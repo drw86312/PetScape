@@ -6,17 +6,24 @@
 //  Copyright © 2016 drw. All rights reserved.
 //
 
+import Alamofire
 import UIKit
+import ReactiveCocoa
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
 	var window: UIWindow?
 
-
 	func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
-		// Override point for customization after application launch.
+		
+		window = UIWindow(frame: UIScreen.mainScreen().bounds)
+		window?.rootViewController = UINavigationController(rootViewController: BaseViewController())
+		window?.backgroundColor = UIColor.whiteColor()
+		window?.makeKeyAndVisible()
+		
 		return true
+		
 	}
 
 	func applicationWillResignActive(application: UIApplication) {
