@@ -74,6 +74,17 @@ public enum Animal: String {
 	case SmallFurry = "SmallFurry"
 }
 
+public enum AdoptionStatus: String {
+	case Available = "A"
+	
+	var titleString: String {
+		switch self {
+		case .Available:
+			return "Available"
+		}
+	}
+}
+
 extension NSURL: Decodable {
 	public static func decode(json: JSON) -> Decoded<NSURL> {
 		return String.decode(json)

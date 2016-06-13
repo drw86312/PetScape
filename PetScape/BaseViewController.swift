@@ -15,7 +15,8 @@ class BaseViewController: UIViewController {
 		
 		//		let endpoint = Endpoint<Shelter>.shelters("60606")
 		// let endpoint = Endpoint<Breed>.breeds(.Reptile)
-		let endpoint = Endpoint<Pet>.pet(1234)
+		let endpoint = Endpoint<Pet>.pet(34725116)
+//		 let endpoint = Endpoint<Pet>.random()
 		
 		API.fetch(endpoint) { response in
 			switch response.result {
