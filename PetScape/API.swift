@@ -27,7 +27,9 @@ struct API {
 	
 	static let kAPIFormat = "format"
 	static let kAPIFormatDefaultValue = "json"
-
+	
+	static let baseKeyPath = "petfinder"
+	
 	static func fetch<Model: Decodable where Model.DecodedType == Model>(
 		endpoint: Endpoint<Model>,
 		queue: dispatch_queue_t? = nil,
@@ -46,57 +48,5 @@ struct API {
 		req.response(queue: queue,
 		             responseSerializer: Request.ArgoResponseSerializer(endpoint.keyPath),
 		             completionHandler: completionHandler)
-	}
-}
-
-extension Request {
-	static func ArgoResponseSerializer
-		<Model: Decodable where Model.DecodedType == Model>(keyPath: String) -> ResponseSerializer<Model, Error> {
-		return ResponseSerializer { request, response, data, error in
-			if let error = error {
-				return .Failure(.Underlying(error))
-			}
-			
-			let JSONSerializer = Request.JSONResponseSerializer()
-			switch JSONSerializer.serializeResponse(request, response, data, error) {
-				
-			case .Success(let jsonObject):
-				guard let modelObject = jsonObject.valueForKeyPath(keyPath) else {
-					return .Failure(.Unknown)
-				}
-				
-				let decodedModel: Decoded<Model> = decode(modelObject) as Decoded<Model>
-				switch decodedModel {
-				case .Success(let model):
-					return .Success(model)
-				case .Failure(let decodeError):
-					return .Failure(.Decoding(decodeError))
-				}
-			case .Failure(let error):
-				return .Failure(.JSONParsing(error))
-			}
-		}
-	}
-	
-	static func ArgoResponseSerializer
-		<Model: Decodable where Model.DecodedType == Model>(keyPath: String) -> ResponseSerializer<[Model], Error> {
-		return ResponseSerializer { _, _, data, error in
-			if let error = error {
-				return .Failure(.Underlying(error))
-			}
-			guard let data = data else { return .Failure(.Unknown) }
-			do {
-				let object = try NSJSONSerialization.JSONObjectWithData(data, options: [])
-				print(object)
-				switch decode(object) as Decoded<[Model]> {
-				case .Success(let models):
-					return .Success(models)
-				case .Failure(let error):
-					return .Failure(.Decoding(error))
-				}
-			} catch let error as NSError {
-				return .Failure(.JSONParsing(error))
-			}
-		}
 	}
 }

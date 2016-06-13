@@ -9,7 +9,7 @@
 import Foundation
 
 extension Endpoint {
-	static func findShelters(zip: String,
+	static func shelters(zip: String,
 	                         shelterName: String? = nil,
 	                         offset: Int = 0,
 	                         count: Int = 20) -> Endpoint<[T]> {
@@ -23,6 +23,6 @@ extension Endpoint {
 		                     path: "shelter.find",
 		                     parameters: parameters,
 		                     headers: nil,
-							 keyPath: "shelters")
+							 keyPath: API.baseKeyPath + ".shelters.shelter")
 	}
 }

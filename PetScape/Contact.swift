@@ -17,6 +17,7 @@ struct Contact {
 	let fax: String?
 	let phone: String?
 	let state: String?
+	let country: String?
 	let zip: String?
 }
 
@@ -30,7 +31,8 @@ extension Contact: Decodable {
 			<*> json <|? ["fax", "$t"]
 			<*> json <|? ["phone", "$t"]
 			<*> json <|? ["state", "$t"]
-			<*> json <|? ["zip","$t"]
+			<*> json <|? ["country", "$t"]
+			<*> json <|? ["zip", "$t"]
 		return contact
 	}
 }

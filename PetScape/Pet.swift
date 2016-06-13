@@ -14,29 +14,40 @@ struct Pet {
 	let id: Int
 	let description: String?
 	let mix: Bool?
+	let animal: Animal?
 	let age: Age?
 	let sex: Sex?
 	let size: Size?
 	let contact: Contact
 	let photos: [Photo]?
 	let name: String?
-//	let breeds: [String]?
+	
+	// Options are keyword descriptors (ex. "hasShots", "housetrained", "specialNeeds", etc.)
+	let options: [String]?
+	
+	let shelterID: String?
+	let shelterPetID: String?
+	//	let breeds: [String]?
 }
 
 extension Pet: Decodable {
 	
 	static func decode(json: JSON) -> Decoded<Pet> {
 		let pet = curry(Pet.init)
-			<^> (json <| ["petfinder", "pet", "id", "$t"] >>- toInt)
-			<*> json <|? ["petfinder", "pet", "description", "$t"]
-			<*> (json <| ["petfinder", "pet", "mix", "$t"] >>- toBoolean)
-			<*> json <|? ["petfinder", "pet", "age", "$t"]
-			<*> json <|? ["petfinder", "pet", "sex", "$t"]
-			<*> json <|? ["petfinder", "pet", "size", "$t"]
-			<*> json <| ["petfinder", "pet", "contact"]
-			<*> json <||? ["petfinder", "pet", "media", "photos", "photo"]
-			<*> json <|? ["petfinder", "pet", "name", "$t"]
-//			<*> json <||? ["petfinder", "pet", "breeds"]
+			<^> (json <| ["id", "$t"] >>- toInt)
+			<*> json <|? ["description", "$t"]
+			<*> (json <| ["mix", "$t"] >>- toBoolean)
+			<*> json <|? ["animal", "$t"]
+			<*> json <|? ["age", "$t"]
+			<*> json <|? ["sex", "$t"]
+			<*> json <|? ["size", "$t"]
+			<*> json <| ["contact"]
+			<*> json <||? ["media", "photos", "photo"]
+			<*> json <|? ["name", "$t"]
+			<*> json <||? ["options", "option"]
+			<*> json <|? ["shelterId", "$t"]
+			<*> json <|? ["shelterPetId", "$t"]
+		//			<*> json <||? ["petfinder", "pet", "breeds"]
 		return pet
 	}
 }

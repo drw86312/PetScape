@@ -63,6 +63,17 @@ public enum Age: String {
 	}
 }
 
+public enum Animal: String {
+	case Barnyard = "Barnyard"
+	case Bird = "Bird"
+	case Cat = "Cat"
+	case Dog = "Dog"
+	case Horse = "Horse"
+	case Pig = "Pig"
+	case Reptile = "Reptile"
+	case SmallFurry = "SmallFurry"
+}
+
 extension NSURL: Decodable {
 	public static func decode(json: JSON) -> Decoded<NSURL> {
 		return String.decode(json)
@@ -99,8 +110,21 @@ extension Age: Decodable {
 	}
 }
 
+extension Animal: Decodable {
+	public static func decode(json: JSON) -> Decoded<Animal> {
+		return String.decode(json)
+			.flatMap {
+				return Animal(rawValue: $0).map(pure) ?? .typeMismatch("Animal", actual: "String")
+		}
+	}
+}
+
 func toInt(number: String) -> Decoded<Int> {
 	return .fromOptional(Int(number))
+}
+
+func toFloat(number: String) -> Decoded<Float> {
+	return .fromOptional(Float(number))
 }
 
 func toBoolean(string: String) -> Decoded<Bool> {
