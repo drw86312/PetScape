@@ -8,38 +8,41 @@
 
 import Argo
 import Curry
+import Foundation
 
 struct Pet {
 	let id: Int
-//	let description: String?
-//	let mix: Bool?
-//	let animal: Animal?
-//	let age: Age?
-//	let sex: Sex?
-//	let size: Size?
-//	let contact: Contact
-//	let photos: [Photo]?
-//	let name: String?
-//	let shelterID: String?
-//	let shelterPetID: String?
+	let lastUpdated: NSDate?
+	let mix: Bool?
+	let description: String?
+	let animal: Animal?
+	let age: Age?
+	let sex: Sex?
+	let size: Size?
+	let contact: Contact?
+	let photos: [Photo]?
+	let name: String?
+	let shelterID: String?
+	let shelterPetID: String?
 }
 
 extension Pet: Decodable {
 	static func decode(json: JSON) -> Decoded<Pet> {
-		let pet = curry(Pet.init)
+		let partialPet = curry(Pet.init)
 			<^> (json <| ["id", "$t"] >>- toInt)
-//			<*> json <|? ["description", "$t"]
-//			<*> (json <| ["mix", "$t"] >>- toBoolean)
-//			<*> json <|? ["animal", "$t"]
-//			<*> json <|? ["age", "$t"]
-//			<*> json <|? ["sex", "$t"]
-//			<*> json <|? ["size", "$t"]
-//			<*> json <| ["contact"]
-//			<*> json <||? ["media", "photos", "photo"]
-//			<*> json <|? ["name", "$t"]
-//			<*> json <|? ["shelterId", "$t"]
-//			<*> json <|? ["shelterPetId", "$t"]
-		return pet
+			<*> (json <| ["lastUpdate", "$t"] >>- toNSDate)
+			<*> (json <| ["mix", "$t"] >>- toBoolean)
+			<*> json <|? ["description", "$t"]
+			<*> json <|? ["animal", "$t"]
+			<*> json <|? ["age", "$t"]
+			<*> json <|? ["sex", "$t"]
+			<*> json <|? ["size", "$t"]
+			<*> json <|? ["contact"]
+			<*> json <||? ["media", "photos", "photo"]
+		return partialPet
+			<*> json <|? ["name", "$t"]
+			<*> json <|? ["shelterId", "$t"]
+			<*> json <|? ["shelterPetId", "$t"]
 	}
 }
 

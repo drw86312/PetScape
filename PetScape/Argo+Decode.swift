@@ -142,3 +142,12 @@ func toBoolean(string: String) -> Decoded<Bool> {
 	return .fromOptional(string.lowercaseString == "yes")
 }
 
+func toNSDate(dateString: String) -> Decoded<NSDate> {
+	let jsonDateFormatter: NSDateFormatter = {
+		let dateFormatter = NSDateFormatter()
+		dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ssZ"
+		return dateFormatter
+	}()
+	return .fromOptional(jsonDateFormatter.dateFromString(dateString))
+}
+

@@ -1,4 +1,5 @@
 github "Alamofire/Alamofire" ~> 3.4
 github "ReactiveCocoa/ReactiveCocoa"
 github "thoughtbot/Argo"
+github "thoughtbot/Curry"
 github "PureLayout/PureLayout"

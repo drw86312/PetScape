@@ -21,7 +21,7 @@ class BaseViewController: UIViewController {
 		API.fetch(endpoint) { response in
 			switch response.result {
 			case .Success(let pet):
-				print(pet)
+				print(pet.lastUpdated)
 			case .Failure(let error):
 				print(error)
 			}
