@@ -13,17 +13,21 @@ class BaseViewController: UIViewController {
 	override func viewDidLoad() {
 		super.viewDidLoad()
 		
-		let endpoint = Endpoint<Pet>.random()
-		API.fetch(endpoint) { result in
+//		let random = Endpoint<Pet>.random()
+//		API.fetch(random) { result in
+//			print(result)
+//		}
+		
+		let shelter = Endpoint<Shelter>.findShelters("60606")
+		API.fetch(shelter) { result in
 			print(result)
 		}
+		
 		
 	}
 
 	override func didReceiveMemoryWarning() {
 		super.didReceiveMemoryWarning()
 	}
-
-
 }
 

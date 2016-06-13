@@ -20,7 +20,11 @@
 		810DD2921CEB6ED700EAF8A8 /* ReactiveCocoa.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 810DD2901CEB6ED700EAF8A8 /* ReactiveCocoa.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		810DD2941CEB6EDE00EAF8A8 /* Result.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 810DD2931CEB6EDE00EAF8A8 /* Result.framework */; };
 		810DD2951CEB6EDE00EAF8A8 /* Result.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 810DD2931CEB6EDE00EAF8A8 /* Result.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		815EBEAF1D0E29890056ECF6 /* Argo+Decode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 815EBEAE1D0E29890056ECF6 /* Argo+Decode.swift */; };
+		815EBEB11D0E35D70056ECF6 /* Shelter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 815EBEB01D0E35D70056ECF6 /* Shelter.swift */; };
+		815EBEB31D0E407E0056ECF6 /* API+Shelter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 815EBEB21D0E407E0056ECF6 /* API+Shelter.swift */; };
 		8174B3FF1D0B70DD00F374D4 /* Contact.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8174B3FE1D0B70DD00F374D4 /* Contact.swift */; };
+		8174B4011D0C6D1E00F374D4 /* Photo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8174B4001D0C6D1E00F374D4 /* Photo.swift */; };
 		819E8E091D0B5C5D00697ADB /* Pet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 819E8E081D0B5C5D00697ADB /* Pet.swift */; };
 		819E8E0C1D0B5F1A00697ADB /* Endpoint.swift in Sources */ = {isa = PBXBuildFile; fileRef = 819E8E0B1D0B5F1A00697ADB /* Endpoint.swift */; };
 		819E8E0E1D0B5F4400697ADB /* API.swift in Sources */ = {isa = PBXBuildFile; fileRef = 819E8E0D1D0B5F4400697ADB /* API.swift */; };
@@ -57,7 +61,11 @@
 		810DD28D1CEB6ECC00EAF8A8 /* PureLayout.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = PureLayout.framework; path = Carthage/Build/iOS/PureLayout.framework; sourceTree = "<group>"; };
 		810DD2901CEB6ED700EAF8A8 /* ReactiveCocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ReactiveCocoa.framework; path = Carthage/Build/iOS/ReactiveCocoa.framework; sourceTree = "<group>"; };
 		810DD2931CEB6EDE00EAF8A8 /* Result.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Result.framework; path = Carthage/Build/iOS/Result.framework; sourceTree = "<group>"; };
+		815EBEAE1D0E29890056ECF6 /* Argo+Decode.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Argo+Decode.swift"; sourceTree = "<group>"; };
+		815EBEB01D0E35D70056ECF6 /* Shelter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Shelter.swift; sourceTree = "<group>"; };
+		815EBEB21D0E407E0056ECF6 /* API+Shelter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "API+Shelter.swift"; sourceTree = "<group>"; };
 		8174B3FE1D0B70DD00F374D4 /* Contact.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Contact.swift; sourceTree = "<group>"; };
+		8174B4001D0C6D1E00F374D4 /* Photo.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Photo.swift; sourceTree = "<group>"; };
 		819E8E081D0B5C5D00697ADB /* Pet.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Pet.swift; sourceTree = "<group>"; };
 		819E8E0B1D0B5F1A00697ADB /* Endpoint.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Endpoint.swift; sourceTree = "<group>"; };
 		819E8E0D1D0B5F4400697ADB /* API.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = API.swift; sourceTree = "<group>"; };
@@ -119,8 +127,11 @@
 		819E8E071D0B5C4700697ADB /* Models */ = {
 			isa = PBXGroup;
 			children = (
+				815EBEAE1D0E29890056ECF6 /* Argo+Decode.swift */,
 				819E8E081D0B5C5D00697ADB /* Pet.swift */,
 				8174B3FE1D0B70DD00F374D4 /* Contact.swift */,
+				8174B4001D0C6D1E00F374D4 /* Photo.swift */,
+				815EBEB01D0E35D70056ECF6 /* Shelter.swift */,
 			);
 			name = Models;
 			sourceTree = "<group>";
@@ -131,6 +142,7 @@
 				819E8E0B1D0B5F1A00697ADB /* Endpoint.swift */,
 				819E8E0D1D0B5F4400697ADB /* API.swift */,
 				819E8E0F1D0B60C700697ADB /* API+Pet.swift */,
+				815EBEB21D0E407E0056ECF6 /* API+Shelter.swift */,
 			);
 			name = API;
 			sourceTree = "<group>";
@@ -236,9 +248,13 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				815EBEB31D0E407E0056ECF6 /* API+Shelter.swift in Sources */,
 				810DD2771CEB6BEA00EAF8A8 /* BaseViewController.swift in Sources */,
 				819E8E091D0B5C5D00697ADB /* Pet.swift in Sources */,
 				810DD2751CEB6BEA00EAF8A8 /* AppDelegate.swift in Sources */,
+				815EBEB11D0E35D70056ECF6 /* Shelter.swift in Sources */,
+				815EBEAF1D0E29890056ECF6 /* Argo+Decode.swift in Sources */,
+				8174B4011D0C6D1E00F374D4 /* Photo.swift in Sources */,
 				819E8E101D0B60C700697ADB /* API+Pet.swift in Sources */,
 				8174B3FF1D0B70DD00F374D4 /* Contact.swift in Sources */,
 				819E8E131D0B65B000697ADB /* Dictionary.swift in Sources */,

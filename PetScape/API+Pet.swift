@@ -14,6 +14,7 @@ extension Endpoint {
 		return Endpoint<T>(method: .GET,
 		                     path: "pet.getRandom",
 		                     parameters: parameters,
-		                     headers: nil)
+		                     headers: nil,
+		                     keyPath: "data")
 	}
 }

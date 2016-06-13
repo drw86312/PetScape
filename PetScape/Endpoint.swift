@@ -17,6 +17,7 @@ struct Endpoint<T> {
 	let defaultParameters: [String: AnyObject] = [API.kAPIOutput : API.kAPIOutputDefaultValue,
 	                                              API.kAPIFormat : API.kAPIFormatDefaultValue,
 	                                              "key" : API.clientID]
+	let keyPath: String
 }
 
 extension Endpoint: URLRequestConvertible {
