@@ -9,7 +9,16 @@
 import Foundation
 
 extension Endpoint {
-	static func shelters(zip: String,
+	
+	static func getShelter(shelterID: String) -> Endpoint<T> {
+		return Endpoint<T>(method: .GET,
+		                   path: "shelter.get",
+		                   parameters: ["id" : shelterID],
+		                   headers: nil,
+		                   keyPath: API.baseKeyPath + ".shelter")
+	}
+	
+	static func findShelters(zip: String,
 	                         shelterName: String? = nil,
 	                         offset: Int = 0,
 	                         count: Int = 20) -> Endpoint<[T]> {
@@ -23,6 +32,21 @@ extension Endpoint {
 		                     path: "shelter.find",
 		                     parameters: parameters,
 		                     headers: nil,
-							 keyPath: API.baseKeyPath + ".shelters.shelter")
+		                     keyPath: API.baseKeyPath + ".shelters.shelter")
+	}
+	
+	static func findPetsForShelter(shelterID: String,
+	                               offset: Int = 0,
+	                               count: Int = 20,
+	                               adoptionStatus: AdoptionStatus? = nil) -> Endpoint<[T]> {
+		var parameters: [String: AnyObject] = ["id" : shelterID,
+		                                       "offset" : offset,
+		                                       "count" : count]
+		if let adoptionStatus = adoptionStatus { parameters.addEntries(["status" : adoptionStatus.rawValue]) }
+		return Endpoint<[T]>(method: .GET,
+		                     path: "shelter.getPets",
+		                     parameters: parameters,
+		                     headers: nil,
+		                     keyPath: API.baseKeyPath + ".pets.pet")
 	}
 }

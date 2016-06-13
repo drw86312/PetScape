@@ -10,10 +10,10 @@ import Argo
 import Foundation
 
 public enum Age: String {
-	case Baby = "BABY"
-	case Young = "YOUNG"
-	case Adult = "ADULT"
-	case Senior = "SENIOR"
+	case Baby = "Baby"
+	case Young = "Young"
+	case Adult = "Adult"
+	case Senior = "Senior"
 	
 	var titleString: String {
 		switch self {
@@ -33,7 +33,7 @@ extension Age: Decodable {
 	public static func decode(json: JSON) -> Decoded<Age> {
 		return String.decode(json)
 			.flatMap {
-				return Age(rawValue: $0.uppercaseString).map(pure) ?? .typeMismatch("Age", actual: "String")
+				return Age(rawValue: $0).map(pure) ?? .typeMismatch("Age", actual: "String")
 		}
 	}
 }

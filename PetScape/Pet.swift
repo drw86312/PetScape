@@ -24,6 +24,8 @@ struct Pet {
 	let name: String?
 	let shelterID: String?
 	let shelterPetID: String?
+	let adoptionStatus: AdoptionStatus?
+
 }
 
 extension Pet: Decodable {
@@ -43,6 +45,7 @@ extension Pet: Decodable {
 			<*> json <|? ["name", "$t"]
 			<*> json <|? ["shelterId", "$t"]
 			<*> json <|? ["shelterPetId", "$t"]
+			<*> json <|? ["status", "$t"]
 	}
 }
 

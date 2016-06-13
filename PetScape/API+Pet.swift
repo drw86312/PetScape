@@ -10,7 +10,7 @@ import Foundation
 
 extension Endpoint {
 	
-	static func pet(petID: Int) -> Endpoint<T> {
+	static func getPet(petID: Int) -> Endpoint<T> {
 		let parameters: [String: AnyObject] = ["id" : petID]
 		return Endpoint<T>(method: .GET,
 		                   path: "pet.get",
@@ -19,22 +19,35 @@ extension Endpoint {
 		                   keyPath: API.baseKeyPath + ".pet")
 	}
 	
+	static func findPets(zip: String,
+	                     animal: Animal? = nil,
+	                     breed: String? = nil,
+	                     size : Size? = nil,
+	                     sex : Sex? = nil,
+	                     age : Age? = nil,
+	                     offset: Int = 0,
+	                     count: Int = 20) -> Endpoint<[T]> {
+		var parameters: [String: AnyObject] = ["location" : zip,
+		                                       "offset" : offset,
+		                                       "count" : count]
+		if let animal = animal { parameters.addEntries(["animal" : animal.rawValue.lowercaseString]) }
+		if let breed = breed { parameters.addEntries(["breed" : breed]) }
+		if let size = size { parameters.addEntries(["size" : size.rawValue]) }
+		if let sex = sex { parameters.addEntries(["sex" : sex.rawValue]) }
+		if let age = age { parameters.addEntries(["age" : age.rawValue]) }
+		return Endpoint<[T]>(method: .GET,
+		                   path: "pet.find",
+		                   parameters: parameters,
+		                   headers: nil,
+		                   keyPath: API.baseKeyPath + ".pets.pet")
+	}
 	
-	static func random() -> Endpoint<T> {
+	static func getRandom() -> Endpoint<T> {
 		let parameters: [String: AnyObject] = [:]
 		return Endpoint<T>(method: .GET,
 		                   path: "pet.getRandom",
 		                   parameters: parameters,
 		                   headers: nil,
 		                   keyPath: API.baseKeyPath + ".pet")
-	}
-	
-	static func breeds(animal: Animal) -> Endpoint<[T]> {
-		let parameters: [String: AnyObject] = ["animal" : animal.rawValue.lowercaseString]
-		return Endpoint<[T]>(method: .GET,
-		                     path: "breed.list",
-		                     parameters: parameters,
-		                     headers: nil,
-		                     keyPath: API.baseKeyPath + ".breeds.breed")
 	}
 }
