@@ -15,7 +15,7 @@ struct Pet {
 	let lastUpdated: NSDate?
 	let mix: Bool?
 	let photos: [Photo]?
-	let breeds: [String]?
+	let breed: String?
 	let description: String?
 	let animal: Animal?
 	let age: Age?
@@ -35,8 +35,7 @@ extension Pet: Decodable {
 			<*> (json <| ["lastUpdate", "$t"] >>- toNSDate)
 			<*> (json <| ["mix", "$t"] >>- toBoolean)
 			<*> (json <|| ["media", "photos", "photo"] >>- toPhotosArray)
-			<*> (json <|| ["breeds"] >>- toPhotosArray)
-
+			<*> json <|? ["breeds", "breed", "$t"]
 			<*> json <|? ["description", "$t"]
 			<*> json <|? ["animal", "$t"]
 			<*> json <|? ["age", "$t"]
@@ -56,4 +55,3 @@ extension Pet: Decodable {
 //	let breeds: [String]?
 
 //			<*> json <||? ["options", "option"]
-//			<*> json <||? ["petfinder", "pet", "breeds"]

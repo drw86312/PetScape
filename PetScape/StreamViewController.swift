@@ -31,9 +31,9 @@ class StreamViewController: UIViewController {
 		
 		tableView.delegate = self
 		tableView.dataSource = self
-		tableView.rowHeight = 420.0
-		tableView.registerClass(LargePetCell.self,
-		                        forCellReuseIdentifier: NSStringFromClass(LargePetCell.self))
+		tableView.rowHeight = 450.0
+		tableView.registerClass(PetCell.self,
+		                        forCellReuseIdentifier: NSStringFromClass(PetCell.self))
 		view.addSubview(tableView)
 		
 		addConstraints()
@@ -53,6 +53,8 @@ class StreamViewController: UIViewController {
 			.start { [unowned self] event in
 				if case .Next = event {
 					self.tableView.reloadData()
+				} else if case .Failed(let error) = event {
+					print(error)
 				}
 		}
 	}
@@ -66,7 +68,7 @@ extension StreamViewController: UITableViewDataSource {
 	
 	func tableView(tableView: UITableView,
 	               cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-		let cell = tableView.dequeueReusableCellWithIdentifier(NSStringFromClass(LargePetCell.self), forIndexPath: indexPath) as! LargePetCell
+		let cell = tableView.dequeueReusableCellWithIdentifier(NSStringFromClass(PetCell.self), forIndexPath: indexPath) as! PetCell
 		cell.pet = viewModel.content[indexPath.row]
 		return cell
 	}

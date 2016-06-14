@@ -14,19 +14,6 @@ public enum Age: String {
 	case Young = "Young"
 	case Adult = "Adult"
 	case Senior = "Senior"
-	
-	var titleString: String {
-		switch self {
-		case .Baby:
-			return "Baby"
-		case .Young:
-			return "Young"
-		case .Adult:
-			return "Adult"
-		case .Senior:
-			return "Senior"
-		}
-	}
 }
 
 extension Age: Decodable {

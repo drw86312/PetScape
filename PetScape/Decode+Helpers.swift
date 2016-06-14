@@ -39,6 +39,11 @@ func toNSDate(dateString: String) -> Decoded<NSDate> {
 	return .fromOptional(jsonDateFormatter.dateFromString(dateString))
 }
 
+func toBreeds(object: AnyObject) -> Decoded<[Breed]> {
+	var breeds: [Breed] = []
+	
+	return .fromOptional(breeds)
+}
 
 func toPhotosArray(images: [Image]) -> Decoded<[Photo]> {
 	var photos: [Photo] = []

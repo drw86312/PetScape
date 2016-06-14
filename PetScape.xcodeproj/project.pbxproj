@@ -27,7 +27,7 @@
 		8134EB981D0F56AD002B5C8F /* AdoptionStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8134EB971D0F56AD002B5C8F /* AdoptionStatus.swift */; };
 		8134EB9A1D0F5DFA002B5C8F /* API+Breed.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8134EB991D0F5DFA002B5C8F /* API+Breed.swift */; };
 		8134EB9C1D0F6FC3002B5C8F /* Launch Screen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 8134EB9B1D0F6FC3002B5C8F /* Launch Screen.storyboard */; };
-		8134EB9F1D0F7134002B5C8F /* LargePetCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8134EB9E1D0F7134002B5C8F /* LargePetCell.swift */; };
+		8134EB9F1D0F7134002B5C8F /* PetCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8134EB9E1D0F7134002B5C8F /* PetCell.swift */; };
 		8134EBA21D0FB9BD002B5C8F /* StreamViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8134EBA11D0FB9BD002B5C8F /* StreamViewModel.swift */; };
 		8134EBA61D0FC6BA002B5C8F /* WebImage.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8134EBA51D0FC6BA002B5C8F /* WebImage.framework */; };
 		815EBEAF1D0E29890056ECF6 /* Decode+Helpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 815EBEAE1D0E29890056ECF6 /* Decode+Helpers.swift */; };
@@ -81,7 +81,7 @@
 		8134EB971D0F56AD002B5C8F /* AdoptionStatus.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AdoptionStatus.swift; sourceTree = "<group>"; };
 		8134EB991D0F5DFA002B5C8F /* API+Breed.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "API+Breed.swift"; sourceTree = "<group>"; };
 		8134EB9B1D0F6FC3002B5C8F /* Launch Screen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = "Launch Screen.storyboard"; sourceTree = "<group>"; };
-		8134EB9E1D0F7134002B5C8F /* LargePetCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LargePetCell.swift; sourceTree = "<group>"; };
+		8134EB9E1D0F7134002B5C8F /* PetCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PetCell.swift; sourceTree = "<group>"; };
 		8134EBA11D0FB9BD002B5C8F /* StreamViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StreamViewModel.swift; sourceTree = "<group>"; };
 		8134EBA51D0FC6BA002B5C8F /* WebImage.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WebImage.framework; path = Carthage/Build/iOS/WebImage.framework; sourceTree = "<group>"; };
 		815EBEAE1D0E29890056ECF6 /* Decode+Helpers.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Decode+Helpers.swift"; sourceTree = "<group>"; };
@@ -170,7 +170,7 @@
 		8134EB9D1D0F70FC002B5C8F /* Cells */ = {
 			isa = PBXGroup;
 			children = (
-				8134EB9E1D0F7134002B5C8F /* LargePetCell.swift */,
+				8134EB9E1D0F7134002B5C8F /* PetCell.swift */,
 			);
 			name = Cells;
 			sourceTree = "<group>";
@@ -333,7 +333,7 @@
 				815EBEB11D0E35D70056ECF6 /* Shelter.swift in Sources */,
 				8134EB981D0F56AD002B5C8F /* AdoptionStatus.swift in Sources */,
 				8134EB961D0F5684002B5C8F /* Age.swift in Sources */,
-				8134EB9F1D0F7134002B5C8F /* LargePetCell.swift in Sources */,
+				8134EB9F1D0F7134002B5C8F /* PetCell.swift in Sources */,
 				81919FC51D109EC0000334BC /* PetCellLabelView.swift in Sources */,
 				815EBEAF1D0E29890056ECF6 /* Decode+Helpers.swift in Sources */,
 				8174B4011D0C6D1E00F374D4 /* Photo.swift in Sources */,

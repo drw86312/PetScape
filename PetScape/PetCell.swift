@@ -1,5 +1,5 @@
 //
-//  LargePetCell.swift
+//  PetCell.swift
 //  PetScape
 //
 //  Created by David Warner on 6/13/16.
@@ -10,7 +10,7 @@ import UIKit
 import PureLayout
 import WebImage
 
-class LargePetCell: UITableViewCell {
+class PetCell: UITableViewCell {
 	
 	private let scrollView = UIScrollView()
 	private let labelView = PetCellLabelView()
@@ -18,7 +18,7 @@ class LargePetCell: UITableViewCell {
 	var pet: Pet? {
 		didSet {
 			guard let pet = pet else { return }
-			configureTitleLabel(pet)
+			configureLabel(pet)
 			configureScrollView(pet)
 		}
 	}
@@ -30,6 +30,7 @@ class LargePetCell: UITableViewCell {
 		scrollView.alwaysBounceVertical = false
 		scrollView.alwaysBounceHorizontal = false
 		scrollView.bounces = false
+		scrollView.delegate = self
 		
 		labelView.layer.cornerRadius = 5.0
 		labelView.layer.masksToBounds = true
@@ -51,7 +52,7 @@ class LargePetCell: UITableViewCell {
 		labelView.autoSetDimension(.Height, toSize: 100)
 	}
 	
-	private func configureTitleLabel(pet: Pet) {
+	private func configureLabel(pet: Pet) {
 		guard let name = pet.name,
 			let sex  = pet.sex else {
 				labelView.titleLabel.attributedText =  NSMutableAttributedString(string: pet.name ?? "", attributes: [NSFontAttributeName : UIFont.systemFontOfSize(21, weight: 0.5)])
@@ -61,11 +62,15 @@ class LargePetCell: UITableViewCell {
 		let ageString = NSMutableAttributedString(string: sex.titleString, attributes: [NSFontAttributeName : UIFont.systemFontOfSize(18)])
 		nameString.appendAttributedString(ageString)
 		labelView.titleLabel.attributedText = nameString
+		
+		guard let breed = pet.breed, let age  = pet.age else { return }
+		labelView.detailLabel.text = age.rawValue + " - " + breed
 	}
 	
 	private func configureScrollView(pet: Pet) {
 		scrollView.frame = contentView.frame
 		if let photos = pet.photos {
+			labelView.pageControl.numberOfPages = photos.count
 			photos
 				.enumerate()
 				.forEach { index, photo in
@@ -78,10 +83,17 @@ class LargePetCell: UITableViewCell {
 					imageView.contentMode = .ScaleToFill
 					scrollView.addSubview(imageView)
 					imageView.sd_setImageWithURL(url, completed: { (image, error, cacheType, url) in
-						print(image.size)
+						
 					})
 			}
 			scrollView.contentSize = CGSize(width: CGFloat(photos.count) * scrollView.frame.width, height: scrollView.frame.height)
 		}
+	}
+}
+
+extension PetCell: UIScrollViewDelegate {
+	
+	func scrollViewDidEndDecelerating(scrollView: UIScrollView) {
+		labelView.pageControl.currentPage = Int(scrollView.contentOffset.x / scrollView.frame.size.width)
 	}
 }
