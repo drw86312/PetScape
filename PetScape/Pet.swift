@@ -14,18 +14,18 @@ struct Pet {
 	let id: Int
 	let lastUpdated: NSDate?
 	let mix: Bool?
+	let photos: [Photo]?
+	let breeds: [String]?
 	let description: String?
 	let animal: Animal?
 	let age: Age?
 	let sex: Sex?
 	let size: Size?
 	let contact: Contact?
-	let photos: [Photo]?
 	let name: String?
 	let shelterID: String?
 	let shelterPetID: String?
 	let adoptionStatus: AdoptionStatus?
-
 }
 
 extension Pet: Decodable {
@@ -34,14 +34,16 @@ extension Pet: Decodable {
 			<^> (json <| ["id", "$t"] >>- toInt)
 			<*> (json <| ["lastUpdate", "$t"] >>- toNSDate)
 			<*> (json <| ["mix", "$t"] >>- toBoolean)
+			<*> (json <|| ["media", "photos", "photo"] >>- toPhotosArray)
+			<*> (json <|| ["breeds"] >>- toPhotosArray)
+
 			<*> json <|? ["description", "$t"]
 			<*> json <|? ["animal", "$t"]
 			<*> json <|? ["age", "$t"]
 			<*> json <|? ["sex", "$t"]
 			<*> json <|? ["size", "$t"]
-			<*> json <|? ["contact"]
-			<*> json <||? ["media", "photos", "photo"]
 		return partialPet
+			<*> json <|? ["contact"]
 			<*> json <|? ["name", "$t"]
 			<*> json <|? ["shelterId", "$t"]
 			<*> json <|? ["shelterPetId", "$t"]

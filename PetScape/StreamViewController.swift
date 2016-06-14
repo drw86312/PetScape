@@ -1,5 +1,5 @@
 //
-//  BaseViewController.swift
+//  StreamViewController.swift
 //  PetScape
 //
 //  Created by David Warner on 5/17/16.
@@ -7,10 +7,13 @@
 //
 
 import PureLayout
+import ReactiveCocoa
+import WebImage
 import UIKit
 
-class BaseViewController: UIViewController {
+class StreamViewController: UIViewController {
 	
+	let viewModel = StreamViewModel()
 	let tableView = UITableView(frame: CGRectZero, style: .Plain)
 	
 	init() {
@@ -28,11 +31,10 @@ class BaseViewController: UIViewController {
 		
 		tableView.delegate = self
 		tableView.dataSource = self
-		tableView.rowHeight = 300.0
+		tableView.rowHeight = 420.0
 		tableView.registerClass(LargePetCell.self,
 		                        forCellReuseIdentifier: NSStringFromClass(LargePetCell.self))
 		view.addSubview(tableView)
-		tableView.backgroundColor = .redColor()
 		
 		addConstraints()
 	}
@@ -44,36 +46,33 @@ class BaseViewController: UIViewController {
 	override func viewDidLoad() {
 		super.viewDidLoad()
 		
-		let endpoint = Endpoint<Shelter>.getShelter("IL608")
-		API.fetch(endpoint) { response in
-			switch response.result {
-			case .Success(let pets):
-				print(pets)
-			case .Failure(let error):
-				print(error)
-			}
+		let endpoint = Endpoint<Pet>.findPets("60606")
+		viewModel
+			.loadNext?
+			.apply(endpoint)
+			.start { [unowned self] event in
+				if case .Next = event {
+					self.tableView.reloadData()
+				}
 		}
-	}
-
-	override func didReceiveMemoryWarning() {
-		super.didReceiveMemoryWarning()
 	}
 }
 
-extension BaseViewController: UITableViewDelegate {
+extension StreamViewController: UITableViewDelegate {
 	
 }
 
-extension BaseViewController: UITableViewDataSource {
+extension StreamViewController: UITableViewDataSource {
 	
 	func tableView(tableView: UITableView,
 	               cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-		let cell = tableView.dequeueReusableCellWithIdentifier(NSStringFromClass(LargePetCell.self), forIndexPath: indexPath)
+		let cell = tableView.dequeueReusableCellWithIdentifier(NSStringFromClass(LargePetCell.self), forIndexPath: indexPath) as! LargePetCell
+		cell.pet = viewModel.content[indexPath.row]
 		return cell
 	}
 	
 	func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-		return 3
+		return viewModel.content.count
 	}
 }
 

@@ -18,7 +18,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 	func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
 		
 		window = UIWindow(frame: UIScreen.mainScreen().bounds)
-		window?.rootViewController = UINavigationController(rootViewController: BaseViewController())
+		
+		let tab = UITabBarController()
+		tab.viewControllers = [UINavigationController(rootViewController: StreamViewController()),
+							   UINavigationController(rootViewController: UIViewController()),
+							   UINavigationController(rootViewController: UIViewController())]
+		window?.rootViewController = tab
 		window?.backgroundColor = UIColor.whiteColor()
 		window?.makeKeyAndVisible()
 		

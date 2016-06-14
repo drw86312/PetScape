@@ -35,6 +35,7 @@ extension Endpoint {
 		if let size = size { parameters.addEntries(["size" : size.rawValue]) }
 		if let sex = sex { parameters.addEntries(["sex" : sex.rawValue]) }
 		if let age = age { parameters.addEntries(["age" : age.rawValue]) }
+
 		return Endpoint<[T]>(method: .GET,
 		                   path: "pet.find",
 		                   parameters: parameters,

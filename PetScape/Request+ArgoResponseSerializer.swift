@@ -21,7 +21,6 @@ extension Request {
 			switch JSONSerializer.serializeResponse(request, response, data, error) {
 				
 			case .Success(let jsonObject):
-				print(jsonObject)
 				guard let modelObject = jsonObject.valueForKeyPath(keyPath) else {
 					return .Failure(.Unknown)
 				}
@@ -42,6 +41,7 @@ extension Request {
 	static func ArgoResponseSerializer
 		<Model: Decodable where Model.DecodedType == Model>(keyPath: String) -> ResponseSerializer<[Model], Error> {
 		return ResponseSerializer { request, response, data, error in
+			
 			if let error = error {
 				return .Failure(.Underlying(error))
 			}
@@ -49,7 +49,7 @@ extension Request {
 			let JSONSerializer = Request.JSONResponseSerializer()
 			switch JSONSerializer.serializeResponse(request, response, data, error) {
 			case .Success(let jsonObject):
-				print(jsonObject)
+//				print(jsonObject)
 				guard let modelObject = jsonObject.valueForKeyPath(keyPath) else {
 					return .Failure(.Unknown)
 				}
