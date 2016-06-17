@@ -11,7 +11,8 @@ import ReactiveCocoa
 
 class StreamViewModel {
 	
-	enum loadState {
+	enum LoadState {
+		case NotLoaded
 		case Loading
 		case Loaded
 		case LoadingNext
@@ -21,9 +22,13 @@ class StreamViewModel {
 	var offset: Int = 0
 	var loadNext: Action<(), [Pet], Error>?
 	
+	let _loadState = MutableProperty<LoadState>(.NotLoaded)
+	let loadState: AnyProperty<LoadState>
+	
 	var animal : MutableProperty<Animal>?
 	
 	init() {
+		self.loadState = AnyProperty(_loadState)
 		self.loadNext = Action<(), [Pet], Error> { endpoint in
 			return SignalProducer<[Pet], Error> { [unowned self] observer, _ in
 				API.fetch(self.generateEndpoint("60606", offset: self.offset)) { [unowned self] response in

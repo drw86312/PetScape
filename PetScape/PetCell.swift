@@ -63,8 +63,8 @@ class PetCell: UITableViewCell {
 		nameString.appendAttributedString(ageString)
 		labelView.titleLabel.attributedText = nameString
 		
-		guard let breed = pet.breed, let age  = pet.age else { return }
-		labelView.detailLabel.text = age.rawValue + " - " + breed
+		guard let breeds = pet.breeds, let age  = pet.age else { return }
+		labelView.detailLabel.text = age.rawValue + " - " + breeds.joinWithSeparator(" / ")
 	}
 	
 	private func configureScrollView(pet: Pet) {
