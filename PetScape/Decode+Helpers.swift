@@ -39,17 +39,16 @@ func toNSDate(dateString: String) -> Decoded<NSDate> {
 	return .fromOptional(jsonDateFormatter.dateFromString(dateString))
 }
 
-func toBreeds(object: AnyObject) -> Decoded<[Breed]> {
-	var breeds: [Breed] = []
-	
-	return .fromOptional(breeds)
-}
+//func toBreeds(object: AnyObject) -> Decoded<[Breed]> {
+//	var breeds: [Breed] = []
+//	return .fromOptional(breeds)
+//}
 
 func toPhotosArray(images: [Image]) -> Decoded<[Photo]> {
 	var photos: [Photo] = []
 	
 	// Get an array of unique image IDs (these will essentially become photos)
-	Array(Set(images.map { $0.id })).forEach { id in
+	Set(images.map { $0.id }).forEach { id in
 		
 		// Get all images associated with a particular image ID.
 		let associatedImages = images.filter { $0.id == id }

@@ -45,14 +45,20 @@ class StreamViewController: UIViewController {
 
 	override func viewDidLoad() {
 		super.viewDidLoad()
-		
-		let endpoint = Endpoint<Pet>.findPets("60606")
+		fetchData()
+	}
+	
+	func fetchData() {
 		viewModel
 			.loadNext?
-			.apply(endpoint)
+			.apply()
 			.start { [unowned self] event in
-				if case .Next = event {
-					self.tableView.reloadData()
+				if case .Next(let content) = event {
+					let paths = (self.tableView.numberOfRowsInSection(0)..<content.count)
+						.map { NSIndexPath(forRow: $0, inSection: 0) }
+					UIView.setAnimationsEnabled(false)
+					self.tableView.insertRowsAtIndexPaths(paths, withRowAnimation: .None)
+					UIView.setAnimationsEnabled(true)
 				} else if case .Failed(let error) = event {
 					print(error)
 				}
@@ -62,6 +68,16 @@ class StreamViewController: UIViewController {
 
 extension StreamViewController: UITableViewDelegate {
 	
+	func scrollViewDidScroll(scrollView: UIScrollView) {
+		let offsetY = scrollView.contentOffset.y
+		let bounds = scrollView.bounds
+		let size = scrollView.contentSize
+		let insets = scrollView.contentInset
+		guard let executing = viewModel.loadNext?.executing.value else { return }
+		if ((offsetY + bounds.size.height - insets.bottom) > size.height && !executing) {
+			fetchData()
+		}
+	}
 }
 
 extension StreamViewController: UITableViewDataSource {

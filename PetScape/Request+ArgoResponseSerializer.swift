@@ -49,7 +49,6 @@ extension Request {
 			let JSONSerializer = Request.JSONResponseSerializer()
 			switch JSONSerializer.serializeResponse(request, response, data, error) {
 			case .Success(let jsonObject):
-				print(jsonObject)
 				guard let modelObject = jsonObject.valueForKeyPath(keyPath) else {
 					return .Failure(.Unknown)
 				}
