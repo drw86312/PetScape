@@ -43,6 +43,7 @@
 		819E8E0E1D0B5F4400697ADB /* API.swift in Sources */ = {isa = PBXBuildFile; fileRef = 819E8E0D1D0B5F4400697ADB /* API.swift */; };
 		819E8E101D0B60C700697ADB /* API+Pet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 819E8E0F1D0B60C700697ADB /* API+Pet.swift */; };
 		819E8E131D0B65B000697ADB /* Dictionary.swift in Sources */ = {isa = PBXBuildFile; fileRef = 819E8E121D0B65B000697ADB /* Dictionary.swift */; };
+		81CE14BA1D14CC4F0092111E /* TableViewBackground.swift in Sources */ = {isa = PBXBuildFile; fileRef = 81CE14B91D14CC4F0092111E /* TableViewBackground.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -97,6 +98,7 @@
 		819E8E0D1D0B5F4400697ADB /* API.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = API.swift; sourceTree = "<group>"; };
 		819E8E0F1D0B60C700697ADB /* API+Pet.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "API+Pet.swift"; sourceTree = "<group>"; };
 		819E8E121D0B65B000697ADB /* Dictionary.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Dictionary.swift; sourceTree = "<group>"; };
+		81CE14B91D14CC4F0092111E /* TableViewBackground.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TableViewBackground.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -188,6 +190,7 @@
 			isa = PBXGroup;
 			children = (
 				81919FC41D109EC0000334BC /* PetCellLabelView.swift */,
+				81CE14B91D14CC4F0092111E /* TableViewBackground.swift */,
 			);
 			name = Views;
 			sourceTree = "<group>";
@@ -337,6 +340,7 @@
 				81919FC51D109EC0000334BC /* PetCellLabelView.swift in Sources */,
 				815EBEAF1D0E29890056ECF6 /* Decode+Helpers.swift in Sources */,
 				8174B4011D0C6D1E00F374D4 /* Photo.swift in Sources */,
+				81CE14BA1D14CC4F0092111E /* TableViewBackground.swift in Sources */,
 				8134EBA21D0FB9BD002B5C8F /* StreamViewModel.swift in Sources */,
 				8134EB9A1D0F5DFA002B5C8F /* API+Breed.swift in Sources */,
 				815EBEB71D0F15720056ECF6 /* Breed.swift in Sources */,

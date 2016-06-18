@@ -15,6 +15,8 @@ class StreamViewController: UIViewController {
 	
 	let viewModel = StreamViewModel()
 	let tableView = UITableView(frame: CGRectZero, style: .Plain)
+	let backgroundView = TableViewBackground()
+	let spinner = UIActivityIndicatorView(activityIndicatorStyle: .WhiteLarge)
 	
 	init() {
 		super.init(nibName: nil, bundle: nil)
@@ -34,13 +36,21 @@ class StreamViewController: UIViewController {
 		tableView.rowHeight = 450.0
 		tableView.registerClass(PetCell.self,
 		                        forCellReuseIdentifier: NSStringFromClass(PetCell.self))
+		tableView.backgroundView = backgroundView
+		tableView.tableFooterView = UIView()
 		view.addSubview(tableView)
+		
+		spinner.hidesWhenStopped = true
+		view.addSubview(spinner)
 		
 		addConstraints()
 	}
 	
 	private func addConstraints() {
 		tableView.autoPinEdgesToSuperviewEdges()
+		
+		spinner.autoAlignAxisToSuperviewAxis(.Vertical)
+		spinner.autoAlignAxis(.Horizontal, toSameAxisOfView: view, withOffset: -25)
 	}
 
 	override func viewDidLoad() {
@@ -86,6 +96,7 @@ extension StreamViewController: UITableViewDataSource {
 	               cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
 		let cell = tableView.dequeueReusableCellWithIdentifier(NSStringFromClass(PetCell.self), forIndexPath: indexPath) as! PetCell
 		cell.pet = viewModel.content[indexPath.row]
+		print(cell)
 		return cell
 	}
 	
