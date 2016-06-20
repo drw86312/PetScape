@@ -96,22 +96,43 @@ class StreamViewController: UIViewController {
 		}
 		
 		guard let reload = viewModel.reload else { return }
-		reloadCocoaAction = CocoaAction(reload) { button in }
+		reloadCocoaAction = CocoaAction(reload) { [unowned self] button in
+		 return self.viewModel.location
+		}
 		
-		viewModel
-			.reload?
-			.apply()
-			.observeOn(UIScheduler())
-			.start { [unowned self] event in
-				if case .Next(let content) = event {
-					// TODO: Figure out why this isn't sending -Next values on button-press action.
-					print("Content: \(content.count)")
-					self.tableView.reloadData()
-				} else if case .Failed(let error) = event {
-					print(error)
+//		viewModel
+//			.reload?
+//			.apply()
+//			.observeOn(UIScheduler())
+//			.start { [unowned self] event in
+//				if case .Next(let content) = event {
+//					// TODO: Figure out why this isn't sending -Next values on button-press action.
+//					self.tableView.reloadData()
+//				} else if case .Failed(let error) = event {
+//					print(error)
+//				}
+//		}
+		
+		let appDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
+		
+		appDelegate
+			.locationManager
+			.locationStatusProperty
+			.producer
+			.start() { [unowned self] event in
+				if case .Next(let state) = event {
+					switch state {
+					case .None:
+						print("None")
+					case .Error(let error):
+						print("Error: \(error)")
+					case .Some(let location):
+						print("Success: \(location)")
+						self.viewModel.location = location
+						self.reloadCocoaAction?.execute(nil)
+					}
 				}
 		}
-		reloadCocoaAction?.execute(nil)
 		
 		backgroundView
 			.refreshButton
@@ -121,23 +142,23 @@ class StreamViewController: UIViewController {
 	}
 	
 	private func loadNext() {
-		if viewModel.loadState.value != .LoadFailed &&
-		   viewModel.loadState.value != .LoadedLast {
-			viewModel
-				.loadNext?
-				.apply()
-				.start { [unowned self] event in
-					if case .Next(let content) = event {
-						let paths = (self.tableView.numberOfRowsInSection(0)..<content.count)
-							.map { NSIndexPath(forRow: $0, inSection: 0) }
-						UIView.setAnimationsEnabled(false)
-						self.tableView.insertRowsAtIndexPaths(paths, withRowAnimation: .None)
-						UIView.setAnimationsEnabled(true)
-					} else if case .Failed(let error) = event {
-						print(error)
-					}
-			}
-		}
+//		if viewModel.loadState.value != .LoadFailed &&
+//		   viewModel.loadState.value != .LoadedLast {
+//			viewModel
+//				.loadNext?
+//				.apply()
+//				.start { [unowned self] event in
+//					if case .Next(let content) = event {
+//						let paths = (self.tableView.numberOfRowsInSection(0)..<content.count)
+//							.map { NSIndexPath(forRow: $0, inSection: 0) }
+//						UIView.setAnimationsEnabled(false)
+//						self.tableView.insertRowsAtIndexPaths(paths, withRowAnimation: .None)
+//						UIView.setAnimationsEnabled(true)
+//					} else if case .Failed(let error) = event {
+//						print(error)
+//					}
+//			}
+//		}
 	}
 	
 	private func emptyDataSet() {

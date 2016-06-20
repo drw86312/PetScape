@@ -23,13 +23,13 @@ class StreamViewModel {
 	var content: [Pet] = []
 	var offset: Int = 0
 	
-	var loadNext: Action<(), [Pet], Error>?
-	var reload: Action<(), [Pet], Error>?
+	var loadNext: Action<String, [Pet], Error>?
+	var reload: Action<String, [Pet], Error>?
 	
 	private let _loadState = MutableProperty<LoadState>(.NotLoaded)
 	let loadState: AnyProperty<LoadState>
 	
-	var location = "60606"
+	var location = ""
 	var count = 10
 	var animal : Animal?
 	var breed : String?
@@ -40,17 +40,19 @@ class StreamViewModel {
 	init() {
 		self.loadState = AnyProperty(_loadState)
 		
-		self.reload = Action<(), [Pet], Error> { endpoint in
+		self.reload = Action<String, [Pet], Error> { location in
+			self.location = location
+			print("Location: \(location)")
 			self.offset = 0
 			self._loadState.value = .Loading
 			return SignalProducer<[Pet], Error> { [unowned self] observer, _ in
 				API.fetch(self.endpoint()) { [unowned self] response in
+					print(self.endpoint())
 					switch response.result {
 					case .Success(let content):
 						self._loadState.value = content.count < self.count ?.LoadedLast : .Loaded
 						self.content = content
 						self.offset = self.content.count
-						print("Send Next: \(observer)")
 						observer.sendNext(self.content)
 						observer.sendCompleted()
 					case .Failure(let error):
@@ -61,7 +63,8 @@ class StreamViewModel {
 			}
 		}
 		
-		self.loadNext = Action<(), [Pet], Error> { endpoint in
+		self.loadNext = Action<String, [Pet], Error> { location in
+			self.location = location
 			self._loadState.value = .LoadingNext
 			return SignalProducer<[Pet], Error> { [unowned self] observer, _ in
 				API.fetch(self.endpoint()) { [unowned self] response in
