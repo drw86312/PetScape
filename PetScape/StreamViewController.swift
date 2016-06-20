@@ -61,7 +61,6 @@ class StreamViewController: UIViewController {
 		button.setImage(UIImage(named: "filter")?.imageWithRenderingMode(.AlwaysTemplate), forState: .Normal)
 		button.imageView?.tintColor = .whiteColor()
 		navigationItem.rightBarButtonItem = UIBarButtonItem(customView: button)
-		navigationController?.navigationBar.barStyle = .BlackTranslucent
 		
 		addConstraints()
 	}

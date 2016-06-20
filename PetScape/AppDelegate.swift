@@ -20,9 +20,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 		window = UIWindow(frame: UIScreen.mainScreen().bounds)
 		
 		let tab = UITabBarController()
-		tab.viewControllers = [UINavigationController(rootViewController: StreamViewController()),
-							   UINavigationController(rootViewController: UIViewController()),
-							   UINavigationController(rootViewController: UIViewController())]
+		let viewControllers = [UINavigationController(rootViewController: StreamViewController()),
+		                       UINavigationController(rootViewController: UIViewController()),
+		                       UINavigationController(rootViewController: UIViewController())]
+		viewControllers.forEach { $0.navigationBar.darkStyle = true }
+		tab.viewControllers = viewControllers
+		tab.tabBar.darkStyle = true
+		
 		window?.rootViewController = tab
 		window?.backgroundColor = UIColor.whiteColor()
 		window?.makeKeyAndVisible()
