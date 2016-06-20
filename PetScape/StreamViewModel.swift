@@ -14,9 +14,9 @@ class StreamViewModel {
 	enum LoadState {
 		case NotLoaded
 		case Loading
+		case LoadingNext
 		case Loaded
 		case LoadedLast
-		case LoadingNext
 		case LoadFailed
 	}
 	
@@ -29,17 +29,22 @@ class StreamViewModel {
 	let _loadState = MutableProperty<LoadState>(.NotLoaded)
 	let loadState: AnyProperty<LoadState>
 	
-	var animal : MutableProperty<Animal>?
+	var location = "60606"
+	var count = 20
+	var animal : Animal?
+	var breed : String?
+	var size : Size?
+	var sex : Sex?
+	var age : Age?
 	
 	init() {
 		self.loadState = AnyProperty(_loadState)
 		
 		self.reload = Action<(), [Pet], Error> { endpoint in
-			print("Reload")
 			self.offset = 0
 			self._loadState.value = .Loading
 			return SignalProducer<[Pet], Error> { [unowned self] observer, _ in
-				API.fetch(self.generateEndpoint("60606", offset: self.offset)) { [unowned self] response in
+				API.fetch(self.endpoint()) { [unowned self] response in
 					switch response.result {
 					case .Success(let content):
 						self._loadState.value = content.count > 0 ? .Loaded : .LoadedLast
@@ -59,7 +64,7 @@ class StreamViewModel {
 		self.loadNext = Action<(), [Pet], Error> { endpoint in
 			self._loadState.value = .LoadingNext
 			return SignalProducer<[Pet], Error> { [unowned self] observer, _ in
-				API.fetch(self.generateEndpoint("60606", offset: self.offset)) { [unowned self] response in
+				API.fetch(self.endpoint()) { [unowned self] response in
 					switch response.result {
 					case .Success(let content):
 						self._loadState.value = content.count > 0 ? .Loaded : .LoadedLast
@@ -76,8 +81,15 @@ class StreamViewModel {
 		}
 	}
 	
-	func generateEndpoint(location: String, offset: Int) -> Endpoint<[Pet]> {
-		return Endpoint<Pet>.findPets(location, offset: offset)
+	func endpoint() -> Endpoint<[Pet]> {
+		return Endpoint<Pet>.findPets(location,
+		                              animal: animal,
+		                              breed: breed,
+		                              size: size,
+		                              sex: sex,
+		                              age: age,
+		                              offset: offset,
+		                              count: count)
 	}
 }
 

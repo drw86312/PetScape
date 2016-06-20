@@ -17,6 +17,7 @@ class StreamViewController: UIViewController {
 	let tableView = UITableView(frame: CGRectZero, style: .Plain)
 	let backgroundView = TableViewBackground()
 	let spinner = UIActivityIndicatorView(activityIndicatorStyle: .WhiteLarge)
+	let loadMoreSpinner = UIActivityIndicatorView(activityIndicatorStyle: .White)
 	
 	var reloadCocoaAction: CocoaAction?
 	
@@ -31,7 +32,7 @@ class StreamViewController: UIViewController {
 	
 	override func loadView() {
 		view = UIView()
-		view.backgroundColor = .whiteColor()
+		view.backgroundColor = .blackColor()
 		
 		tableView.delegate = self
 		tableView.dataSource = self
@@ -39,10 +40,15 @@ class StreamViewController: UIViewController {
 		tableView.registerClass(PetCell.self,
 		                        forCellReuseIdentifier: NSStringFromClass(PetCell.self))
 		tableView.backgroundView = backgroundView
-		print(tableView.backgroundView)
+		tableView.backgroundColor = .blackColor()
+		tableView.backgroundView?.backgroundColor = .blackColor()
 		tableView.backgroundView?.hidden = true
-		tableView.tableFooterView = UIView()
+		tableView.separatorStyle = .None
 		view.addSubview(tableView)
+		
+		loadMoreSpinner.frame = CGRectMake(0, 0, 320, 65)
+		loadMoreSpinner.hidesWhenStopped = true
+		tableView.tableFooterView = loadMoreSpinner
 		
 		spinner.hidesWhenStopped = true
 		view.addSubview(spinner)
@@ -60,35 +66,38 @@ class StreamViewController: UIViewController {
 	override func viewDidLoad() {
 		super.viewDidLoad()
 		
-		DynamicProperty(object: self.backgroundView, keyPath: "hidden") <~ viewModel
+		let loadState = viewModel
 			.loadState
 			.producer
 			.observeOn(UIScheduler())
 			.skipRepeats()
-			.map { state -> Bool in
-				switch state {
-				case .LoadFailed: return false
-				default : return true
-				}
-		}
 		
-		viewModel
-			.loadState
-			.producer
+		loadState
 			.start() { [unowned self] event in
 				if case .Next(let state) = event {
-					switch state {
-					case .LoadFailed:
+					if case .LoadingNext = state {
+						self.loadMoreSpinner.startAnimating()
+					} else {
+						self.loadMoreSpinner.stopAnimating()
+					}
+					
+					if case .Loading = state {
+						self.spinner.startAnimating()
+					} else {
+						self.spinner.stopAnimating()
+					}
+					
+					if case .LoadFailed = state {
+						self.backgroundView.hidden = false
 						self.emptyDataSet()
-					default: return
+					} else {
+						self.backgroundView.hidden = true
 					}
 				}
 		}
 		
 		guard let reload = viewModel.reload else { return }
-		reloadCocoaAction = CocoaAction(reload) { button in
-			print(button)
-		}
+		reloadCocoaAction = CocoaAction(reload) { button in }
 		
 		viewModel
 			.reload?
