@@ -53,6 +53,16 @@ class StreamViewController: UIViewController {
 		spinner.hidesWhenStopped = true
 		view.addSubview(spinner)
 		
+		let button = UIButton(type: .Custom)
+		button.frame = CGRect(x: 0, y: 0, width: 22, height: 22)
+		button.addTarget(self,
+		                 action: #selector(StreamViewController.filterIconPressed),
+		                 forControlEvents: .TouchUpInside)
+		button.setImage(UIImage(named: "filter")?.imageWithRenderingMode(.AlwaysTemplate), forState: .Normal)
+		button.imageView?.tintColor = .whiteColor()
+		navigationItem.rightBarButtonItem = UIBarButtonItem(customView: button)
+		navigationController?.navigationBar.barStyle = .BlackTranslucent
+		
 		addConstraints()
 	}
 	
@@ -75,18 +85,8 @@ class StreamViewController: UIViewController {
 		loadState
 			.start() { [unowned self] event in
 				if case .Next(let state) = event {
-					if case .LoadingNext = state {
-						self.loadMoreSpinner.startAnimating()
-					} else {
-						self.loadMoreSpinner.stopAnimating()
-					}
-					
-					if case .Loading = state {
-						self.spinner.startAnimating()
-					} else {
-						self.spinner.stopAnimating()
-					}
-					
+					if case .LoadingNext = state { self.loadMoreSpinner.startAnimating() } else { self.loadMoreSpinner.stopAnimating() }
+					if case .Loading = state { self.spinner.startAnimating() } else { self.spinner.stopAnimating() }
 					if case .LoadFailed = state {
 						self.backgroundView.hidden = false
 						self.emptyDataSet()
@@ -122,7 +122,8 @@ class StreamViewController: UIViewController {
 	}
 	
 	private func loadNext() {
-		if viewModel.loadState.value != .LoadFailed {
+		if viewModel.loadState.value != .LoadFailed &&
+		   viewModel.loadState.value != .LoadedLast {
 			viewModel
 				.loadNext?
 				.apply()
@@ -145,6 +146,11 @@ class StreamViewController: UIViewController {
 			viewModel.content = []
 			tableView.reloadData()
 		}
+	}
+	
+	func filterIconPressed() {
+		let vc = FilterListViewController()
+		navigationController?.pushViewController(vc, animated: true)
 	}
 }
 

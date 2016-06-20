@@ -26,11 +26,11 @@ class StreamViewModel {
 	var loadNext: Action<(), [Pet], Error>?
 	var reload: Action<(), [Pet], Error>?
 	
-	let _loadState = MutableProperty<LoadState>(.NotLoaded)
+	private let _loadState = MutableProperty<LoadState>(.NotLoaded)
 	let loadState: AnyProperty<LoadState>
 	
 	var location = "60606"
-	var count = 20
+	var count = 10
 	var animal : Animal?
 	var breed : String?
 	var size : Size?
@@ -47,7 +47,7 @@ class StreamViewModel {
 				API.fetch(self.endpoint()) { [unowned self] response in
 					switch response.result {
 					case .Success(let content):
-						self._loadState.value = content.count > 0 ? .Loaded : .LoadedLast
+						self._loadState.value = content.count < self.count ?.LoadedLast : .Loaded
 						self.content = content
 						self.offset = self.content.count
 						print("Send Next: \(observer)")
@@ -67,7 +67,7 @@ class StreamViewModel {
 				API.fetch(self.endpoint()) { [unowned self] response in
 					switch response.result {
 					case .Success(let content):
-						self._loadState.value = content.count > 0 ? .Loaded : .LoadedLast
+						self._loadState.value = content.count < self.count ?.LoadedLast : .Loaded
 						self.content += content
 						self.offset = self.content.count
 						observer.sendNext(self.content)
