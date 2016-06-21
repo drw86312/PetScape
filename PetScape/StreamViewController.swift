@@ -19,8 +19,6 @@ class StreamViewController: UIViewController {
 	let spinner = UIActivityIndicatorView(activityIndicatorStyle: .WhiteLarge)
 	let loadMoreSpinner = UIActivityIndicatorView(activityIndicatorStyle: .White)
 	
-	var reloadCocoaAction: CocoaAction?
-	
 	init() {
 		super.init(nibName: nil, bundle: nil)
 		title = NSLocalizedString("Pets", comment: "")
@@ -40,6 +38,9 @@ class StreamViewController: UIViewController {
 		tableView.registerClass(PetCell.self,
 		                        forCellReuseIdentifier: NSStringFromClass(PetCell.self))
 		tableView.backgroundView = backgroundView
+		backgroundView.refreshButton.addTarget(self,
+		                                       action: #selector(StreamViewController.refreshButtonPressed),
+		                                       forControlEvents: .TouchUpInside)
 		tableView.backgroundColor = .blackColor()
 		tableView.backgroundView?.backgroundColor = .blackColor()
 		tableView.backgroundView?.hidden = true
@@ -95,70 +96,36 @@ class StreamViewController: UIViewController {
 				}
 		}
 		
-		guard let reload = viewModel.reload else { return }
-		reloadCocoaAction = CocoaAction(reload) { [unowned self] button in
-		 return self.viewModel.location
-		}
-		
-//		viewModel
-//			.reload?
-//			.apply()
-//			.observeOn(UIScheduler())
-//			.start { [unowned self] event in
-//				if case .Next(let content) = event {
-//					// TODO: Figure out why this isn't sending -Next values on button-press action.
-//					self.tableView.reloadData()
-//				} else if case .Failed(let error) = event {
-//					print(error)
-//				}
-//		}
-		
-		let appDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
-		
-		appDelegate
-			.locationManager
-			.locationStatusProperty
-			.producer
-			.start() { [unowned self] event in
-				if case .Next(let state) = event {
-					switch state {
-					case .None:
-						print("None")
-					case .Error(let error):
-						print("Error: \(error)")
-					case .Some(let location):
-						print("Success: \(location)")
-						self.viewModel.location = location
-						self.reloadCocoaAction?.execute(nil)
-					}
+		viewModel
+			.reload?
+			.events
+			.observeOn(UIScheduler())
+			.observeNext { event in
+				if case .Next = event {
+					self.tableView.reloadData()
 				}
 		}
 		
-		backgroundView
-			.refreshButton
-			.addTarget(reloadCocoaAction,
-			           action: CocoaAction.selector,
-			           forControlEvents: .TouchUpInside)
-	}
-	
-	private func loadNext() {
-//		if viewModel.loadState.value != .LoadFailed &&
-//		   viewModel.loadState.value != .LoadedLast {
-//			viewModel
-//				.loadNext?
-//				.apply()
-//				.start { [unowned self] event in
-//					if case .Next(let content) = event {
-//						let paths = (self.tableView.numberOfRowsInSection(0)..<content.count)
-//							.map { NSIndexPath(forRow: $0, inSection: 0) }
-//						UIView.setAnimationsEnabled(false)
-//						self.tableView.insertRowsAtIndexPaths(paths, withRowAnimation: .None)
-//						UIView.setAnimationsEnabled(true)
-//					} else if case .Failed(let error) = event {
-//						print(error)
-//					}
-//			}
-//		}
+		viewModel
+			.loadNext?
+			.events
+			.observeOn(UIScheduler())
+			.observeNext { event in
+				if case .Next(let range) = event {
+					let paths = range.map { NSIndexPath(forRow: $0, inSection: 0) }
+					UIView.setAnimationsEnabled(false)
+					self.tableView.insertRowsAtIndexPaths(paths, withRowAnimation: .None)
+					UIView.setAnimationsEnabled(true)
+				}
+		}
+		
+		DynamicProperty(object: backgroundView.refreshButton, keyPath: "enabled")
+			<~ loadState.map { state -> Bool in
+				if state == .LoadFailed {
+					return true
+				}
+				return false
+		}
 	}
 	
 	private func emptyDataSet() {
@@ -172,6 +139,12 @@ class StreamViewController: UIViewController {
 		let vc = FilterListViewController()
 		navigationController?.pushViewController(vc, animated: true)
 	}
+	
+	func refreshButtonPressed() {
+		if case .Some(let location) = viewModel.locationStatus.value {
+			viewModel.reload?.apply(location).start()
+		}
+	}
 }
 
 extension StreamViewController: UITableViewDelegate {
@@ -181,9 +154,14 @@ extension StreamViewController: UITableViewDelegate {
 		let bounds = scrollView.bounds
 		let size = scrollView.contentSize
 		let insets = scrollView.contentInset
+		
 		guard let executing = viewModel.loadNext?.executing.value else { return }
-		if ((offsetY + bounds.size.height - insets.bottom) > size.height && !executing) {
-			loadNext()
+		if ((offsetY + bounds.size.height - insets.bottom) > size.height &&
+			!executing &&
+			viewModel.loadState.value == .Loaded) {
+			if case .Some(let location) = viewModel.locationStatus.value {
+				viewModel.loadNext?.apply(location).start()
+			}
 		}
 	}
 }
