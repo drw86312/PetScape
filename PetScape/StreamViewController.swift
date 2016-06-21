@@ -100,7 +100,7 @@ class StreamViewController: UIViewController {
 			.reload?
 			.events
 			.observeOn(UIScheduler())
-			.observeNext { event in
+			.observeNext { [unowned self] event in
 				if case .Next = event {
 					self.tableView.reloadData()
 				}
@@ -110,7 +110,7 @@ class StreamViewController: UIViewController {
 			.loadNext?
 			.events
 			.observeOn(UIScheduler())
-			.observeNext { event in
+			.observeNext { [unowned self] event in
 				if case .Next(let range) = event {
 					let paths = range.map { NSIndexPath(forRow: $0, inSection: 0) }
 					UIView.setAnimationsEnabled(false)

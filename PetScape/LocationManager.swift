@@ -46,19 +46,27 @@ class LocationManager: NSObject, CLLocationManagerDelegate {
 			return
 		}
 		
-		CLGeocoder().reverseGeocodeLocation(location, completionHandler: { [unowned self ](placemarks, error) -> Void in
+		CLGeocoder().reverseGeocodeLocation(location, completionHandler: { [unowned self ] (placemarks, error) -> Void in
 			manager.stopUpdatingLocation()
 			if let error = error {
 				self._locationStatusProperty.value = .Error(error.localizedDescription)
 			}
 			
 			guard let placemarks = placemarks where placemarks.count > 0,
-			      let placemark = placemarks.first,
-			      let postalCode = placemark.postalCode else {
-				self._locationStatusProperty.value = .Error("No locations found")
-				return
+				let placemark = placemarks.first else {
+					self._locationStatusProperty.value = .Error("No locations found")
+					return
 			}
-			self._locationStatusProperty.value = .Some(postalCode)
+			
+			// Give postal code precedence, then try city/state
+			if let postalCode = placemark.postalCode {
+				self._locationStatusProperty.value = .Some(postalCode)
+			} else if let locality = placemark.locality,
+				      let administrativeArea = placemark.administrativeArea {
+				self._locationStatusProperty.value = .Some(locality + ", " + administrativeArea)
+			} else {
+				self._locationStatusProperty.value = .Error("No locations found")
+			}
 		})
 	}
 	

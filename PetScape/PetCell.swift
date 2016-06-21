@@ -55,7 +55,8 @@ class PetCell: UITableViewCell {
 	private func configureLabel(pet: Pet) {
 		guard let name = pet.name,
 			let sex  = pet.sex else {
-				labelView.titleLabel.attributedText =  NSMutableAttributedString(string: pet.name ?? "", attributes: [NSFontAttributeName : UIFont.systemFontOfSize(21, weight: 0.5)])
+				labelView.titleLabel.attributedText =  NSMutableAttributedString(string: pet.name ?? "",
+				                                                                 attributes: [NSFontAttributeName : UIFont.systemFontOfSize(21, weight: 0.5)])
 				return
 		}
 		let nameString = NSMutableAttributedString(string: name + " - ", attributes: [NSFontAttributeName : UIFont.boldSystemFontOfSize(21)])
