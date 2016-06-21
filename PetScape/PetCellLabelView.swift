@@ -14,6 +14,7 @@ class PetCellLabelView: UIView {
 	private let blurView = UIVisualEffectView(effect: UIBlurEffect(style: UIBlurEffectStyle.Dark))
 	let titleLabel = UILabel()
 	let detailLabel = UILabel()
+	let detailLabel2 = UILabel()
 	let pageControl = UIPageControl()
 	
 	init() {
@@ -21,12 +22,16 @@ class PetCellLabelView: UIView {
 		
 		titleLabel.textColor = .whiteColor()
 		
-		detailLabel.font = UIFont.systemFontOfSize(14)
+		detailLabel.font = UIFont.systemFontOfSize(16)
 		detailLabel.textColor = .whiteColor()
+		
+		detailLabel2.font = UIFont.systemFontOfSize(12)
+		detailLabel2.textColor = .whiteColor()
 		
 		addSubview(blurView)
 		addSubview(titleLabel)
 		addSubview(detailLabel)
+		addSubview(detailLabel2)
 		addSubview(pageControl)
 		
 		addConstraints()
@@ -44,6 +49,9 @@ class PetCellLabelView: UIView {
 		
 		detailLabel.autoPinEdge(.Top, toEdge: .Bottom, ofView: titleLabel, withOffset: 5)
 		detailLabel.autoPinEdge(.Left, toEdge: .Left, ofView: self, withOffset: 15)
+		
+		detailLabel2.autoPinEdge(.Top, toEdge: .Bottom, ofView: detailLabel, withOffset: 5)
+		detailLabel2.autoPinEdge(.Left, toEdge: .Left, ofView: self, withOffset: 15)
 	}
 	
 	required init?(coder aDecoder: NSCoder) {

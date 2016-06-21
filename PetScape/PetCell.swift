@@ -37,8 +37,12 @@ class PetCell: UITableViewCell {
 		
 		contentView.addSubview(scrollView)
 		contentView.addSubview(labelView)
-
+		
 		addConstraints()
+	}
+	
+	override func layoutSubviews() {
+		super.layoutSubviews()
 	}
 	
 	required init?(coder aDecoder: NSCoder) {
@@ -53,25 +57,34 @@ class PetCell: UITableViewCell {
 	}
 	
 	private func configureLabel(pet: Pet) {
-		guard let name = pet.name,
-			let sex  = pet.sex else {
-				labelView.titleLabel.attributedText =  NSMutableAttributedString(string: pet.name ?? "",
-				                                                                 attributes: [NSFontAttributeName : UIFont.systemFontOfSize(21, weight: 0.5)])
-				return
-		}
-		let nameString = NSMutableAttributedString(string: name + " - ", attributes: [NSFontAttributeName : UIFont.boldSystemFontOfSize(21)])
-		let ageString = NSMutableAttributedString(string: sex.titleString, attributes: [NSFontAttributeName : UIFont.systemFontOfSize(18)])
-		nameString.appendAttributedString(ageString)
-		labelView.titleLabel.attributedText = nameString
 		
-		guard let breeds = pet.breeds, let age  = pet.age else { return }
-		labelView.detailLabel.text = age.rawValue + " - " + breeds.joinWithSeparator(" / ")
+		if let name = pet.name, let sex  = pet.sex {
+			let nameString = NSMutableAttributedString(string: name, attributes: [NSFontAttributeName : UIFont.boldSystemFontOfSize(21)])
+			let ageString = NSMutableAttributedString(string: "  |  " + sex.titleString, attributes: [NSFontAttributeName : UIFont.systemFontOfSize(18)])
+			nameString.appendAttributedString(ageString)
+			labelView.titleLabel.attributedText = nameString
+		} else {
+			labelView.titleLabel.attributedText =  NSMutableAttributedString(string: pet.name ?? "",
+			                                                                 attributes: [NSFontAttributeName : UIFont.systemFontOfSize(21, weight: 0.5)])
+		}
+		
+		if let breeds = pet.breeds,
+			let age  = pet.age {
+			labelView.detailLabel.text = age.rawValue + "  |  " + breeds.joinWithSeparator(" / ")
+		}
+		
+		if let size = pet.size, mix = pet.mix, status = pet.adoptionStatus {
+			let mixString = mix ? "Y" : "N"
+			labelView.detailLabel2.text = "Size: \(size.rawValue)  |  Mix: \(mixString)  |  Status: \(status.titleString)"
+		}
 	}
 	
 	private func configureScrollView(pet: Pet) {
-		scrollView.frame = contentView.frame
+		scrollView.subviews.forEach { $0.removeFromSuperview() }
+		if scrollView.frame != contentView.frame {
+			scrollView.frame = contentView.frame
+		}
 		if let photos = pet.photos {
-			labelView.pageControl.numberOfPages = photos.count
 			photos
 				.enumerate()
 				.forEach { index, photo in
@@ -83,11 +96,13 @@ class PetCell: UITableViewCell {
 						height: scrollView.frame.height))
 					imageView.contentMode = .ScaleToFill
 					scrollView.addSubview(imageView)
-					imageView.sd_setImageWithURL(url, completed: { (image, error, cacheType, url) in
-						
-					})
+					imageView.sd_setImageWithURL(url, placeholderImage: UIColor.grayColor().imageFromColor())
 			}
 			scrollView.contentSize = CGSize(width: CGFloat(photos.count) * scrollView.frame.width, height: scrollView.frame.height)
+			labelView.pageControl.numberOfPages = photos.count
+			scrollView.setContentOffset(scrollView.frame.origin, animated: false)
+			labelView.pageControl.currentPage = 0
+			labelView.pageControl.hidden = photos.count < 2
 		}
 	}
 }

@@ -51,6 +51,7 @@
 		81CE14C41D1877100092111E /* FilterLocationCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 81CE14C31D1877100092111E /* FilterLocationCell.swift */; };
 		81CE14C61D1877280092111E /* SimpleFilterCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 81CE14C51D1877280092111E /* SimpleFilterCell.swift */; };
 		81CE14C91D188C9B0092111E /* LocationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 81CE14C81D188C9B0092111E /* LocationManager.swift */; };
+		81E798C91D19A4B600135EAB /* UIColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 81E798C81D19A4B600135EAB /* UIColor.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -113,6 +114,7 @@
 		81CE14C31D1877100092111E /* FilterLocationCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FilterLocationCell.swift; sourceTree = "<group>"; };
 		81CE14C51D1877280092111E /* SimpleFilterCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SimpleFilterCell.swift; sourceTree = "<group>"; };
 		81CE14C81D188C9B0092111E /* LocationManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LocationManager.swift; sourceTree = "<group>"; };
+		81E798C81D19A4B600135EAB /* UIColor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UIColor.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -247,6 +249,7 @@
 				81CE14BB1D1732630092111E /* UITableView.swift */,
 				81CE14BF1D1861E50092111E /* UINavigationBar.swift */,
 				81CE14C11D18641A0092111E /* UITabBar.swift */,
+				81E798C81D19A4B600135EAB /* UIColor.swift */,
 			);
 			name = Extensions;
 			sourceTree = "<group>";
@@ -363,6 +366,7 @@
 				819E8E091D0B5C5D00697ADB /* Pet.swift in Sources */,
 				81CE14C91D188C9B0092111E /* LocationManager.swift in Sources */,
 				810DD2751CEB6BEA00EAF8A8 /* AppDelegate.swift in Sources */,
+				81E798C91D19A4B600135EAB /* UIColor.swift in Sources */,
 				815EBEB51D0F04980056ECF6 /* Request+ArgoResponseSerializer.swift in Sources */,
 				8134EB901D0F55D8002B5C8F /* Sex.swift in Sources */,
 				815EBEB11D0E35D70056ECF6 /* Shelter.swift in Sources */,

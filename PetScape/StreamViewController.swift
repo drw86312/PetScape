@@ -96,6 +96,14 @@ class StreamViewController: UIViewController {
 				}
 		}
 		
+		DynamicProperty(object: backgroundView.refreshButton, keyPath: "enabled")
+			<~ loadState.map { state -> Bool in
+				if state == .LoadFailed {
+					return true
+				}
+				return false
+		}
+		
 		viewModel
 			.reload?
 			.events
@@ -118,14 +126,6 @@ class StreamViewController: UIViewController {
 					UIView.setAnimationsEnabled(true)
 				}
 		}
-		
-		DynamicProperty(object: backgroundView.refreshButton, keyPath: "enabled")
-			<~ loadState.map { state -> Bool in
-				if state == .LoadFailed {
-					return true
-				}
-				return false
-		}
 	}
 	
 	private func emptyDataSet() {
@@ -136,8 +136,7 @@ class StreamViewController: UIViewController {
 	}
 	
 	func filterIconPressed() {
-		let vc = FilterListViewController()
-		navigationController?.pushViewController(vc, animated: true)
+		navigationController?.pushViewController(FilterListViewController(), animated: true)
 	}
 	
 	func refreshButtonPressed() {

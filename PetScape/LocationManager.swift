@@ -53,7 +53,7 @@ class LocationManager: NSObject, CLLocationManagerDelegate {
 			}
 			
 			guard let placemarks = placemarks where placemarks.count > 0,
-				let placemark = placemarks.first else {
+				  let placemark = placemarks.first else {
 					self._locationStatusProperty.value = .Error("No locations found")
 					return
 			}
@@ -70,13 +70,13 @@ class LocationManager: NSObject, CLLocationManagerDelegate {
 		})
 	}
 	
-	func locationManager(manager: CLLocationManager, didChangeAuthorizationStatus status: CLAuthorizationStatus) {
-		if status == .AuthorizedAlways {
-			if CLLocationManager.isMonitoringAvailableForClass(CLBeaconRegion.self) {
-				if CLLocationManager.isRangingAvailable() {
-					// do stuff
-				}
-			}
-		}
-	}
+//	func locationManager(manager: CLLocationManager, didChangeAuthorizationStatus status: CLAuthorizationStatus) {
+//		if status == .AuthorizedAlways {
+//			if CLLocationManager.isMonitoringAvailableForClass(CLBeaconRegion.self) {
+//				if CLLocationManager.isRangingAvailable() {
+//					// do stuff
+//				}
+//			}
+//		}
+//	}
 }
