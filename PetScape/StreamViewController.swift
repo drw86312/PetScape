@@ -43,7 +43,7 @@ class StreamViewController: UIViewController {
 		                                       forControlEvents: .TouchUpInside)
 		tableView.backgroundColor = .blackColor()
 		tableView.backgroundView?.backgroundColor = .blackColor()
-		tableView.backgroundView?.hidden = true
+//		tableView.backgroundView?.hidden = true
 		tableView.separatorStyle = .None
 		view.addSubview(tableView)
 		
@@ -54,14 +54,26 @@ class StreamViewController: UIViewController {
 		spinner.hidesWhenStopped = true
 		view.addSubview(spinner)
 		
-		let button = UIButton(type: .Custom)
-		button.frame = CGRect(x: 0, y: 0, width: 22, height: 22)
-		button.addTarget(self,
+		let filterIcon = UIButton(type: .Custom)
+		filterIcon.frame = CGRect(x: 0, y: 0, width: 25, height: 25)
+		filterIcon.addTarget(self,
 		                 action: #selector(StreamViewController.filterIconPressed),
 		                 forControlEvents: .TouchUpInside)
-		button.setImage(UIImage(named: "filter")?.imageWithRenderingMode(.AlwaysTemplate), forState: .Normal)
-		button.imageView?.tintColor = .whiteColor()
-		navigationItem.rightBarButtonItem = UIBarButtonItem(customView: button)
+		filterIcon.setImage(UIImage(named: "filter")?.imageWithRenderingMode(.AlwaysTemplate), forState: .Normal)
+		filterIcon.imageView?.tintColor = .whiteColor()
+		
+		let locationIcon = UIButton(type: .Custom)
+		locationIcon.frame = CGRect(x: 0, y: 0, width: 25, height: 25)
+		locationIcon.addTarget(self,
+		                     action: #selector(StreamViewController.locationIconPressed),
+		                     forControlEvents: .TouchUpInside)
+		locationIcon.setImage(UIImage(named: "location")?.imageWithRenderingMode(.AlwaysTemplate), forState: .Normal)
+		locationIcon.imageView?.tintColor = .whiteColor()
+		
+		let space = UIBarButtonItem(barButtonSystemItem: .FixedSpace, target: nil, action: nil)
+		space.width = 20
+		
+		navigationItem.rightBarButtonItems = [UIBarButtonItem(customView: filterIcon), space, UIBarButtonItem(customView: locationIcon)]
 		
 		addConstraints()
 	}
@@ -82,16 +94,31 @@ class StreamViewController: UIViewController {
 			.observeOn(UIScheduler())
 			.skipRepeats()
 		
+		let locationState = viewModel
+			.locationStatus
+			.producer
+			.observeOn(UIScheduler())
+		
+		DynamicProperty(object: backgroundView.label, keyPath: "text") <~
+			locationState
+				.map { state -> String in
+					if case .Denied = state {
+						return "Please enable location Services or Set Location in Filters"
+					} else {
+						return ""
+					}
+		}
+		
 		loadState
 			.start() { [unowned self] event in
 				if case .Next(let state) = event {
 					if case .LoadingNext = state { self.loadMoreSpinner.startAnimating() } else { self.loadMoreSpinner.stopAnimating() }
 					if case .Loading = state { self.spinner.startAnimating() } else { self.spinner.stopAnimating() }
 					if case .LoadFailed = state {
-						self.backgroundView.hidden = false
-						self.emptyDataSet()
+//						self.backgroundView.hidden = false
+//						self.emptyDataSet()
 					} else {
-						self.backgroundView.hidden = true
+//						self.backgroundView.hidden = true
 					}
 				}
 		}
@@ -137,6 +164,20 @@ class StreamViewController: UIViewController {
 	
 	func filterIconPressed() {
 		navigationController?.pushViewController(FilterListViewController(), animated: true)
+//		let vc = BaseModalViewController()
+//		vc.modalPresentationStyle = .OverCurrentContext
+//		tabBarController?.presentViewController(vc, animated: false, completion: nil)
+	}
+	
+	func locationIconPressed() {
+		let appDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
+		if case .Denied = viewModel.locationStatus.value {
+			if let url  = NSURL(string: UIApplicationOpenSettingsURLString) where UIApplication.sharedApplication().canOpenURL(url)  {
+				UIApplication.sharedApplication().openURL(url)
+			}
+		} else {
+			appDelegate.locationManager.manager.startUpdatingLocation()
+		}
 	}
 	
 	func refreshButtonPressed() {

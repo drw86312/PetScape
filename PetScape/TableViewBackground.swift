@@ -19,7 +19,9 @@ class TableViewBackground: UIView {
 				
 		label.text = "Refresh Failed"
 		label.textColor = .whiteColor()
+		label.textAlignment = .Center
 		label.font = UIFont.systemFontOfSize(21)
+		label.numberOfLines = 0
 		
 		refreshButton.setTitle("Retry", forState: .Normal)
 		refreshButton.setTitleColor(.whiteColor(), forState: .Normal)
@@ -38,8 +40,9 @@ class TableViewBackground: UIView {
 	private func addConstraints() {
 		label.autoAlignAxisToSuperviewAxis(.Vertical)
 		label.autoAlignAxis(.Horizontal, toSameAxisOfView: self, withOffset: -25)
+		label.autoSetDimension(.Width, toSize: 250)
 		
-		refreshButton.autoPinEdge(.Top, toEdge: .Bottom, ofView: label, withOffset: 10)
+		refreshButton.autoPinEdge(.Top, toEdge: .Bottom, ofView: label, withOffset: 15)
 		refreshButton.autoAlignAxisToSuperviewAxis(.Vertical)
 		refreshButton.autoSetDimension(.Width, toSize: 150)
 		refreshButton.autoSetDimension(.Height, toSize: 50)
@@ -48,5 +51,4 @@ class TableViewBackground: UIView {
 	required init?(coder aDecoder: NSCoder) {
 		fatalError("init(coder:) has not been implemented")
 	}
-
 }

@@ -52,6 +52,7 @@
 		81CE14C61D1877280092111E /* SimpleFilterCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 81CE14C51D1877280092111E /* SimpleFilterCell.swift */; };
 		81CE14C91D188C9B0092111E /* LocationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 81CE14C81D188C9B0092111E /* LocationManager.swift */; };
 		81E798C91D19A4B600135EAB /* UIColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 81E798C81D19A4B600135EAB /* UIColor.swift */; };
+		81E798CB1D19E07C00135EAB /* BaseModalViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 81E798CA1D19E07C00135EAB /* BaseModalViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -115,6 +116,7 @@
 		81CE14C51D1877280092111E /* SimpleFilterCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SimpleFilterCell.swift; sourceTree = "<group>"; };
 		81CE14C81D188C9B0092111E /* LocationManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LocationManager.swift; sourceTree = "<group>"; };
 		81E798C81D19A4B600135EAB /* UIColor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UIColor.swift; sourceTree = "<group>"; };
+		81E798CA1D19E07C00135EAB /* BaseModalViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BaseModalViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -202,6 +204,7 @@
 				810DD2761CEB6BEA00EAF8A8 /* StreamViewController.swift */,
 				8134EBA11D0FB9BD002B5C8F /* StreamViewModel.swift */,
 				81CE14BD1D185A200092111E /* FilterListViewController.swift */,
+				81E798CA1D19E07C00135EAB /* BaseModalViewController.swift */,
 			);
 			name = "View Controllers";
 			sourceTree = "<group>";
@@ -384,6 +387,7 @@
 				815EBEB71D0F15720056ECF6 /* Breed.swift in Sources */,
 				81CE14C21D18641A0092111E /* UITabBar.swift in Sources */,
 				81CE14BE1D185A200092111E /* FilterListViewController.swift in Sources */,
+				81E798CB1D19E07C00135EAB /* BaseModalViewController.swift in Sources */,
 				819E8E101D0B60C700697ADB /* API+Pet.swift in Sources */,
 				8174B3FF1D0B70DD00F374D4 /* Contact.swift in Sources */,
 				819E8E131D0B65B000697ADB /* Dictionary.swift in Sources */,

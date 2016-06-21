@@ -50,11 +50,14 @@ class StreamViewModel {
 			.start() { [unowned self] event in
 				if case .Next(let state) = event {
 					switch state {
-					case .None:
-						print("None")
+					case .NotDetermined:
+						print("Not Determined")
+					case .Denied:
+						print("Denied")
 					case .Error(let error):
 						print("Error: \(error)")
 					case .Some(let location):
+						print("Update Location: \(location)")
 						self.reload?.apply(location).start()
 					}
 				}
