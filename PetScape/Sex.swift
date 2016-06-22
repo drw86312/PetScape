@@ -24,10 +24,10 @@ public enum Sex: String {
 }
 
 extension Sex: Decodable {
-	public static func decode(json: JSON) -> Decoded<Sex> {
+	public static func decode(_ json: JSON) -> Decoded<Sex> {
 		return String.decode(json)
 			.flatMap {
-				return Sex(rawValue: $0.uppercaseString).map(pure) ?? .typeMismatch("Sex", actual: "String")
+				return Sex(rawValue: $0.uppercased()).map(pure) ?? .typeMismatch("Sex", actual: "String")
 		}
 	}
 }

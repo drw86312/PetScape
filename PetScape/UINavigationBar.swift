@@ -13,11 +13,11 @@ extension UINavigationBar {
 	
 	var darkStyle: Bool {
 		set {
-			barStyle = .BlackTranslucent
-			tintColor = .whiteColor()
+			barStyle = .blackTranslucent
+			tintColor = .white()
 		}
 		get {
-			return barStyle == .BlackTranslucent
+			return barStyle == .blackTranslucent
 		}
 	}
 }

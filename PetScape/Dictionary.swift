@@ -7,13 +7,13 @@
 //
 
 extension Dictionary {
-	internal mutating func addEntries(other: [Key:Value]) {
+	internal mutating func addEntries(_ other: [Key:Value]) {
 		for (key, value) in other {
 			self[key] = value
 		}
 	}
 	
-	internal func withEntries(other: [Key:Value]) -> [Key:Value] {
+	internal func withEntries(_ other: [Key:Value]) -> [Key:Value] {
 		var ret = self
 		ret.addEntries(other)
 		return ret

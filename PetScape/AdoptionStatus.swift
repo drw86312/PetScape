@@ -30,7 +30,7 @@ public enum AdoptionStatus: String {
 }
 
 extension AdoptionStatus: Decodable {
-	public static func decode(json: JSON) -> Decoded<AdoptionStatus> {
+	public static func decode(_ json: JSON) -> Decoded<AdoptionStatus> {
 		return String.decode(json)
 			.flatMap {
 				return AdoptionStatus(rawValue: $0).map(pure) ?? .typeMismatch("Adoption Status", actual: "String")

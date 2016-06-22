@@ -31,11 +31,11 @@ class BaseModalViewController: UIViewController {
 	}
 	
 	override func loadView() {
-		view = UIVisualEffectView(effect: UIBlurEffect(style: UIBlurEffectStyle.Dark))
+		view = UIVisualEffectView(effect: UIBlurEffect(style: UIBlurEffectStyle.dark))
 		view.alpha = 0
 		view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(BaseModalViewController.dismiss)))
 		
-		contentView.backgroundColor = .whiteColor()
+		contentView.backgroundColor = .white()
 		contentView.layer.masksToBounds = true
 		contentView.layer.cornerRadius = 2.5
 		
@@ -44,13 +44,13 @@ class BaseModalViewController: UIViewController {
 		addConstraints()
 	}
 	
-	override func viewDidAppear(animated: Bool) {
+	override func viewDidAppear(_ animated: Bool) {
 		super.viewDidAppear(animated)
 		
 		contentViewHorizontalConstraint.constant = 0
 		
-		UIView.animateWithDuration(
-			Constants.animationDuration,
+		UIView.animate(
+			withDuration: Constants.animationDuration,
 			delay: 0,
 			usingSpringWithDamping: Constants.springDamping,
 			initialSpringVelocity: Constants.springVelocity,
@@ -63,18 +63,18 @@ class BaseModalViewController: UIViewController {
 	}
 	
 	private func addConstraints() {
-		contentView.autoSetDimension(.Width, toSize: 250)
-		contentView.autoAlignAxisToSuperviewAxis(.Vertical)
-		contentViewHeightConstraint = contentView.autoSetDimension(.Height, toSize: 300)
-		contentViewHorizontalConstraint = contentView.autoAlignAxisToSuperviewAxis(.Horizontal)
+		contentView.autoSetDimension(.width, toSize: 250)
+		contentView.autoAlignAxis(toSuperviewAxis: .vertical)
+		contentViewHeightConstraint = contentView.autoSetDimension(.height, toSize: 300)
+		contentViewHorizontalConstraint = contentView.autoAlignAxis(toSuperviewAxis: .horizontal)
 		
-		contentViewHorizontalConstraint.constant = UIScreen.mainScreen().bounds.height/2 + contentViewHeightConstraint.constant
+		contentViewHorizontalConstraint.constant = UIScreen.main().bounds.height/2 + contentViewHeightConstraint.constant
 	}
 	
 	func dismiss() {
-		contentViewHorizontalConstraint.constant = UIScreen.mainScreen().bounds.height/2 + contentViewHeightConstraint.constant
-		UIView.animateWithDuration(
-			Constants.animationDuration,
+		contentViewHorizontalConstraint.constant = UIScreen.main().bounds.height/2 + contentViewHeightConstraint.constant
+		UIView.animate(
+			withDuration: Constants.animationDuration,
 			delay: 0,
 			usingSpringWithDamping: Constants.springDamping,
 			initialSpringVelocity: Constants.springVelocity,
@@ -84,7 +84,7 @@ class BaseModalViewController: UIViewController {
 				self.view.layoutIfNeeded()
 			},
 			completion: { finished in
-				self.presentingViewController?.dismissViewControllerAnimated(false, completion: nil)
+				self.presentingViewController?.dismiss(animated: false, completion: nil)
 		})
 	}
 }

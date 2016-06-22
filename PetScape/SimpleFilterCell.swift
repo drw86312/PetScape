@@ -17,18 +17,18 @@ class SimpleFilterCell: UITableViewCell {
 	override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
 		super.init(style: style, reuseIdentifier: reuseIdentifier)
 		
-		contentView.backgroundColor = .blackColor()
+		contentView.backgroundColor = .black()
 		
 		let selectedView = UIView()
 		selectedView.backgroundColor = UIColor(white: 0.1, alpha: 1)
 		selectedBackgroundView = selectedView
 		
 		label.sizeToFit()
-		label.textColor = .whiteColor()
-		label.font = UIFont.boldSystemFontOfSize(21)
+		label.textColor = .white()
+		label.font = UIFont.boldSystemFont(ofSize: 21)
 		addSubview(label)
 		
-		divider.backgroundColor = .grayColor()
+		divider.backgroundColor = .gray()
 		addSubview(divider)
 		
 		addConstraints()
@@ -39,13 +39,13 @@ class SimpleFilterCell: UITableViewCell {
 	}
 	
 	private func addConstraints() {
-		label.autoPinEdge(.Left, toEdge: .Left, ofView: contentView, withOffset: 15)
-		label.autoAlignAxisToSuperviewAxis(.Horizontal)
+		label.autoPinEdge(.left, to: .left, of: contentView, withOffset: 15)
+		label.autoAlignAxis(toSuperviewAxis: .horizontal)
 		
-		divider.autoPinEdge(.Bottom, toEdge: .Bottom, ofView: contentView)
-		divider.autoPinEdge(.Left, toEdge: .Left, ofView: contentView, withOffset: 15)
-		divider.autoPinEdge(.Right, toEdge: .Right, ofView: contentView, withOffset: -15)
-		divider.autoSetDimension(.Height, toSize: 1)
+		divider.autoPinEdge(.bottom, to: .bottom, of: contentView)
+		divider.autoPinEdge(.left, to: .left, of: contentView, withOffset: 15)
+		divider.autoPinEdge(.right, to: .right, of: contentView, withOffset: -15)
+		divider.autoSetDimension(.height, toSize: 1)
 	}
 	
 	override func layoutSubviews() {

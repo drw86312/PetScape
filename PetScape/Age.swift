@@ -17,7 +17,7 @@ public enum Age: String {
 }
 
 extension Age: Decodable {
-	public static func decode(json: JSON) -> Decoded<Age> {
+	public static func decode(_ json: JSON) -> Decoded<Age> {
 		return String.decode(json)
 			.flatMap {
 				return Age(rawValue: $0).map(pure) ?? .typeMismatch("Age", actual: "String")

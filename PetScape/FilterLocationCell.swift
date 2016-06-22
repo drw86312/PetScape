@@ -16,14 +16,14 @@ class FilterLocationCell: SimpleFilterCell {
 	override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
 		super.init(style: style, reuseIdentifier: reuseIdentifier)
 		
-		textField.textAlignment = .Right
-		textField.tintColor = .whiteColor()
-		textField.textColor = .whiteColor()
-		textField.font = UIFont.systemFontOfSize(16)
-		textField.keyboardAppearance = .Dark
-		textField.attributedPlaceholder = NSAttributedString(string: "Zip or City & State",
-		                                                     attributes: [NSFontAttributeName : UIFont.systemFontOfSize(21),
-																		  NSForegroundColorAttributeName : UIColor.whiteColor()])
+		textField.textAlignment = .right
+		textField.tintColor = .white()
+		textField.textColor = .white()
+		textField.font = UIFont.systemFont(ofSize: 16)
+		textField.keyboardAppearance = .dark
+		textField.attributedPlaceholder = AttributedString(string: "Zip or City & State",
+		                                                     attributes: [NSFontAttributeName : UIFont.systemFont(ofSize: 21),
+																		  NSForegroundColorAttributeName : UIColor.white()])
 		addSubview(textField)
 		addConstraints()
 	}
@@ -33,9 +33,9 @@ class FilterLocationCell: SimpleFilterCell {
 	}
 	
 	private func addConstraints() {
-		textField.autoPinEdge(.Left, toEdge: .Right, ofView: label, withOffset: 10)
-		textField.autoPinEdge(.Right, toEdge: .Right, ofView: contentView, withOffset: -15)
-		textField.autoPinEdge(.Top, toEdge: .Top, ofView: contentView)
-		textField.autoPinEdge(.Bottom, toEdge: .Bottom, ofView: contentView)
+		textField.autoPinEdge(.left, to: .right, of: label, withOffset: 10)
+		textField.autoPinEdge(.right, to: .right, of: contentView, withOffset: -15)
+		textField.autoPinEdge(.top, to: .top, of: contentView)
+		textField.autoPinEdge(.bottom, to: .bottom, of: contentView)
 	}
 }

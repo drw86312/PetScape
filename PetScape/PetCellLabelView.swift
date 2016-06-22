@@ -11,22 +11,22 @@ import PureLayout
 
 class PetCellLabelView: UIView {
 	
-	private let blurView = UIVisualEffectView(effect: UIBlurEffect(style: UIBlurEffectStyle.Dark))
+	private let blurView = UIVisualEffectView(effect: UIBlurEffect(style: UIBlurEffectStyle.dark))
 	let titleLabel = UILabel()
 	let detailLabel = UILabel()
 	let detailLabel2 = UILabel()
 	let pageControl = UIPageControl()
 	
 	init() {
-		super.init(frame: CGRectZero)
+		super.init(frame: CGRect.zero)
 		
-		titleLabel.textColor = .whiteColor()
+		titleLabel.textColor = .white()
 		
-		detailLabel.font = UIFont.systemFontOfSize(16)
-		detailLabel.textColor = .whiteColor()
+		detailLabel.font = UIFont.systemFont(ofSize: 16)
+		detailLabel.textColor = .white()
 		
-		detailLabel2.font = UIFont.systemFontOfSize(12)
-		detailLabel2.textColor = .whiteColor()
+		detailLabel2.font = UIFont.systemFont(ofSize: 12)
+		detailLabel2.textColor = .white()
 		
 		addSubview(blurView)
 		addSubview(titleLabel)
@@ -40,18 +40,18 @@ class PetCellLabelView: UIView {
 	private func addConstraints() {
 		blurView.autoPinEdgesToSuperviewEdges()
 		
-		pageControl.autoAlignAxisToSuperviewAxis(.Vertical)
-		pageControl.autoPinEdgeToSuperviewEdge(.Top)
-		pageControl.autoSetDimension(.Height, toSize: 25)
+		pageControl.autoAlignAxis(toSuperviewAxis: .vertical)
+		pageControl.autoPinEdge(toSuperviewEdge: .top)
+		pageControl.autoSetDimension(.height, toSize: 25)
 		
-		titleLabel.autoPinEdge(.Left, toEdge: .Left, ofView: self, withOffset: 15)
-		titleLabel.autoPinEdge(.Top, toEdge: .Bottom, ofView: pageControl, withOffset: -5)
+		titleLabel.autoPinEdge(.left, to: .left, of: self, withOffset: 15)
+		titleLabel.autoPinEdge(.top, to: .bottom, of: pageControl, withOffset: -5)
 		
-		detailLabel.autoPinEdge(.Top, toEdge: .Bottom, ofView: titleLabel, withOffset: 5)
-		detailLabel.autoPinEdge(.Left, toEdge: .Left, ofView: self, withOffset: 15)
+		detailLabel.autoPinEdge(.top, to: .bottom, of: titleLabel, withOffset: 5)
+		detailLabel.autoPinEdge(.left, to: .left, of: self, withOffset: 15)
 		
-		detailLabel2.autoPinEdge(.Top, toEdge: .Bottom, ofView: detailLabel, withOffset: 5)
-		detailLabel2.autoPinEdge(.Left, toEdge: .Left, ofView: self, withOffset: 15)
+		detailLabel2.autoPinEdge(.top, to: .bottom, of: detailLabel, withOffset: 5)
+		detailLabel2.autoPinEdge(.left, to: .left, of: self, withOffset: 15)
 	}
 	
 	required init?(coder aDecoder: NSCoder) {

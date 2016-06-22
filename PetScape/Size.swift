@@ -30,10 +30,10 @@ public enum Size: String {
 }
 
 extension Size: Decodable {
-	public static func decode(json: JSON) -> Decoded<Size> {
+	public static func decode(_ json: JSON) -> Decoded<Size> {
 		return String.decode(json)
 			.flatMap {
-				return Size(rawValue: $0.uppercaseString).map(pure) ?? .typeMismatch("Size", actual: "String")
+				return Size(rawValue: $0.uppercased()).map(pure) ?? .typeMismatch("Size", actual: "String")
 		}
 	}
 }

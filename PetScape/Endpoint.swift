@@ -22,10 +22,10 @@ struct Endpoint<T> {
 
 extension Endpoint: URLRequestConvertible {
 	var URLRequest: NSMutableURLRequest {
-		let mutableRequest = NSMutableURLRequest(URL: API.baseURL.URLByAppendingPathComponent(path))
-		mutableRequest.HTTPMethod = method.rawValue
+		let mutableRequest = NSMutableURLRequest(url: try! API.baseURL.appendingPathComponent(path))
+		mutableRequest.httpMethod = method.rawValue
 		mutableRequest.allHTTPHeaderFields = headers
-		let encoding = ParameterEncoding.URL
+		let encoding = ParameterEncoding.url
 		return encoding.encode(mutableRequest, parameters: defaultParameters.withEntries(parameters)).0
 	}
 }

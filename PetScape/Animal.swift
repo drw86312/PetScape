@@ -21,7 +21,7 @@ public enum Animal: String {
 }
 
 extension Animal: Decodable {
-	public static func decode(json: JSON) -> Decoded<Animal> {
+	public static func decode(_ json: JSON) -> Decoded<Animal> {
 		return String.decode(json)
 			.flatMap {
 				return Animal(rawValue: $0).map(pure) ?? .typeMismatch("Animal", actual: "String")

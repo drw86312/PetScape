@@ -13,11 +13,11 @@ extension UITabBar {
 	
 	var darkStyle: Bool {
 		set {
-			barStyle = .Black
-			tintColor = .whiteColor()
+			barStyle = .black
+			tintColor = .white()
 		}
 		get {
-			return barStyle == .Black
+			return barStyle == .black
 		}
 	}
 }

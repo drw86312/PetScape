@@ -10,7 +10,7 @@ import Foundation
 
 extension Endpoint {
 	
-	static func getShelter(shelterID: String) -> Endpoint<T> {
+	static func getShelter(_ shelterID: String) -> Endpoint<T> {
 		return Endpoint<T>(method: .GET,
 		                   path: "shelter.get",
 		                   parameters: ["id" : shelterID],
@@ -18,7 +18,7 @@ extension Endpoint {
 		                   keyPath: API.baseKeyPath + ".shelter")
 	}
 	
-	static func findShelters(zip: String,
+	static func findShelters(_ zip: String,
 	                         shelterName: String? = nil,
 	                         offset: Int = 0,
 	                         count: Int = 20) -> Endpoint<[T]> {
@@ -35,7 +35,7 @@ extension Endpoint {
 		                     keyPath: API.baseKeyPath + ".shelters.shelter")
 	}
 	
-	static func findPetsForShelter(shelterID: String,
+	static func findPetsForShelter(_ shelterID: String,
 	                               offset: Int = 0,
 	                               count: Int = 20,
 	                               adoptionStatus: AdoptionStatus? = nil) -> Endpoint<[T]> {

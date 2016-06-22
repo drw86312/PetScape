@@ -22,7 +22,7 @@ struct Contact {
 }
 
 extension Contact: Decodable {
-	static func decode(json: JSON) -> Decoded<Contact> {
+	static func decode(_ json: JSON) -> Decoded<Contact> {
 		let contact = curry(Contact.init)
 			<^> json <|? ["address1", "$t"]
 			<*> json <|? ["address2", "$t"]

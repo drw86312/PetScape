@@ -13,10 +13,10 @@ import ReactiveCocoa
 class LocationManager: NSObject, CLLocationManagerDelegate {
 	
 	enum LocationStatus {
-		case NotDetermined
-		case Denied
-		case Some(String)
-		case Error(String)
+		case notDetermined
+		case denied
+		case some(String)
+		case error(String)
 	}
 	
 	class var sharedInstance : LocationManager {
@@ -27,7 +27,7 @@ class LocationManager: NSObject, CLLocationManagerDelegate {
 	}
 	
 	let manager = CLLocationManager()
-	private let _locationStatusProperty = MutableProperty<LocationStatus>(.NotDetermined)
+	private let _locationStatusProperty = MutableProperty<LocationStatus>(.notDetermined)
 	let locationStatusProperty: AnyProperty<LocationStatus>
 	
 	override init() {
@@ -38,44 +38,44 @@ class LocationManager: NSObject, CLLocationManagerDelegate {
 		manager.requestWhenInUseAuthorization()
 	}
 	
-	func locationManager(manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+	func locationManager(_ manager: CLLocationManager, didUpdate locations: [CLLocation]) {
 		guard let location = manager.location else {
-			self._locationStatusProperty.value = .Error("No locations found")
+			self._locationStatusProperty.value = .error("No locations found")
 			return
 		}
 		
 		CLGeocoder().reverseGeocodeLocation(location, completionHandler: { [unowned self ] (placemarks, error) -> Void in
 			manager.stopUpdatingLocation()
 			if let error = error {
-				self._locationStatusProperty.value = .Error(error.localizedDescription)
+				self._locationStatusProperty.value = .error(error.localizedDescription)
 			}
 			
 			guard let placemarks = placemarks where placemarks.count > 0,
 				  let placemark = placemarks.first else {
-					self._locationStatusProperty.value = .Error("No locations found")
+					self._locationStatusProperty.value = .error("No locations found")
 					return
 			}
 			
 			// Give postal code precedence, then try city/state
 			if let postalCode = placemark.postalCode {
-				self._locationStatusProperty.value = .Some(postalCode)
+				self._locationStatusProperty.value = .some(postalCode)
 			} else if let locality = placemark.locality,
 				      let administrativeArea = placemark.administrativeArea {
-				self._locationStatusProperty.value = .Some(locality + ", " + administrativeArea)
+				self._locationStatusProperty.value = .some(locality + ", " + administrativeArea)
 			} else {
-				self._locationStatusProperty.value = .Error("No locations found")
+				self._locationStatusProperty.value = .error("No locations found")
 			}
 		})
 	}
 	
-	func locationManager(manager: CLLocationManager, didChangeAuthorizationStatus status: CLAuthorizationStatus) {
+	func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
 		switch status {
-		case .AuthorizedAlways, .AuthorizedWhenInUse:
+		case .authorizedAlways, .authorizedWhenInUse:
 			manager.startUpdatingLocation()
-		case .Denied, .Restricted:
-			self._locationStatusProperty.value = .Denied
-		case .NotDetermined:
-			self._locationStatusProperty.value = .NotDetermined
+		case .denied, .restricted:
+			self._locationStatusProperty.value = .denied
+		case .notDetermined:
+			self._locationStatusProperty.value = .notDetermined
 		}
 	}
 }

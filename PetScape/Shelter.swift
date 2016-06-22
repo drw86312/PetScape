@@ -18,7 +18,7 @@ struct Shelter {
 }
 
 extension Shelter: Decodable {
-	static func decode(json: JSON) -> Decoded<Shelter> {
+	static func decode(_ json: JSON) -> Decoded<Shelter> {
 		let shelter = curry(Shelter.init)
 			<^> json <| ["id", "$t"]
 			<*> json <| ["name" ,"$t"]

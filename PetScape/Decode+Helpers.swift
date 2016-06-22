@@ -9,37 +9,37 @@
 import Argo
 import Foundation
 
-extension NSURL: Decodable {
-	public static func decode(json: JSON) -> Decoded<NSURL> {
+extension URL: Decodable {
+	public static func decode(_ json: JSON) -> Decoded<URL> {
 		return String.decode(json)
 			.flatMap {
-				return NSURL(string: $0).map(pure) ?? .typeMismatch("NSURL", actual: "String")
+				return URL(string: $0).map(pure) ?? .typeMismatch("NSURL", actual: "String")
 		}
 	}
 }
 
-func toInt(number: String) -> Decoded<Int> {
+func toInt(_ number: String) -> Decoded<Int> {
 	return .fromOptional(Int(number))
 }
 
-func toFloat(number: String) -> Decoded<Float> {
+func toFloat(_ number: String) -> Decoded<Float> {
 	return .fromOptional(Float(number))
 }
 
-func toBoolean(string: String) -> Decoded<Bool> {
-	return .fromOptional(string.lowercaseString == "yes")
+func toBoolean(_ string: String) -> Decoded<Bool> {
+	return .fromOptional(string.lowercased() == "yes")
 }
 
-func toNSDate(dateString: String) -> Decoded<NSDate> {
-	let jsonDateFormatter: NSDateFormatter = {
-		let dateFormatter = NSDateFormatter()
+func toNSDate(_ dateString: String) -> Decoded<Date> {
+	let jsonDateFormatter: DateFormatter = {
+		let dateFormatter = DateFormatter()
 		dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ssZ"
 		return dateFormatter
 	}()
-	return .fromOptional(jsonDateFormatter.dateFromString(dateString))
+	return .fromOptional(jsonDateFormatter.date(from: dateString))
 }
 
-func toPhotos(images: [Image]?) -> Decoded<[Photo]> {
+func toPhotos(_ images: [Image]?) -> Decoded<[Photo]> {
 	var photos: [Photo] = []
 	
 	guard let images = images else { return .fromOptional(photos) }
@@ -52,11 +52,12 @@ func toPhotos(images: [Image]?) -> Decoded<[Photo]> {
 		
 		// If associatedImages, iterate and store URLs of various sizes in local vars
 		if associatedImages.count > 0 {
-			var thumbnailURL: NSURL?
-			var smallURL: NSURL?
-			var mediumURL: NSURL?
-			var largeURL: NSURL?
-			var extraLargeURL: NSURL?
+			var thumbnailURL: URL?
+			var smallURL: URL?
+			var mediumURL: URL?
+			var largeURL: URL?
+			var extraLargeURL: URL?
+			
 			associatedImages.forEach {
 				switch $0.size {
 				case "t":

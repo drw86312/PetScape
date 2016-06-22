@@ -12,22 +12,22 @@ import ReactiveCocoa
 class StreamViewModel {
 	
 	enum LoadState {
-		case NotLoaded
-		case Loading
-		case LoadingNext
-		case Loaded
-		case LoadedNoResults
-		case LoadedLast
-		case LoadFailed
+		case notLoaded
+		case loading
+		case loadingNext
+		case loaded
+		case loadedNoResults
+		case loadedLast
+		case loadFailed
 	}
 	
 	var content: [Pet] = []
 	var offset: Int = 0
 	
-	var loadNext: Action<String, Range<Int>, Error>?
-	var reload: Action<String, Range<Int>, Error>?
+	var loadNext: Action<String, CountableRange<Int>, Error>?
+	var reload: Action<String, CountableRange<Int>, Error>?
 	
-	private let _loadState = MutableProperty<LoadState>(.NotLoaded)
+	private let _loadState = MutableProperty<LoadState>(.notLoaded)
 	let loadState: AnyProperty<LoadState>
 	
 	let locationStatus: AnyProperty<LocationManager.LocationStatus>
@@ -42,66 +42,66 @@ class StreamViewModel {
 	init() {
 		self.loadState = AnyProperty(_loadState)
 		
-		let appDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
+		let appDelegate = UIApplication.shared().delegate as! AppDelegate
 		locationStatus = AnyProperty(appDelegate.locationManager.locationStatusProperty)
 		
 		locationStatus
 			.producer
 			.start() { [unowned self] event in
-				if case .Next(let state) = event {
+				if case .next(let state) = event {
 					switch state {
-					case .NotDetermined:
+					case .notDetermined:
 						print("Not Determined")
-					case .Denied:
+					case .denied:
 						print("Denied")
-					case .Error(let error):
+					case .error(let error):
 						print("Error: \(error)")
-					case .Some(let location):
+					case .some(let location):
 //						print("Update Location: \(location)")
 						self.reload?.apply(location).start()
 					}
 				}
 		}
 		
-		self.reload = Action<String, Range<Int>, Error> { location in
+		self.reload = Action<String, CountableRange<Int>, Error> { location in
 			self.offset = 0
-			self._loadState.value = .Loading
-			return SignalProducer<Range<Int>, Error> { [unowned self] observer, _ in
+			self._loadState.value = .loading
+			return SignalProducer<CountableRange<Int>, Error> { [unowned self] observer, _ in
 				API.fetch(self.endpoint(location)) { [unowned self] response in
 					switch response.result {
-					case .Success(let content):
+					case .success(let content):
 						if content.count == 0 {
-							self._loadState.value = .LoadedNoResults
+							self._loadState.value = .loadedNoResults
 						} else if content.count < self.count {
-							self._loadState.value = .LoadedLast
+							self._loadState.value = .loadedLast
 						} else {
-							self._loadState.value = .Loaded
+							self._loadState.value = .loaded
 						}
 						self.content = content
 						self.offset = self.content.count
 						observer.sendNext(0..<self.content.count)
 						observer.sendCompleted()
-					case .Failure(let error):
-						self._loadState.value = .LoadFailed
+					case .failure(let error):
+						self._loadState.value = .loadFailed
 						observer.sendFailed(error)
 					}
 				}
 			}
 		}
 		
-		self.loadNext = Action<String, Range<Int>, Error> { location in
-			self._loadState.value = .LoadingNext
-			return SignalProducer<Range<Int>, Error> { [unowned self] observer, _ in
+		self.loadNext = Action<String, CountableRange<Int>, Error> { location in
+			self._loadState.value = .loadingNext
+			return SignalProducer<CountableRange<Int>, Error> { [unowned self] observer, _ in
 				API.fetch(self.endpoint(location)) { [unowned self] response in
 					switch response.result {
-					case .Success(let content):
-						self._loadState.value = content.count < self.count ?.LoadedLast : .Loaded
+					case .success(let content):
+						self._loadState.value = content.count < self.count ?.loadedLast : .loaded
 						self.content += content
 						self.offset = self.content.count
 						observer.sendNext(self.content.count - content.count..<self.content.count)
 						observer.sendCompleted()
-					case .Failure(let error):
-						self._loadState.value = .LoadFailed
+					case .failure(let error):
+						self._loadState.value = .loadFailed
 						print(error)
 						observer.sendFailed(error)
 					}
@@ -110,7 +110,7 @@ class StreamViewModel {
 		}
 	}
 	
-	func endpoint(location: String) -> Endpoint<[Pet]> {
+	func endpoint(_ location: String) -> Endpoint<[Pet]> {
 		return Endpoint<Pet>.findPets(location,
 		                              animal: animal,
 		                              breed: breed,

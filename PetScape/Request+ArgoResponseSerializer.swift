@@ -11,57 +11,57 @@ import Argo
 
 extension Request {
 	static func ArgoResponseSerializer
-		<Model: Decodable where Model.DecodedType == Model>(keyPath: String) -> ResponseSerializer<Model, Error> {
+		<Model: Decodable where Model.DecodedType == Model>(_ keyPath: String) -> ResponseSerializer<Model, Error> {
 		return ResponseSerializer { request, response, data, error in
 			if let error = error {
-				return .Failure(.Underlying(error))
+				return .failure(.underlying(error))
 			}
 			
 			let JSONSerializer = Request.JSONResponseSerializer()
 			switch JSONSerializer.serializeResponse(request, response, data, error) {
 				
-			case .Success(let jsonObject):
-				guard let modelObject = jsonObject.valueForKeyPath(keyPath) else {
-					return .Failure(.Unknown)
+			case .success(let jsonObject):
+				guard let modelObject = jsonObject.value(forKeyPath: keyPath) else {
+					return .failure(.unknown)
 				}
 				
 				let decodedModel: Decoded<Model> = decode(modelObject) as Decoded<Model>
 				switch decodedModel {
-				case .Success(let model):
-					return .Success(model)
-				case .Failure(let decodeError):
-					return .Failure(.Decoding(decodeError))
+				case .success(let model):
+					return .success(model)
+				case .failure(let decodeError):
+					return .failure(.decoding(decodeError))
 				}
-			case .Failure(let error):
-				return .Failure(.JSONParsing(error))
+			case .failure(let error):
+				return .failure(.jsonParsing(error))
 			}
 		}
 	}
 	
 	static func ArgoResponseSerializer
-		<Model: Decodable where Model.DecodedType == Model>(keyPath: String) -> ResponseSerializer<[Model], Error> {
+		<Model: Decodable where Model.DecodedType == Model>(_ keyPath: String) -> ResponseSerializer<[Model], Error> {
 		return ResponseSerializer { request, response, data, error in
 			
 			if let error = error {
-				return .Failure(.Underlying(error))
+				return .failure(.underlying(error))
 			}
 			
 			let JSONSerializer = Request.JSONResponseSerializer()
 			switch JSONSerializer.serializeResponse(request, response, data, error) {
-			case .Success(let jsonObject):
-				guard let modelObject = jsonObject.valueForKeyPath(keyPath) else {
-					return .Failure(.Unknown)
+			case .success(let jsonObject):
+				guard let modelObject = jsonObject.value(forKeyPath: keyPath) else {
+					return .failure(.unknown)
 				}
 				
 				let decodedModels: Decoded<[Model]> = decode(modelObject) as Decoded<[Model]>
 				switch decodedModels {
-				case .Success(let model):
-					return .Success(model)
-				case .Failure(let decodeError):
-					return .Failure(.Decoding(decodeError))
+				case .success(let model):
+					return .success(model)
+				case .failure(let decodeError):
+					return .failure(.decoding(decodeError))
 				}
-			case .Failure(let error):
-				return .Failure(.JSONParsing(error))
+			case .failure(let error):
+				return .failure(.jsonParsing(error))
 			}
 		}
 	}

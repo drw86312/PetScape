@@ -12,7 +12,7 @@ import Foundation
 
 struct Pet {
 	let id: Int
-	let lastUpdated: NSDate?
+	let lastUpdated: Date?
 	let mix: Bool?
 	let photos: [Photo]?
 	let breeds: [String]?
@@ -29,28 +29,28 @@ struct Pet {
 }
 
 extension Pet: Decodable {
-	static func decode(json: JSON) -> Decoded<Pet> {
+	static func decode(_ json: JSON) -> Decoded<Pet> {
 		
 		let breeds: Decoded<[String]> = decodedJSON(json, forKey: "breeds")
 			.map { decodedJSON($0, forKey: "breed") }
 			.flatMap { breedJSON in
 				return breedJSON.map { json in
 					switch json {
-					case .Array(let breedsArrayJSON):
+					case .array(let breedsArrayJSON):
 						return breedsArrayJSON.map { json in
 							switch json {
-							case .Object(let breedsToJSON):
+							case .object(let breedsToJSON):
 								switch breedsToJSON["$t"]! {
-								case .String(let breed):
+								case .string(let breed):
 									return breed
 								default: return ""
 								}
 							default: return ""
 							}
 						}
-					case .Object(let breedsToJSON):
+					case .object(let breedsToJSON):
 						switch breedsToJSON["$t"]! {
-						case .String(let breed):
+						case .string(let breed):
 							return [breed]
 						default: return []
 						}

@@ -11,22 +11,22 @@ import Curry
 
 struct Photo {
 	let id: Int
-	let thumbnailURL: NSURL?
-	let smallURL: NSURL?
-	let mediumURL: NSURL?
-	let largeURL: NSURL?
-	let extraLargeURL: NSURL?
+	let thumbnailURL: URL?
+	let smallURL: URL?
+	let mediumURL: URL?
+	let largeURL: URL?
+	let extraLargeURL: URL?
 }
 
-// Image is an intermediate object which will be mapped to Photo with -toPhotosArray function b/c JSON format is weird 
+// Image is an intermediate object which will be mapped to Photo with -toPhotos function b/c JSON format is weird 
 struct Image {
 	let id: Int
-	let url: NSURL
+	let url: URL
 	let size: String
 }
 
 extension Image: Decodable {
-	static func decode(json: JSON) -> Decoded<Image> {
+	static func decode(_ json: JSON) -> Decoded<Image> {
 		let image = curry(Image.init)
 			<^> (json <| ["@id"] >>- toInt)
 			<*> json <| ["$t"]

@@ -14,10 +14,10 @@ import UIKit
 class StreamViewController: UIViewController {
 	
 	let viewModel = StreamViewModel()
-	let tableView = UITableView(frame: CGRectZero, style: .Plain)
+	let tableView = UITableView(frame: CGRect.zero, style: .plain)
 	let backgroundView = TableViewBackground()
-	let spinner = UIActivityIndicatorView(activityIndicatorStyle: .WhiteLarge)
-	let loadMoreSpinner = UIActivityIndicatorView(activityIndicatorStyle: .White)
+	let spinner = UIActivityIndicatorView(activityIndicatorStyle: .whiteLarge)
+	let loadMoreSpinner = UIActivityIndicatorView(activityIndicatorStyle: .white)
 	
 	init() {
 		super.init(nibName: nil, bundle: nil)
@@ -30,46 +30,46 @@ class StreamViewController: UIViewController {
 	
 	override func loadView() {
 		view = UIView()
-		view.backgroundColor = .blackColor()
+		view.backgroundColor = .black()
 		
 		tableView.delegate = self
 		tableView.dataSource = self
 		tableView.rowHeight = 500.0
-		tableView.registerClass(PetCell.self,
+		tableView.register(PetCell.self,
 		                        forCellReuseIdentifier: NSStringFromClass(PetCell.self))
 		tableView.backgroundView = backgroundView
 		backgroundView.refreshButton.addTarget(self,
 		                                       action: #selector(StreamViewController.refreshButtonPressed),
-		                                       forControlEvents: .TouchUpInside)
-		tableView.backgroundColor = .blackColor()
-		tableView.backgroundView?.backgroundColor = .blackColor()
-		tableView.separatorStyle = .None
+		                                       for: .touchUpInside)
+		tableView.backgroundColor = .black()
+		tableView.backgroundView?.backgroundColor = .black()
+		tableView.separatorStyle = .none
 		view.addSubview(tableView)
 		
-		loadMoreSpinner.frame = CGRectMake(0, 0, 320, 65)
+		loadMoreSpinner.frame = CGRect(x: 0, y: 0, width: 320, height: 65)
 		loadMoreSpinner.hidesWhenStopped = true
 		tableView.tableFooterView = loadMoreSpinner
 		
 		spinner.hidesWhenStopped = true
 		view.addSubview(spinner)
 		
-		let filterIcon = UIButton(type: .Custom)
+		let filterIcon = UIButton(type: .custom)
 		filterIcon.frame = CGRect(x: 0, y: 0, width: 25, height: 25)
 		filterIcon.addTarget(self,
 		                 action: #selector(StreamViewController.filterIconPressed),
-		                 forControlEvents: .TouchUpInside)
-		filterIcon.setImage(UIImage(named: "filter")?.imageWithRenderingMode(.AlwaysTemplate), forState: .Normal)
-		filterIcon.imageView?.tintColor = .whiteColor()
+		                 for: .touchUpInside)
+		filterIcon.setImage(UIImage(named: "filter")?.withRenderingMode(.alwaysTemplate), for: UIControlState())
+		filterIcon.imageView?.tintColor = .white()
 		
-		let locationIcon = UIButton(type: .Custom)
+		let locationIcon = UIButton(type: .custom)
 		locationIcon.frame = CGRect(x: 0, y: 0, width: 25, height: 25)
 		locationIcon.addTarget(self,
 		                     action: #selector(StreamViewController.locationIconPressed),
-		                     forControlEvents: .TouchUpInside)
-		locationIcon.setImage(UIImage(named: "location")?.imageWithRenderingMode(.AlwaysTemplate), forState: .Normal)
-		locationIcon.imageView?.tintColor = .whiteColor()
+		                     for: .touchUpInside)
+		locationIcon.setImage(UIImage(named: "location")?.withRenderingMode(.alwaysTemplate), for: UIControlState())
+		locationIcon.imageView?.tintColor = .white()
 		
-		let space = UIBarButtonItem(barButtonSystemItem: .FixedSpace, target: nil, action: nil)
+		let space = UIBarButtonItem(barButtonSystemItem: .fixedSpace, target: nil, action: nil)
 		space.width = 20
 		
 		navigationItem.rightBarButtonItems = [UIBarButtonItem(customView: filterIcon), space, UIBarButtonItem(customView: locationIcon)]
@@ -81,8 +81,8 @@ class StreamViewController: UIViewController {
 	private func addConstraints() {
 		tableView.autoPinEdgesToSuperviewEdges()
 		
-		spinner.autoAlignAxisToSuperviewAxis(.Vertical)
-		spinner.autoAlignAxis(.Horizontal, toSameAxisOfView: view, withOffset: -25)
+		spinner.autoAlignAxis(toSuperviewAxis: .vertical)
+		spinner.autoAlignAxis(.horizontal, toSameAxisOf: view, withOffset: -25)
 	}
 	
 	override func viewDidLoad() {
@@ -102,7 +102,7 @@ class StreamViewController: UIViewController {
 		DynamicProperty(object: backgroundView.label, keyPath: "text") <~
 			locationState
 				.map { state -> String in
-					if case .Denied = state {
+					if case .denied = state {
 						return "Please enable location Services or Set Location in Filters"
 					} else {
 						return ""
@@ -111,10 +111,10 @@ class StreamViewController: UIViewController {
 		
 		loadState
 			.start() { [unowned self] event in
-				if case .Next(let state) = event {
-					if case .LoadingNext = state { self.loadMoreSpinner.startAnimating() } else { self.loadMoreSpinner.stopAnimating() }
-					if case .Loading = state { self.spinner.startAnimating() } else { self.spinner.stopAnimating() }
-					if case .LoadFailed = state {
+				if case .next(let state) = event {
+					if case .loadingNext = state { self.loadMoreSpinner.startAnimating() } else { self.loadMoreSpinner.stopAnimating() }
+					if case .loading = state { self.spinner.startAnimating() } else { self.spinner.stopAnimating() }
+					if case .loadFailed = state {
 //						self.backgroundView.hidden = false
 //						self.emptyDataSet()
 					} else {
@@ -125,7 +125,7 @@ class StreamViewController: UIViewController {
 		
 		DynamicProperty(object: backgroundView.refreshButton, keyPath: "enabled")
 			<~ loadState.map { state -> Bool in
-				if state == .LoadFailed {
+				if state == .loadFailed {
 					return true
 				}
 				return false
@@ -136,7 +136,7 @@ class StreamViewController: UIViewController {
 			.events
 			.observeOn(UIScheduler())
 			.observeNext { [unowned self] event in
-				if case .Next = event {
+				if case .next = event {
 					self.tableView.reloadData()
 				}
 		}
@@ -146,10 +146,10 @@ class StreamViewController: UIViewController {
 			.events
 			.observeOn(UIScheduler())
 			.observeNext { [unowned self] event in
-				if case .Next(let range) = event {
-					let paths = range.map { NSIndexPath(forRow: $0, inSection: 0) }
+				if case .next(let range) = event {
+					let paths = range.map { IndexPath(row: $0, section: 0) }
 					UIView.setAnimationsEnabled(false)
-					self.tableView.insertRowsAtIndexPaths(paths, withRowAnimation: .None)
+					self.tableView.insertRows(at: paths, with: .none)
 					UIView.setAnimationsEnabled(true)
 				}
 		}
@@ -170,10 +170,10 @@ class StreamViewController: UIViewController {
 	}
 	
 	func locationIconPressed() {
-		let appDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
-		if case .Denied = viewModel.locationStatus.value {
-			if let url  = NSURL(string: UIApplicationOpenSettingsURLString) where UIApplication.sharedApplication().canOpenURL(url)  {
-				UIApplication.sharedApplication().openURL(url)
+		let appDelegate = UIApplication.shared().delegate as! AppDelegate
+		if case .denied = viewModel.locationStatus.value {
+			if let url  = URL(string: UIApplicationOpenSettingsURLString) where UIApplication.shared().canOpenURL(url)  {
+				UIApplication.shared().openURL(url)
 			}
 		} else {
 			appDelegate.locationManager.manager.startUpdatingLocation()
@@ -181,19 +181,19 @@ class StreamViewController: UIViewController {
 	}
 	
 	func refreshButtonPressed() {
-		if case .Some(let location) = viewModel.locationStatus.value {
+		if case .some(let location) = viewModel.locationStatus.value {
 			viewModel.reload?.apply(location).start()
 		}
 	}
 	
 	override func preferredStatusBarStyle() -> UIStatusBarStyle {
-		return .LightContent
+		return .lightContent
 	}
 }
 
 extension StreamViewController: UITableViewDelegate {
 	
-	func scrollViewDidScroll(scrollView: UIScrollView) {
+	func scrollViewDidScroll(_ scrollView: UIScrollView) {
 		let offsetY = scrollView.contentOffset.y
 		let bounds = scrollView.bounds
 		let size = scrollView.contentSize
@@ -202,8 +202,8 @@ extension StreamViewController: UITableViewDelegate {
 		guard let executing = viewModel.loadNext?.executing.value else { return }
 		if ((offsetY + bounds.size.height - insets.bottom) > size.height &&
 			!executing &&
-			viewModel.loadState.value == .Loaded) {
-			if case .Some(let location) = viewModel.locationStatus.value {
+			viewModel.loadState.value == .loaded) {
+			if case .some(let location) = viewModel.locationStatus.value {
 				viewModel.loadNext?.apply(location).start()
 			}
 		}
@@ -212,14 +212,14 @@ extension StreamViewController: UITableViewDelegate {
 
 extension StreamViewController: UITableViewDataSource {
 	
-	func tableView(tableView: UITableView,
-	               cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-		let cell = tableView.dequeueReusableCellWithIdentifier(NSStringFromClass(PetCell.self), forIndexPath: indexPath) as! PetCell
-		cell.pet = viewModel.content[indexPath.row]
+	func tableView(_ tableView: UITableView,
+	               cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+		let cell = tableView.dequeueReusableCell(withIdentifier: NSStringFromClass(PetCell.self), for: indexPath) as! PetCell
+		cell.pet = viewModel.content[(indexPath as NSIndexPath).row]
 		return cell
 	}
 	
-	func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+	func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
 		return viewModel.content.count
 	}
 }

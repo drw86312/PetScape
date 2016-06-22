@@ -15,21 +15,21 @@ class TableViewBackground: UIView {
 	let refreshButton = UIButton()
 	
 	init() {
-		super.init(frame: CGRectZero)
+		super.init(frame: CGRect.zero)
 				
 		label.text = "Refresh Failed"
-		label.textColor = .whiteColor()
-		label.textAlignment = .Center
-		label.font = UIFont.systemFontOfSize(21)
+		label.textColor = .white()
+		label.textAlignment = .center
+		label.font = UIFont.systemFont(ofSize: 21)
 		label.numberOfLines = 0
 		
-		refreshButton.setTitle("Retry", forState: .Normal)
-		refreshButton.setTitleColor(.whiteColor(), forState: .Normal)
-		refreshButton.titleLabel?.font = UIFont.systemFontOfSize(21)
+		refreshButton.setTitle("Retry", for: UIControlState())
+		refreshButton.setTitleColor(.white(), for: UIControlState())
+		refreshButton.titleLabel?.font = UIFont.systemFont(ofSize: 21)
 		refreshButton.layer.masksToBounds = true
 		refreshButton.layer.cornerRadius = 2.5
 		refreshButton.layer.borderWidth = 2.0
-		refreshButton.layer.borderColor = UIColor.whiteColor().CGColor
+		refreshButton.layer.borderColor = UIColor.white().cgColor
 		
 		addSubview(label)
 		addSubview(refreshButton)
@@ -38,14 +38,14 @@ class TableViewBackground: UIView {
 	}
 	
 	private func addConstraints() {
-		label.autoAlignAxisToSuperviewAxis(.Vertical)
-		label.autoAlignAxis(.Horizontal, toSameAxisOfView: self, withOffset: -25)
-		label.autoSetDimension(.Width, toSize: 250)
+		label.autoAlignAxis(toSuperviewAxis: .vertical)
+		label.autoAlignAxis(.horizontal, toSameAxisOf: self, withOffset: -25)
+		label.autoSetDimension(.width, toSize: 250)
 		
-		refreshButton.autoPinEdge(.Top, toEdge: .Bottom, ofView: label, withOffset: 15)
-		refreshButton.autoAlignAxisToSuperviewAxis(.Vertical)
-		refreshButton.autoSetDimension(.Width, toSize: 150)
-		refreshButton.autoSetDimension(.Height, toSize: 50)
+		refreshButton.autoPinEdge(.top, to: .bottom, of: label, withOffset: 15)
+		refreshButton.autoAlignAxis(toSuperviewAxis: .vertical)
+		refreshButton.autoSetDimension(.width, toSize: 150)
+		refreshButton.autoSetDimension(.height, toSize: 50)
 	}
 	
 	required init?(coder aDecoder: NSCoder) {

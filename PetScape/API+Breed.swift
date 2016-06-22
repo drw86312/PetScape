@@ -9,8 +9,8 @@
 import Foundation
 
 extension Endpoint {
-	static func breeds(animal: Animal) -> Endpoint<[T]> {
-		let parameters: [String: AnyObject] = ["animal" : animal.rawValue.lowercaseString]
+	static func breeds(_ animal: Animal) -> Endpoint<[T]> {
+		let parameters: [String: AnyObject] = ["animal" : animal.rawValue.lowercased()]
 		return Endpoint<[T]>(method: .GET,
 		                     path: "breed.list",
 		                     parameters: parameters,

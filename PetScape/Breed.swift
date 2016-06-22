@@ -14,7 +14,7 @@ struct Breed {
 }
 
 extension Breed: Decodable {
-	static func decode(json: JSON) -> Decoded<Breed> {
+	static func decode(_ json: JSON) -> Decoded<Breed> {
 		let breed = curry(Breed.init)
 			<^> json <| ["$t"]
 		return breed

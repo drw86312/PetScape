@@ -299,6 +299,9 @@
 				TargetAttributes = {
 					810DD2701CEB6BEA00EAF8A8 = {
 						CreatedOnToolsVersion = 7.3.1;
+						DevelopmentTeam = H3S3HGMYSA;
+						DevelopmentTeamName = "David Warner (Personal Team)";
+						LastSwiftMigration = 0800;
 					};
 				};
 			};
@@ -496,6 +499,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.drw.PetScape;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 3.0;
 			};
 			name = Debug;
 		};
@@ -511,6 +515,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.drw.PetScape;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 3.0;
 			};
 			name = Release;
 		};

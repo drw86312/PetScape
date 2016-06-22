@@ -26,7 +26,7 @@ class PetCell: UITableViewCell {
 	override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
 		super.init(style: style, reuseIdentifier: reuseIdentifier)
 		
-		scrollView.pagingEnabled = true
+		scrollView.isPagingEnabled = true
 		scrollView.alwaysBounceVertical = false
 		scrollView.alwaysBounceHorizontal = false
 		scrollView.bounces = false
@@ -50,27 +50,27 @@ class PetCell: UITableViewCell {
 	}
 	
 	private func addConstraints() {
-		labelView.autoPinEdgeToSuperviewEdge(.Left, withInset: 10)
-		labelView.autoPinEdgeToSuperviewEdge(.Right, withInset: 10)
-		labelView.autoPinEdgeToSuperviewEdge(.Bottom, withInset: 10)
-		labelView.autoSetDimension(.Height, toSize: 100)
+		labelView.autoPinEdge(toSuperviewEdge: .left, withInset: 10)
+		labelView.autoPinEdge(toSuperviewEdge: .right, withInset: 10)
+		labelView.autoPinEdge(toSuperviewEdge: .bottom, withInset: 10)
+		labelView.autoSetDimension(.height, toSize: 100)
 	}
 	
-	private func configureLabel(pet: Pet) {
+	private func configureLabel(_ pet: Pet) {
 		
 		if let name = pet.name, let sex  = pet.sex {
-			let nameString = NSMutableAttributedString(string: name, attributes: [NSFontAttributeName : UIFont.boldSystemFontOfSize(21)])
-			let ageString = NSMutableAttributedString(string: "  |  " + sex.titleString, attributes: [NSFontAttributeName : UIFont.systemFontOfSize(18)])
-			nameString.appendAttributedString(ageString)
+			let nameString = NSMutableAttributedString(string: name, attributes: [NSFontAttributeName : UIFont.boldSystemFont(ofSize: 21)])
+			let ageString = NSMutableAttributedString(string: "  |  " + sex.titleString, attributes: [NSFontAttributeName : UIFont.systemFont(ofSize: 18)])
+			nameString.append(ageString)
 			labelView.titleLabel.attributedText = nameString
 		} else {
 			labelView.titleLabel.attributedText =  NSMutableAttributedString(string: pet.name ?? "",
-			                                                                 attributes: [NSFontAttributeName : UIFont.systemFontOfSize(21, weight: 0.5)])
+			                                                                 attributes: [NSFontAttributeName : UIFont.systemFont(ofSize: 21, weight: 0.5)])
 		}
 		
 		if let breeds = pet.breeds,
 			let age  = pet.age {
-			labelView.detailLabel.text = age.rawValue + "  |  " + breeds.joinWithSeparator(" / ")
+			labelView.detailLabel.text = age.rawValue + "  |  " + breeds.joined(separator: " / ")
 		}
 		
 		if let size = pet.size, mix = pet.mix, status = pet.adoptionStatus {
@@ -79,14 +79,14 @@ class PetCell: UITableViewCell {
 		}
 	}
 	
-	private func configureScrollView(pet: Pet) {
+	private func configureScrollView(_ pet: Pet) {
 		scrollView.subviews.forEach { $0.removeFromSuperview() }
 		if scrollView.frame != contentView.frame {
 			scrollView.frame = contentView.frame
 		}
 		if let photos = pet.photos {
 			photos
-				.enumerate()
+				.enumerated()
 				.forEach { index, photo in
 					guard let url = photo.extraLargeURL else { return }
 					let imageView = UIImageView(frame: CGRect(
@@ -94,22 +94,22 @@ class PetCell: UITableViewCell {
 						y: scrollView.frame.origin.y,
 						width: scrollView.frame.width,
 						height: scrollView.frame.height))
-					imageView.contentMode = .ScaleToFill
+					imageView.contentMode = .scaleToFill
 					scrollView.addSubview(imageView)
-					imageView.sd_setImageWithURL(url, placeholderImage: UIColor.grayColor().imageFromColor())
+					imageView.sd_setImage(with: url, placeholderImage: UIColor.gray().imageFromColor())
 			}
 			scrollView.contentSize = CGSize(width: CGFloat(photos.count) * scrollView.frame.width, height: scrollView.frame.height)
 			labelView.pageControl.numberOfPages = photos.count
 			scrollView.setContentOffset(scrollView.frame.origin, animated: false)
 			labelView.pageControl.currentPage = 0
-			labelView.pageControl.hidden = photos.count < 2
+			labelView.pageControl.isHidden = photos.count < 2
 		}
 	}
 }
 
 extension PetCell: UIScrollViewDelegate {
 	
-	func scrollViewDidEndDecelerating(scrollView: UIScrollView) {
+	func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
 		labelView.pageControl.currentPage = Int(scrollView.contentOffset.x / scrollView.frame.size.width)
 	}
 }

@@ -10,7 +10,7 @@ import UIKit
 
 class FilterListViewController: UIViewController {
 	
-	let tableView = UITableView(frame: CGRectZero, style: .Plain)
+	let tableView = UITableView(frame: CGRect.zero, style: .plain)
 	
 	init() {
 		super.init(nibName: nil, bundle: nil)
@@ -23,17 +23,17 @@ class FilterListViewController: UIViewController {
 	
 	override func loadView() {
 		view = UIView()
-		view.backgroundColor = .blackColor()
+		view.backgroundColor = .black()
 		
-		tableView.registerClass(FilterLocationCell.self,
+		tableView.register(FilterLocationCell.self,
 		                        forCellReuseIdentifier: NSStringFromClass(FilterLocationCell.self))
-		tableView.registerClass(SimpleFilterCell.self,
+		tableView.register(SimpleFilterCell.self,
 		                        forCellReuseIdentifier: NSStringFromClass(SimpleFilterCell.self))
-		tableView.separatorStyle = .None
-		tableView.backgroundColor = .blackColor()
+		tableView.separatorStyle = .none
+		tableView.backgroundColor = .black()
 		tableView.dataSource = self
 		tableView.delegate = self
-		tableView.keyboardDismissMode = .OnDrag
+		tableView.keyboardDismissMode = .onDrag
 		view.addSubview(tableView)
 		
 		addConstraints()
@@ -51,11 +51,11 @@ class FilterListViewController: UIViewController {
 
 extension FilterListViewController: UITableViewDelegate {
 	
-	func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
-		tableView.deselectRowAtIndexPath(indexPath, animated: false)
+	func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+		tableView.deselectRow(at: indexPath, animated: false)
 	}
 	
-	func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
+	func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
 		return 60
 	}
 }
@@ -63,18 +63,18 @@ extension FilterListViewController: UITableViewDelegate {
 
 extension FilterListViewController: UITableViewDataSource {
 	
-	func tableView(tableView: UITableView,
-	               cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-		if indexPath.row == 0 {
-			let cell = tableView.dequeueReusableCellWithIdentifier(NSStringFromClass(FilterLocationCell.self), forIndexPath: indexPath) as! FilterLocationCell
+	func tableView(_ tableView: UITableView,
+	               cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+		if (indexPath as NSIndexPath).row == 0 {
+			let cell = tableView.dequeueReusableCell(withIdentifier: NSStringFromClass(FilterLocationCell.self), for: indexPath) as! FilterLocationCell
 			cell.label.text = "Location"
 			return cell
 		} else {
-			let cell = tableView.dequeueReusableCellWithIdentifier(NSStringFromClass(SimpleFilterCell.self), forIndexPath: indexPath) as! SimpleFilterCell
-			cell.accessoryType = .DisclosureIndicator
-			cell.tintColor = .blackColor()
+			let cell = tableView.dequeueReusableCell(withIdentifier: NSStringFromClass(SimpleFilterCell.self), for: indexPath) as! SimpleFilterCell
+			cell.accessoryType = .disclosureIndicator
+			cell.tintColor = .black()
 			
-			switch indexPath.row {
+			switch (indexPath as NSIndexPath).row {
 			case 1:
 				cell.label.text = "Animal"
 			case 2:
@@ -91,7 +91,7 @@ extension FilterListViewController: UITableViewDataSource {
 		}
 	}
 	
-	func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+	func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
 		return 6
 	}
 }

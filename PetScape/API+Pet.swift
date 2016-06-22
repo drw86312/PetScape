@@ -10,7 +10,7 @@ import Foundation
 
 extension Endpoint {
 	
-	static func getPet(petID: Int) -> Endpoint<T> {
+	static func getPet(_ petID: Int) -> Endpoint<T> {
 		let parameters: [String: AnyObject] = ["id" : petID]
 		return Endpoint<T>(method: .GET,
 		                   path: "pet.get",
@@ -19,7 +19,7 @@ extension Endpoint {
 		                   keyPath: API.baseKeyPath + ".pet")
 	}
 	
-	static func findPets(zip: String,
+	static func findPets(_ zip: String,
 	                     animal: Animal? = nil,
 	                     breed: String? = nil,
 	                     size : Size? = nil,
@@ -30,7 +30,7 @@ extension Endpoint {
 		var parameters: [String: AnyObject] = ["location" : zip,
 		                                       "offset" : offset,
 		                                       "count" : count]
-		if let animal = animal { parameters.addEntries(["animal" : animal.rawValue.lowercaseString]) }
+		if let animal = animal { parameters.addEntries(["animal" : animal.rawValue.lowercased()]) }
 		if let breed = breed { parameters.addEntries(["breed" : breed]) }
 		if let size = size { parameters.addEntries(["size" : size.rawValue]) }
 		if let sex = sex { parameters.addEntries(["sex" : sex.rawValue]) }
