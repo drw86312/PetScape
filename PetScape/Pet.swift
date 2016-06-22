@@ -58,69 +58,12 @@ extension Pet: Decodable {
 					}
 				}
 		}
-	
-		let photos: Decoded<[Image]> = decodedJSON(json, forKey: "media")
-			.map { decodedJSON($0, forKey: "photos") }
-			.flatMap { photoJSON in
-				return photoJSON.map { json in
-					switch json {
-					case .Object(let photoToJSON):
-						switch photoToJSON["photo"]! {
-						case .Array(let arrayJSON):
-							return arrayJSON.map { json in
-								switch json {
-								case .Object(let imageJSON):
-									
-									var id: Int?
-									var url: NSURL?
-									var size: String?
-									
-									switch imageJSON["@id"]! {
-									case .String(let string):
-										if let int = Int(string) {
-											id = int
-										}
-									default: break
-									}
-									
-									switch imageJSON["$t"]! {
-									case .String(let string):
-										if let urlFromString = NSURL(string: string) {
-											url = urlFromString
-										}
-									default: break
-									}
-									
-									switch imageJSON["@size"]! {
-									case .String(let string):
-										size = string
-									default: break
-									}
-									
-									if let id = id,
-										let url = url,
-										let size = size {
-										return Image(id: id, url: url, size: size)
-									}
-									return Image(id: 5000, url: NSURL(), size: "failure")
-								default:
-									return Image(id: 5000, url: NSURL(), size: "failure")
-								}
-							}
-						default:
-							return []
-						}
-					default:
-						return []
-					}
-				}
-		}
 		
 		let partialPet = curry(Pet.init)
 			<^> (json <| ["id", "$t"] >>- toInt)
 			<*> (json <| ["lastUpdate", "$t"] >>- toNSDate)
 			<*> (json <| ["mix", "$t"] >>- toBoolean)
-			<*> (photos >>- toPhotosArray)
+			<*> ((json <||? ["media", "photos", "photo"]) >>- toPhotos)
 			<*> breeds
 			<*> json <|? ["description", "$t"]
 			<*> json <|? ["animal", "$t"]

@@ -25,12 +25,12 @@ struct Image {
 	let size: String
 }
 
-//extension Image: Decodable {
-//	static func decode(json: JSON) -> Decoded<Image> {
-//		let image = curry(Image.init)
-//			<^> (json <| ["@id"] >>- toInt)
-//			<*> json <| ["$t"]
-//			<*> json <| ["@size"]
-//		return image
-//	}
-//}
+extension Image: Decodable {
+	static func decode(json: JSON) -> Decoded<Image> {
+		let image = curry(Image.init)
+			<^> (json <| ["@id"] >>- toInt)
+			<*> json <| ["$t"]
+			<*> json <| ["@size"]
+		return image
+	}
+}

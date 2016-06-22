@@ -39,8 +39,10 @@ func toNSDate(dateString: String) -> Decoded<NSDate> {
 	return .fromOptional(jsonDateFormatter.dateFromString(dateString))
 }
 
-func toPhotosArray(images: [Image]) -> Decoded<[Photo]> {
+func toPhotos(images: [Image]?) -> Decoded<[Photo]> {
 	var photos: [Photo] = []
+	
+	guard let images = images else { return .fromOptional(photos) }
 		
 	// Get an array of unique image IDs (these will essentially become photos)
 	Set(images.map { $0.id }).forEach { id in

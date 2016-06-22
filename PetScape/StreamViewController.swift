@@ -112,7 +112,6 @@ class StreamViewController: UIViewController {
 		loadState
 			.start() { [unowned self] event in
 				if case .Next(let state) = event {
-					print(state)
 					if case .LoadingNext = state { self.loadMoreSpinner.startAnimating() } else { self.loadMoreSpinner.stopAnimating() }
 					if case .Loading = state { self.spinner.startAnimating() } else { self.spinner.stopAnimating() }
 					if case .LoadFailed = state {
