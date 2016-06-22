@@ -34,7 +34,7 @@ class StreamViewController: UIViewController {
 		
 		tableView.delegate = self
 		tableView.dataSource = self
-		tableView.rowHeight = 450.0
+		tableView.rowHeight = 500.0
 		tableView.registerClass(PetCell.self,
 		                        forCellReuseIdentifier: NSStringFromClass(PetCell.self))
 		tableView.backgroundView = backgroundView
@@ -43,7 +43,6 @@ class StreamViewController: UIViewController {
 		                                       forControlEvents: .TouchUpInside)
 		tableView.backgroundColor = .blackColor()
 		tableView.backgroundView?.backgroundColor = .blackColor()
-//		tableView.backgroundView?.hidden = true
 		tableView.separatorStyle = .None
 		view.addSubview(tableView)
 		
@@ -74,6 +73,7 @@ class StreamViewController: UIViewController {
 		space.width = 20
 		
 		navigationItem.rightBarButtonItems = [UIBarButtonItem(customView: filterIcon), space, UIBarButtonItem(customView: locationIcon)]
+		navigationController?.hidesBarsOnSwipe = true
 		
 		addConstraints()
 	}
@@ -112,6 +112,7 @@ class StreamViewController: UIViewController {
 		loadState
 			.start() { [unowned self] event in
 				if case .Next(let state) = event {
+					print(state)
 					if case .LoadingNext = state { self.loadMoreSpinner.startAnimating() } else { self.loadMoreSpinner.stopAnimating() }
 					if case .Loading = state { self.spinner.startAnimating() } else { self.spinner.stopAnimating() }
 					if case .LoadFailed = state {
@@ -184,6 +185,10 @@ class StreamViewController: UIViewController {
 		if case .Some(let location) = viewModel.locationStatus.value {
 			viewModel.reload?.apply(location).start()
 		}
+	}
+	
+	override func preferredStatusBarStyle() -> UIStatusBarStyle {
+		return .LightContent
 	}
 }
 

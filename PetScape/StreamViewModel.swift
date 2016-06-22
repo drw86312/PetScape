@@ -57,7 +57,7 @@ class StreamViewModel {
 					case .Error(let error):
 						print("Error: \(error)")
 					case .Some(let location):
-						print("Update Location: \(location)")
+//						print("Update Location: \(location)")
 						self.reload?.apply(location).start()
 					}
 				}
@@ -102,6 +102,7 @@ class StreamViewModel {
 						observer.sendCompleted()
 					case .Failure(let error):
 						self._loadState.value = .LoadFailed
+						print(error)
 						observer.sendFailed(error)
 					}
 				}

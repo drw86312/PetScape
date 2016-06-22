@@ -41,7 +41,7 @@ func toNSDate(dateString: String) -> Decoded<NSDate> {
 
 func toPhotosArray(images: [Image]) -> Decoded<[Photo]> {
 	var photos: [Photo] = []
-	
+		
 	// Get an array of unique image IDs (these will essentially become photos)
 	Set(images.map { $0.id }).forEach { id in
 		
