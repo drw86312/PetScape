@@ -8,6 +8,7 @@
 
 import Foundation
 import ReactiveCocoa
+import Result
 
 class StreamViewModel {
 	
@@ -24,8 +25,8 @@ class StreamViewModel {
 	var content: [Pet] = []
 	var offset: Int = 0
 	
-	var loadNext: Action<String, Range<Int>, Error>?
-	var reload: Action<String, Range<Int>, Error>?
+	var loadNext: Action<String, Range<Int>, Error>!
+	var reload: Action<String, Range<Int>, Error>!
 	
 	private let _loadState = MutableProperty<LoadState>(.NotLoaded)
 	let loadState: AnyProperty<LoadState>
@@ -33,7 +34,8 @@ class StreamViewModel {
 	let locationStatus: AnyProperty<LocationManager.LocationStatus>
 	
 	var count = 10
-	var animal : Animal?
+	
+	var animal = MutableProperty<Animal?>(nil)
 	var breed : String?
 	var size : Size?
 	var sex : Sex?
@@ -45,8 +47,33 @@ class StreamViewModel {
 		let appDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
 		locationStatus = AnyProperty(appDelegate.locationManager.locationStatusProperty)
 		
-		locationStatus
+		let uniqueLocations = locationStatus
 			.producer
+			.filter {
+				if case .Some = $0 {
+					return true
+				}
+				return false
+			}
+			.skipRepeats(==)
+		
+		let otherStatuses = locationStatus
+			.producer
+			.filter { status in
+				if case .Some = status {
+					return false
+				}
+				return true
+		}
+		
+		let stateSignal = SignalProducer(values: [uniqueLocations, otherStatuses])
+			.flatten(.Merge)
+		
+		let dispose = stateSignal
+			.map { _ in () }
+			.flatMapError { _ in SignalProducer<(), NoError>.empty }
+		
+		stateSignal
 			.start() { [unowned self] event in
 				if case .Next(let state) = event {
 					switch state {
@@ -54,11 +81,18 @@ class StreamViewModel {
 						print("Not Determined")
 					case .Denied:
 						print("Denied")
+					case .Scanning:
+						print("Scanning")
 					case .Error(let error):
 						print("Error: \(error)")
 					case .Some(let location):
-//						print("Update Location: \(location)")
-						self.reload?.apply(location).start()
+						print("Location: \(location)")
+						self.reload
+							.apply(location)
+							.takeUntil(dispose
+								.skip(1)
+								.take(1))
+							.start()
 					}
 				}
 		}
@@ -112,7 +146,7 @@ class StreamViewModel {
 	
 	func endpoint(location: String) -> Endpoint<[Pet]> {
 		return Endpoint<Pet>.findPets(location,
-		                              animal: animal,
+		                              animal: animal.value,
 		                              breed: breed,
 		                              size: size,
 		                              sex: sex,

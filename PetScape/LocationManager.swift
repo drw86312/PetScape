@@ -10,11 +10,30 @@ import Foundation
 import CoreLocation
 import ReactiveCocoa
 
+extension LocationManager.LocationStatus: Equatable {}
+
+func == (lhs: LocationManager.LocationStatus, rhs: LocationManager.LocationStatus) -> Bool {
+	switch (lhs, rhs) {
+	case (.NotDetermined, .NotDetermined):
+		return true
+	case (.Denied, .Denied):
+		return true
+	case (.Scanning, .Scanning):
+		return true
+	case (.Some(let x), .Some(let y)):
+		return x == y
+	case (.Error(let x), .Error(let y)):
+		return x == y
+	default: return false
+	}
+}
+
 class LocationManager: NSObject, CLLocationManagerDelegate {
 	
 	enum LocationStatus {
 		case NotDetermined
 		case Denied
+		case Scanning
 		case Some(String)
 		case Error(String)
 	}
@@ -45,60 +64,40 @@ class LocationManager: NSObject, CLLocationManagerDelegate {
 		}
 		
 		CLGeocoder().reverseGeocodeLocation(location, completionHandler: { [unowned self ] (placemarks, error) -> Void in
-			manager.stopUpdatingLocation()
 			if let error = error {
 				self._locationStatusProperty.value = .Error(error.localizedDescription)
 			}
 			
-			guard let placemarks = placemarks where placemarks.count > 0,
-				  let placemark = placemarks.first else {
-					self._locationStatusProperty.value = .Error("No locations found")
-					return
+			guard let placemarks = placemarks where placemarks.count > 0, let placemark = placemarks.first else {
+				self._locationStatusProperty.value = .Error("No locations found")
+				return
 			}
 			
 			// Give postal code precedence, then try city/state
 			if let postalCode = placemark.postalCode {
 				self._locationStatusProperty.value = .Some(postalCode)
 			} else if let locality = placemark.locality,
-				      let administrativeArea = placemark.administrativeArea {
+				let administrativeArea = placemark.administrativeArea {
 				self._locationStatusProperty.value = .Some(locality + ", " + administrativeArea)
 			} else {
 				self._locationStatusProperty.value = .Error("No locations found")
 			}
-		})
+			})
 	}
 	
 	func locationManager(manager: CLLocationManager, didChangeAuthorizationStatus status: CLAuthorizationStatus) {
 		switch status {
 		case .AuthorizedAlways, .AuthorizedWhenInUse:
-			manager.startUpdatingLocation()
+			scanLocation()
 		case .Denied, .Restricted:
 			self._locationStatusProperty.value = .Denied
 		case .NotDetermined:
 			self._locationStatusProperty.value = .NotDetermined
 		}
 	}
+	
+	func scanLocation() {
+		manager.startUpdatingLocation()
+		self._locationStatusProperty.value = .Scanning
+	}
 }
-
-//case NotDetermined
-//
-//// This application is not authorized to use location services.  Due
-//// to active restrictions on location services, the user cannot change
-//// this status, and may not have personally denied authorization
-//case Restricted
-//
-//// User has explicitly denied authorization for this application, or
-//// location services are disabled in Settings.
-//case Denied
-//
-//// User has granted authorization to use their location at any time,
-//// including monitoring for regions, visits, or significant location changes.
-//@available(iOS 8.0, *)
-//case AuthorizedAlways
-//
-//// User has granted authorization to use their location only when your app
-//// is visible to them (it will be made visible to them if you continue to
-//// receive location updates while in the background).  Authorization to use
-//// launch APIs has not been granted.
-//@available(iOS 8.0, *)
-//case AuthorizedWhenInUse

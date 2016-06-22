@@ -176,13 +176,13 @@ class StreamViewController: UIViewController {
 				UIApplication.sharedApplication().openURL(url)
 			}
 		} else {
-			appDelegate.locationManager.manager.startUpdatingLocation()
+			appDelegate.locationManager.scanLocation()
 		}
 	}
 	
 	func refreshButtonPressed() {
 		if case .Some(let location) = viewModel.locationStatus.value {
-			viewModel.reload?.apply(location).start()
+			viewModel.reload.apply(location).start()
 		}
 	}
 	
@@ -204,7 +204,7 @@ extension StreamViewController: UITableViewDelegate {
 			!executing &&
 			viewModel.loadState.value == .Loaded) {
 			if case .Some(let location) = viewModel.locationStatus.value {
-				viewModel.loadNext?.apply(location).start()
+				viewModel.loadNext.apply(location).start()
 			}
 		}
 	}
