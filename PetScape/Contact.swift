@@ -30,9 +30,9 @@ extension Contact: Decodable {
 			<*> json <|? ["email", "$t"]
 			<*> json <|? ["fax", "$t"]
 			<*> json <|? ["phone", "$t"]
+		return contact
 			<*> json <|? ["state", "$t"]
 			<*> json <|? ["country", "$t"]
 			<*> json <|? ["zip", "$t"]
-		return contact
 	}
 }
