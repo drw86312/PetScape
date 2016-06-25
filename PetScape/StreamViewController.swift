@@ -100,6 +100,16 @@ class StreamViewController: UIViewController {
 			.producer
 			.observeOn(UIScheduler())
 		
+		DynamicProperty(object: backgroundView, keyPath: "hidden") <~
+			loadState
+				.map { state -> Bool in
+					if case .Failed = state {
+						return false
+					}
+					return true
+				}
+				.skipRepeats()
+		
 		DynamicProperty(object: backgroundView.label, keyPath: "text") <~
 			locationState
 				.map { state -> String in
@@ -110,7 +120,7 @@ class StreamViewController: UIViewController {
 					}
 		}
 		
-		let loading = loadState
+		let loadingFirst = loadState
 			.map { state -> Bool in
 				if case .Loading = state where self.viewModel.content.count == 0 {
 					return true
@@ -131,12 +141,12 @@ class StreamViewController: UIViewController {
 			.flatMapError { _ in SignalProducer<Bool, NoError>.empty }
 
 		
-		self.spinner.loading(loading)
+		self.spinner.loading(loadingFirst)
 		self.loadMoreSpinner.loading(loadingMore)
 		
 		DynamicProperty(object: backgroundView.refreshButton, keyPath: "enabled")
 			<~ loadState.map { state -> Bool in
-				if state == .LoadFailed {
+				if state == .Failed {
 					return true
 				}
 				return false
@@ -144,7 +154,7 @@ class StreamViewController: UIViewController {
 		
 		// Observe next values on -load Action and insert rows for corresponding range
 		viewModel
-			.load?
+			.load
 			.events
 			.observeOn(UIScheduler())
 			.observeNext { [unowned self] event in
@@ -161,6 +171,7 @@ class StreamViewController: UIViewController {
 			.events
 			.observeOn(UIScheduler())
 			.observeFailed { error in
+				// TODO handle errors
 				print(error)
 		}
 	}
@@ -210,10 +221,8 @@ extension StreamViewController: UITableViewDelegate {
 		let insets = scrollView.contentInset
 		
 		if ((offsetY + bounds.size.height - insets.bottom) > size.height &&
-			viewModel.loadState.value == .Loaded) {
-			if case .Some(let location) = viewModel.locationStatus.value {
-				viewModel.offset.value = viewModel.content.count
-			}
+			viewModel.load.executing.value == false) {
+			viewModel.loadNext()
 		}
 	}
 }

@@ -18,22 +18,19 @@ class StreamViewModel {
 		case NotLoaded
 		case Loading
 		case Loaded
-		case LoadedNoResults
-		case LoadedLast
-		case LoadFailed
+		case NoResults
+		case Failed
 	}
 	
 	var content: [Pet] = []
 	var count = 10
+	var offset = 0
 	
 	var load: Action<Endpoint<[Pet]>, Range<Int>, Error>!
-	
-	private let _loadState = MutableProperty<LoadState>(.NotLoaded)
-	let loadState: AnyProperty<LoadState>
+	let loadState = MutableProperty<LoadState>(.NotLoaded)
 	
 	let locationStatus: AnyProperty<LocationManager.LocationStatus>
 	
-	let offset = MutableProperty<Int>(0)
 	let animal: MutableProperty<Animal?>
 	let breed: MutableProperty<String?>
 	let size: MutableProperty<Size?>
@@ -66,8 +63,6 @@ class StreamViewModel {
 		sex = MutableProperty<Sex?>(optionalSex)
 		age = MutableProperty<Age?>(optionalAge)
 		
-		self.loadState = AnyProperty(_loadState)
-		
 		let appDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
 		locationStatus = AnyProperty(appDelegate.locationManager.locationStatusProperty)
 		
@@ -88,26 +83,23 @@ class StreamViewModel {
 			.combineLatestWith(size.producer)
 			.combineLatestWith(sex.producer)
 			.combineLatestWith(age.producer)
-			.combineLatestWith(offset.producer)
 			// Unpack the tuples
-			.map { (tuple, offset) -> (String, Animal?, String?, Size?, Sex?, Age?, Int) in
-				let age = tuple.1
-				let sex = tuple.0.1
-				let size = tuple.0.0.1
-				let breed = tuple.0.0.0.1
-				let animal = tuple.0.0.0.0.1
-				let location = tuple.0.0.0.0.0
-				return (location, animal, breed, size, sex, age, offset)
+			.map { (tuple, age) -> (String, Animal?, String?, Size?, Sex?, Age?) in
+				let sex = tuple.1
+				let size = tuple.0.1
+				let breed = tuple.0.0.1
+				let animal = tuple.0.0.0.1
+				let location = tuple.0.0.0.0
+				return (location, animal, breed, size, sex, age)
 			}
 			.map { [unowned self] tuple -> Endpoint<[Pet]> in
-				return Endpoint<Pet>.findPets(
-					tuple.0,
+				return self.generateEndpoint(tuple.0,
 					animal: tuple.1,
 					breed: tuple.2,
 					size: tuple.3,
 					sex: tuple.4,
 					age: tuple.5,
-					offset: tuple.6,
+					offset: self.offset,
 					count: self.count)
 		}
 		
@@ -126,27 +118,96 @@ class StreamViewModel {
 		}
 		
 		self.load = Action<Endpoint<[Pet]>, Range<Int>, Error> { endpoint in
-			self._loadState.value = .Loading
 			return SignalProducer<Range<Int>, Error> { [unowned self] observer, _ in
 				API.fetch(endpoint) { [unowned self] response in
 					switch response.result {
 					case .Success(let content):
-						if content.count == 0 {
-							self._loadState.value = .LoadedNoResults
-						} else if content.count < self.count {
-							self._loadState.value = .LoadedLast
-						} else {
-							self._loadState.value = .Loaded
-						}
 						self.content += content
+						self.offset = self.content.count
 						observer.sendNext(self.content.count - content.count..<self.content.count)
 						observer.sendCompleted()
 					case .Failure(let error):
-						self._loadState.value = .LoadFailed
 						observer.sendFailed(error)
 					}
 				}
 			}
 		}
+		
+		// Derive .Loading state by merging location scanning and fetching data signals
+		let isFindingLocation = locationStatus
+			.signal
+			.map { status -> LoadState? in
+				if case .Scanning = status {
+					return .Loading
+				}
+				return nil
+		}
+		.ignoreNil()
+		
+		let isFetchingData = self.load
+			.executing
+			.signal
+			.map { executing -> LoadState? in
+				return executing ? .Loading : nil
+			}
+			.ignoreNil()
+		
+		let loading = Signal.merge([isFindingLocation, isFetchingData])
+		
+		// Derive .Loaded states from events on the load action
+		let loaded = self.load
+			.events
+			.map { signal -> LoadState? in
+				if case .Next(let range) = signal {
+					if range.endIndex == 0 {
+						return .NoResults
+					}
+					return .Loaded
+				} else if case .Failed = signal {
+					return .Failed
+				} else if case .Interrupted = signal {
+					return .Failed
+				}
+				return nil
+			}
+			.ignoreNil()
+		
+		// Merge loading and loaded signals
+		self.loadState <~ Signal.merge([loaded, loading]).skipRepeats()
+	}
+	
+	func loadNext() {
+		if case .Some(let location) = locationStatus.value {
+			let endpoint = generateEndpoint(location,
+			                                animal: animal.value,
+			                                breed: breed.value,
+			                                size: size.value,
+			                                sex: sex.value,
+			                                age: age.value,
+			                                offset: self.offset,
+			                                count: self.count)
+			load
+				.apply(endpoint)
+				.start()
+		}
+	}
+	
+	func generateEndpoint(location: String,
+	                      animal: Animal?,
+	                      breed: String?,
+	                      size: Size?,
+	                      sex: Sex?,
+	                      age: Age?,
+	                      offset: Int,
+	                      count: Int) -> Endpoint<[Pet]> {
+		return Endpoint<Pet>.findPets(
+			location,
+			animal: animal,
+			breed: breed,
+			size: size,
+			sex: sex,
+			age: age,
+			offset: offset,
+			count: count)
 	}
 }
