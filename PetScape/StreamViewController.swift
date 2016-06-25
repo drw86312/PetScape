@@ -8,6 +8,7 @@
 
 import PureLayout
 import ReactiveCocoa
+import Result
 import WebImage
 import UIKit
 
@@ -109,19 +110,29 @@ class StreamViewController: UIViewController {
 					}
 		}
 		
-		loadState
-			.start() { [unowned self] event in
-				if case .Next(let state) = event {
-					if case .LoadingNext = state { self.loadMoreSpinner.startAnimating() } else { self.loadMoreSpinner.stopAnimating() }
-					if case .Loading = state { self.spinner.startAnimating() } else { self.spinner.stopAnimating() }
-					if case .LoadFailed = state {
-//						self.backgroundView.hidden = false
-//						self.emptyDataSet()
-					} else {
-//						self.backgroundView.hidden = true
-					}
+		let loading = loadState
+			.map { state -> Bool in
+				if case .Loading = state where self.viewModel.content.count == 0 {
+					return true
 				}
-		}
+				return false
+			}
+			.skipRepeats()
+			.flatMapError { _ in SignalProducer<Bool, NoError>.empty }
+		
+		let loadingMore = loadState
+			.map { state -> Bool in
+				if case .Loading = state where self.viewModel.content.count != 0 {
+					return true
+				}
+				return false
+			}
+			.skipRepeats()
+			.flatMapError { _ in SignalProducer<Bool, NoError>.empty }
+
+		
+		self.spinner.loading(loading)
+		self.loadMoreSpinner.loading(loadingMore)
 		
 		DynamicProperty(object: backgroundView.refreshButton, keyPath: "enabled")
 			<~ loadState.map { state -> Bool in
@@ -131,18 +142,9 @@ class StreamViewController: UIViewController {
 				return false
 		}
 		
+		// Observe next values on -load Action and insert rows for corresponding range
 		viewModel
-			.reload?
-			.events
-			.observeOn(UIScheduler())
-			.observeNext { [unowned self] event in
-				if case .Next = event {
-					self.tableView.reloadData()
-				}
-		}
-		
-		viewModel
-			.loadNext?
+			.load?
 			.events
 			.observeOn(UIScheduler())
 			.observeNext { [unowned self] event in
@@ -152,6 +154,14 @@ class StreamViewController: UIViewController {
 					self.tableView.insertRowsAtIndexPaths(paths, withRowAnimation: .None)
 					UIView.setAnimationsEnabled(true)
 				}
+		}
+		
+		viewModel
+			.load?
+			.events
+			.observeOn(UIScheduler())
+			.observeFailed { error in
+				print(error)
 		}
 	}
 	
@@ -182,7 +192,7 @@ class StreamViewController: UIViewController {
 	
 	func refreshButtonPressed() {
 		if case .Some(let location) = viewModel.locationStatus.value {
-			viewModel.reload.apply(location).start()
+//			viewModel.reload.apply(location).start()
 		}
 	}
 	
@@ -199,12 +209,10 @@ extension StreamViewController: UITableViewDelegate {
 		let size = scrollView.contentSize
 		let insets = scrollView.contentInset
 		
-		guard let executing = viewModel.loadNext?.executing.value else { return }
 		if ((offsetY + bounds.size.height - insets.bottom) > size.height &&
-			!executing &&
 			viewModel.loadState.value == .Loaded) {
 			if case .Some(let location) = viewModel.locationStatus.value {
-				viewModel.loadNext.apply(location).start()
+				viewModel.offset.value = viewModel.content.count
 			}
 		}
 	}

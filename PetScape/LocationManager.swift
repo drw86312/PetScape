@@ -64,6 +64,7 @@ class LocationManager: NSObject, CLLocationManagerDelegate {
 		}
 		
 		CLGeocoder().reverseGeocodeLocation(location, completionHandler: { [unowned self ] (placemarks, error) -> Void in
+			manager.stopUpdatingLocation()
 			if let error = error {
 				self._locationStatusProperty.value = .Error(error.localizedDescription)
 			}
