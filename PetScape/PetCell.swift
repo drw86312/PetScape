@@ -14,6 +14,8 @@ class PetCell: UITableViewCell {
 	
 	private let scrollView = UIScrollView()
 	private let labelView = PetCellLabelView()
+	
+	var imageViews = [UIImageView()]
 
 	var pet: Pet? {
 		didSet {
@@ -80,30 +82,60 @@ class PetCell: UITableViewCell {
 	}
 	
 	private func configureScrollView(pet: Pet) {
-		scrollView.subviews.forEach { $0.removeFromSuperview() }
-		if scrollView.frame != contentView.frame {
-			scrollView.frame = contentView.frame
+		if scrollView.frame != contentView.frame { scrollView.frame = contentView.frame }
+		
+		guard let photos = pet.photos else {
+			// Remove all but one imageView
+			imageViews[1..<imageViews.count].forEach { $0.removeFromSuperview() }
+			imageViews.removeRange(1..<imageViews.count)
+			scrollView.contentSize = CGSize(width: CGFloat(imageViews.count) * scrollView.frame.width, height: scrollView.frame.height)
+			scrollView.setContentOffset(scrollView.frame.origin, animated: false)
+			labelView.pageControl.hidden = true
+			labelView.pageControl.currentPage = 0
+			return
 		}
-		if let photos = pet.photos {
-			photos
+		
+		if photos.count > imageViews.count {
+			// Add imageViews
+			let new = (imageViews.count..<photos.count).map { _ in return UIImageView() }
+			imageViews.appendContentsOf(new)
+			imageViews
 				.enumerate()
-				.forEach { index, photo in
-					guard let url = photo.extraLargeURL else { return }
-					let imageView = UIImageView(frame: CGRect(
+				.forEach { index, imageView in
+				if imageView.superview == nil {
+					imageView.frame = CGRect(
 						x: CGFloat(index) * scrollView.frame.width,
 						y: scrollView.frame.origin.y,
 						width: scrollView.frame.width,
-						height: scrollView.frame.height))
+						height: scrollView.frame.height)
 					imageView.contentMode = .ScaleToFill
 					scrollView.addSubview(imageView)
-					imageView.sd_setImageWithURL(url, placeholderImage: UIColor.grayColor().imageFromColor())
+				}
 			}
-			scrollView.contentSize = CGSize(width: CGFloat(photos.count) * scrollView.frame.width, height: scrollView.frame.height)
-			labelView.pageControl.numberOfPages = photos.count
-			scrollView.setContentOffset(scrollView.frame.origin, animated: false)
-			labelView.pageControl.currentPage = 0
-			labelView.pageControl.hidden = photos.count < 2
+		} else if photos.count < imageViews.count {
+			// Remove imageViews
+			imageViews[photos.count..<imageViews.count].forEach { $0.removeFromSuperview() }
+			imageViews.removeRange(photos.count..<imageViews.count)
 		}
+		
+		// At this poing photos and imageViews count should be equal
+		if photos.count == imageViews.count {
+			imageViews
+				.enumerate()
+				.forEach { index, imageView in
+				 if let url = photos[index].extraLargeURL {
+					imageView.sd_setImageWithURL(url, placeholderImage: UIColor.grayColor().imageFromColor())
+					}
+			}
+		} else {
+			print("My math is wrong")
+		}
+		
+		scrollView.contentSize = CGSize(width: CGFloat(imageViews.count) * scrollView.frame.width, height: scrollView.frame.height)
+		scrollView.setContentOffset(scrollView.frame.origin, animated: false)
+		labelView.pageControl.numberOfPages = photos.count
+		labelView.pageControl.hidden = photos.count < 2
+		labelView.pageControl.currentPage = 0
 	}
 }
 

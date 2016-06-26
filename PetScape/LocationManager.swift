@@ -53,7 +53,7 @@ class LocationManager: NSObject, CLLocationManagerDelegate {
 		locationStatusProperty = AnyProperty(_locationStatusProperty)
 		super.init()
 		manager.delegate = self
-		manager.desiredAccuracy = kCLLocationAccuracyHundredMeters
+		manager.desiredAccuracy = kCLLocationAccuracyBest
 		manager.requestWhenInUseAuthorization()
 	}
 	

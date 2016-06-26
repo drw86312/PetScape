@@ -77,13 +77,13 @@ class StreamViewModel {
 			.skipRepeats(==)
 			.ignoreNil()
 		
-		let combined = uniqueLocations
+		let filterSignal = uniqueLocations
 			.combineLatestWith(animal.producer)
 			.combineLatestWith(breed.producer)
 			.combineLatestWith(size.producer)
 			.combineLatestWith(sex.producer)
 			.combineLatestWith(age.producer)
-			// Unpack the tuples
+			// Unpack tuples
 			.map { (tuple, age) -> (String, Animal?, String?, Size?, Sex?, Age?) in
 				let sex = tuple.1
 				let size = tuple.0.1
@@ -99,26 +99,49 @@ class StreamViewModel {
 					size: tuple.3,
 					sex: tuple.4,
 					age: tuple.5,
-					offset: self.offset,
+					offset: 0,
 					count: self.count)
-		}
+			}
 		
 		// Use this signal to cancel in-flight requests
-		let disposalSignal = combined
+		let disposalSignal = filterSignal
 			.map { _ in () }
 			.flatMapError { _ in SignalProducer<(), NoError>.empty }
 		
-		combined.startWithNext { endpoint in
-			self.load
-				.apply(endpoint)
-				.takeUntil(disposalSignal
-					.skip(1)
-					.take(1))
-				.start()
+//		disposalSignal
+//			.skip(1)
+//			.take(1)
+//			.startWithNext {
+//				print("Disposal")
+//		}
+		
+//		uniqueLocations.startWithNext { loc in
+//			print(loc)
+//		}
+		
+		filterSignal.startWithNext { [unowned self] endpoint in
+			if !self.load.executing.value {
+				print(self.load.executing.value)
+				self.load
+					.apply(endpoint)
+					.takeUntil(disposalSignal.skip(1).take(1))
+					.on(disposed: { print("Disposing") })
+					.start()
+			}
 		}
 		
+//		client.resourceList()
+//			.flatMap(.Latest) { (ids) -> SignalProducer<Resource, MyError> in
+//				let signalProducers = ids.map { client.fetchResource($0) }
+//				return SignalProducer(values: signalProducers).flatten(.Merge)
+//		}
+		
+//		let loading = SignalProducer<State, NoError>(value: .Loading)
+
+		
 		self.load = Action<Endpoint<[Pet]>, Range<Int>, Error> { endpoint in
-			return SignalProducer<Range<Int>, Error> { [unowned self] observer, _ in
+			print("Load called")
+			return SignalProducer<Range<Int>, Error> { [unowned self] observer, disposable in
 				API.fetch(endpoint) { [unowned self] response in
 					switch response.result {
 					case .Success(let content):
@@ -137,12 +160,10 @@ class StreamViewModel {
 		let isFindingLocation = locationStatus
 			.signal
 			.map { status -> LoadState? in
-				if case .Scanning = status {
-					return .Loading
-				}
+				if case .Scanning = status { return .Loading }
 				return nil
-		}
-		.ignoreNil()
+			}
+			.ignoreNil()
 		
 		let isFetchingData = self.load
 			.executing
@@ -190,6 +211,12 @@ class StreamViewModel {
 				.apply(endpoint)
 				.start()
 		}
+	}
+	
+	func reload() {
+		if content.count != 0 { content = [] }
+		self.offset = 0
+		loadNext()
 	}
 	
 	func generateEndpoint(location: String,

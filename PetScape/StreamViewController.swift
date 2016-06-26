@@ -174,6 +174,10 @@ class StreamViewController: UIViewController {
 				// TODO handle errors
 				print(error)
 		}
+		
+		viewModel.loadState.producer.startWithNext { state in
+//			print(state)
+		}
 	}
 	
 	private func emptyDataSet() {
@@ -202,9 +206,7 @@ class StreamViewController: UIViewController {
 	}
 	
 	func refreshButtonPressed() {
-		if case .Some(let location) = viewModel.locationStatus.value {
-//			viewModel.reload.apply(location).start()
-		}
+		viewModel.reload()
 	}
 	
 	override func preferredStatusBarStyle() -> UIStatusBarStyle {
@@ -223,6 +225,7 @@ extension StreamViewController: UITableViewDelegate {
 		if ((offsetY + bounds.size.height - insets.bottom) > size.height &&
 			viewModel.load.executing.value == false) {
 			viewModel.loadNext()
+			print("Load next")
 		}
 	}
 }
