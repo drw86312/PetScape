@@ -11,13 +11,13 @@ import UIKit
 
 extension UINavigationBar {
 	
-	var darkStyle: Bool {
+	var defaultStyle: Bool {
 		set {
-			barStyle = .BlackTranslucent
-			tintColor = .whiteColor()
+			barTintColor = UIColor(color: .MainColor)
+			titleTextAttributes = [NSForegroundColorAttributeName: UIColor(color: .LightGray)]
 		}
 		get {
-			return barStyle == .BlackTranslucent
+			return true
 		}
 	}
 }

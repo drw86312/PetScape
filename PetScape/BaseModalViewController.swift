@@ -32,7 +32,6 @@ class BaseModalViewController: UIViewController {
 	
 	override func loadView() {
 		view = UIVisualEffectView(effect: UIBlurEffect(style: UIBlurEffectStyle.Dark))
-		view.alpha = 0
 		view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(BaseModalViewController.dismiss)))
 		
 		contentView.backgroundColor = .whiteColor()
@@ -56,7 +55,6 @@ class BaseModalViewController: UIViewController {
 			initialSpringVelocity: Constants.springVelocity,
 			options: UIViewAnimationOptions(rawValue: 0),
 			animations: {
-				self.view.alpha = 1.0
 				self.view.layoutIfNeeded()
 			},
 			completion: nil)
@@ -80,7 +78,6 @@ class BaseModalViewController: UIViewController {
 			initialSpringVelocity: Constants.springVelocity,
 			options: UIViewAnimationOptions(rawValue: 0),
 			animations: {
-				self.view.alpha = 0.0
 				self.view.layoutIfNeeded()
 			},
 			completion: { finished in

@@ -11,47 +11,74 @@ import PureLayout
 
 class PetCellLabelView: UIView {
 	
-	private let blurView = UIVisualEffectView(effect: UIBlurEffect(style: UIBlurEffectStyle.Dark))
+	private let rightStackView = UIStackView()
+	let topButton = UIButton()
+	let bottomButton = UIButton()
+	
+	private let topStackView = UIStackView()
 	let titleLabel = UILabel()
 	let detailLabel = UILabel()
+	
 	let detailLabel2 = UILabel()
-	let pageControl = UIPageControl()
 	
 	init() {
 		super.init(frame: CGRectZero)
-		
-		titleLabel.textColor = .whiteColor()
+		backgroundColor = UIColor(color: .MainColor)
 		
 		detailLabel.font = UIFont.systemFontOfSize(16)
-		detailLabel.textColor = .whiteColor()
-		
 		detailLabel2.font = UIFont.systemFontOfSize(12)
-		detailLabel2.textColor = .whiteColor()
 		
-		addSubview(blurView)
-		addSubview(titleLabel)
-		addSubview(detailLabel)
+		[titleLabel, detailLabel, detailLabel2].forEach {
+			$0.textColor = .whiteColor()
+			$0.numberOfLines = 1
+			$0.lineBreakMode = .ByTruncatingTail
+		}
+		
+		topButton.setTitle("C", forState: .Normal)
+		bottomButton.setTitle("F", forState: .Normal)
+		
+		rightStackView.axis = .Horizontal
+		rightStackView.distribution = .EqualSpacing
+		rightStackView.alignment = .Fill
+		rightStackView.spacing = 10;
+		
+		rightStackView.addArrangedSubview(topButton)
+		rightStackView.addArrangedSubview(bottomButton)
+		
+		topStackView.axis = .Vertical
+		topStackView.distribution = .FillEqually
+		topStackView.alignment = .Leading
+		topStackView.spacing = 0
+		
+		topStackView.addArrangedSubview(titleLabel)
+		topStackView.addArrangedSubview(detailLabel)
+		
+		addSubview(topStackView)
+		addSubview(rightStackView)
 		addSubview(detailLabel2)
-		addSubview(pageControl)
-		
+
 		addConstraints()
 	}
 	
 	private func addConstraints() {
-		blurView.autoPinEdgesToSuperviewEdges()
 		
-		pageControl.autoAlignAxisToSuperviewAxis(.Vertical)
-		pageControl.autoPinEdgeToSuperviewEdge(.Top)
-		pageControl.autoSetDimension(.Height, toSize: 25)
+		rightStackView.arrangedSubviews.forEach {
+			$0.autoSetDimension(.Width, toSize: 40)
+			$0.autoSetDimension(.Height, toSize: 40)
+		}
 		
-		titleLabel.autoPinEdge(.Left, toEdge: .Left, ofView: self, withOffset: 15)
-		titleLabel.autoPinEdge(.Top, toEdge: .Bottom, ofView: pageControl, withOffset: -5)
+		rightStackView.autoPinEdge(.Right, toEdge: .Right, ofView: self, withOffset: -10)
+		rightStackView.autoPinEdge(.Bottom, toEdge: .Bottom, ofView: self)
+		rightStackView.autoSetDimension(.Width, toSize: 90)
 		
-		detailLabel.autoPinEdge(.Top, toEdge: .Bottom, ofView: titleLabel, withOffset: 5)
-		detailLabel.autoPinEdge(.Left, toEdge: .Left, ofView: self, withOffset: 15)
+		topStackView.autoPinEdge(.Left, toEdge: .Left, ofView: self, withOffset: 10)
+		topStackView.autoPinEdge(.Top, toEdge: .Top, ofView: self, withOffset: 5)
+		topStackView.autoPinEdge(.Bottom, toEdge: .Top, ofView: rightStackView)
+		topStackView.autoPinEdge(.Right, toEdge: .Right, ofView: self, withOffset: -10)
 		
-		detailLabel2.autoPinEdge(.Top, toEdge: .Bottom, ofView: detailLabel, withOffset: 5)
-		detailLabel2.autoPinEdge(.Left, toEdge: .Left, ofView: self, withOffset: 15)
+		detailLabel2.autoPinEdge(.Left, toEdge: .Left, ofView: topStackView)
+		detailLabel2.autoPinEdge(.Bottom, toEdge: .Bottom, ofView: self, withOffset: -5)
+		detailLabel2.autoPinEdge(.Right, toEdge: .Left, ofView: rightStackView, withOffset: -10)
 	}
 	
 	required init?(coder aDecoder: NSCoder) {

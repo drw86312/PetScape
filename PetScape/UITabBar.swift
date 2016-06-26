@@ -11,10 +11,9 @@ import UIKit
 
 extension UITabBar {
 	
-	var darkStyle: Bool {
+	var defaultStyle: Bool {
 		set {
-			barStyle = .Black
-			tintColor = .whiteColor()
+			tintColor = UIColor(color: .MainColor)
 		}
 		get {
 			return barStyle == .Black

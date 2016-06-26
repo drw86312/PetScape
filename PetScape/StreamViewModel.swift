@@ -121,7 +121,6 @@ class StreamViewModel {
 		
 		filterSignal.startWithNext { [unowned self] endpoint in
 			if !self.load.executing.value {
-				print(self.load.executing.value)
 				self.load
 					.apply(endpoint)
 					.takeUntil(disposalSignal.skip(1).take(1))
@@ -140,7 +139,6 @@ class StreamViewModel {
 
 		
 		self.load = Action<Endpoint<[Pet]>, Range<Int>, Error> { endpoint in
-			print("Load called")
 			return SignalProducer<Range<Int>, Error> { [unowned self] observer, disposable in
 				API.fetch(endpoint) { [unowned self] response in
 					switch response.result {

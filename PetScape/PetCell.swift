@@ -10,12 +10,18 @@ import UIKit
 import PureLayout
 import WebImage
 
+protocol PetCellDelegate {
+	func topButtonPressed()
+	func bottomButtonPressed()
+}
+
 class PetCell: UITableViewCell {
 	
 	private let scrollView = UIScrollView()
 	private let labelView = PetCellLabelView()
-	
-	var imageViews = [UIImageView()]
+	private let pageControl = UIPageControl()
+	private var imageViews = [UIImageView()]
+	var delegate: PetCellDelegate?
 
 	var pet: Pet? {
 		didSet {
@@ -37,8 +43,15 @@ class PetCell: UITableViewCell {
 		labelView.layer.cornerRadius = 5.0
 		labelView.layer.masksToBounds = true
 		
+		labelView.topButton.addTarget(self, action: #selector(PetCell.topButtonPressed(_:)), forControlEvents: .TouchUpInside)
+		labelView.bottomButton.addTarget(self, action: #selector(PetCell.bottomButtonPressed(_:)), forControlEvents: .TouchUpInside)
+		
+		pageControl.pageIndicatorTintColor = .whiteColor()
+		pageControl.currentPageIndicatorTintColor = UIColor(color: .MainColor)
+		
 		contentView.addSubview(scrollView)
 		contentView.addSubview(labelView)
+		contentView.addSubview(pageControl)
 		
 		addConstraints()
 	}
@@ -55,19 +68,21 @@ class PetCell: UITableViewCell {
 		labelView.autoPinEdgeToSuperviewEdge(.Left, withInset: 10)
 		labelView.autoPinEdgeToSuperviewEdge(.Right, withInset: 10)
 		labelView.autoPinEdgeToSuperviewEdge(.Bottom, withInset: 10)
-		labelView.autoSetDimension(.Height, toSize: 100)
+		
+		pageControl.autoAlignAxisToSuperviewAxis(.Vertical)
+		pageControl.autoPinEdgeToSuperviewEdge(.Top, withInset: 10)
 	}
 	
 	private func configureLabel(pet: Pet) {
 		
 		if let name = pet.name, let sex  = pet.sex {
-			let nameString = NSMutableAttributedString(string: name, attributes: [NSFontAttributeName : UIFont.boldSystemFontOfSize(21)])
+			let nameString = NSMutableAttributedString(string: name, attributes: [NSFontAttributeName : UIFont.boldSystemFontOfSize(24)])
 			let ageString = NSMutableAttributedString(string: "  |  " + sex.titleString, attributes: [NSFontAttributeName : UIFont.systemFontOfSize(18)])
 			nameString.appendAttributedString(ageString)
 			labelView.titleLabel.attributedText = nameString
 		} else {
 			labelView.titleLabel.attributedText =  NSMutableAttributedString(string: pet.name ?? "",
-			                                                                 attributes: [NSFontAttributeName : UIFont.systemFontOfSize(21, weight: 0.5)])
+			                                                                 attributes: [NSFontAttributeName : UIFont.systemFontOfSize(24, weight: 0.5)])
 		}
 		
 		if let breeds = pet.breeds,
@@ -90,8 +105,8 @@ class PetCell: UITableViewCell {
 			imageViews.removeRange(1..<imageViews.count)
 			scrollView.contentSize = CGSize(width: CGFloat(imageViews.count) * scrollView.frame.width, height: scrollView.frame.height)
 			scrollView.setContentOffset(scrollView.frame.origin, animated: false)
-			labelView.pageControl.hidden = true
-			labelView.pageControl.currentPage = 0
+			pageControl.hidden = true
+			pageControl.currentPage = 0
 			return
 		}
 		
@@ -118,7 +133,7 @@ class PetCell: UITableViewCell {
 			imageViews.removeRange(photos.count..<imageViews.count)
 		}
 		
-		// At this poing photos and imageViews count should be equal
+		// At this point photos and imageViews count should be equal
 		if photos.count == imageViews.count {
 			imageViews
 				.enumerate()
@@ -127,21 +142,29 @@ class PetCell: UITableViewCell {
 					imageView.sd_setImageWithURL(url, placeholderImage: UIColor.grayColor().imageFromColor())
 					}
 			}
-		} else {
-			print("My math is wrong")
 		}
 		
 		scrollView.contentSize = CGSize(width: CGFloat(imageViews.count) * scrollView.frame.width, height: scrollView.frame.height)
 		scrollView.setContentOffset(scrollView.frame.origin, animated: false)
-		labelView.pageControl.numberOfPages = photos.count
-		labelView.pageControl.hidden = photos.count < 2
-		labelView.pageControl.currentPage = 0
+		pageControl.numberOfPages = photos.count
+		pageControl.hidden = photos.count < 2
+		pageControl.currentPage = 0
+	}
+	
+	func topButtonPressed(sender: UIButton) {
+		guard let delegate = delegate else { return }
+		delegate.topButtonPressed()
+	}
+	
+	func bottomButtonPressed(sender: UIButton) {
+		guard let delegate = delegate else { return }
+		delegate.bottomButtonPressed()
 	}
 }
 
 extension PetCell: UIScrollViewDelegate {
 	
 	func scrollViewDidEndDecelerating(scrollView: UIScrollView) {
-		labelView.pageControl.currentPage = Int(scrollView.contentOffset.x / scrollView.frame.size.width)
+		pageControl.currentPage = Int(scrollView.contentOffset.x / scrollView.frame.size.width)
 	}
 }

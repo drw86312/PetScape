@@ -20,7 +20,11 @@ class StreamViewController: UIViewController {
 	let spinner = UIActivityIndicatorView(activityIndicatorStyle: .WhiteLarge)
 	let loadMoreSpinner = UIActivityIndicatorView(activityIndicatorStyle: .White)
 	
+	let scrollSignal: Signal<UIScrollView, NoError>
+	private let scrollObserver: Observer<UIScrollView, NoError>
+	
 	init() {
+		(scrollSignal, scrollObserver) = Signal.pipe()
 		super.init(nibName: nil, bundle: nil)
 		title = NSLocalizedString("Pets", comment: "")
 	}
@@ -33,8 +37,8 @@ class StreamViewController: UIViewController {
 		view = UIView()
 		view.backgroundColor = .blackColor()
 		
-		tableView.delegate = self
 		tableView.dataSource = self
+		tableView.delegate = self
 		tableView.rowHeight = 500.0
 		tableView.registerClass(PetCell.self,
 		                        forCellReuseIdentifier: NSStringFromClass(PetCell.self))
@@ -42,16 +46,18 @@ class StreamViewController: UIViewController {
 		backgroundView.refreshButton.addTarget(self,
 		                                       action: #selector(StreamViewController.refreshButtonPressed),
 		                                       forControlEvents: .TouchUpInside)
-		tableView.backgroundColor = .blackColor()
-		tableView.backgroundView?.backgroundColor = .blackColor()
+		tableView.backgroundColor = UIColor(color: .LightGray)
+		tableView.backgroundView?.backgroundColor = UIColor(color: .LightGray)
 		tableView.separatorStyle = .None
 		view.addSubview(tableView)
 		
 		loadMoreSpinner.frame = CGRectMake(0, 0, 320, 65)
 		loadMoreSpinner.hidesWhenStopped = true
+		loadMoreSpinner.color = UIColor(color: .MainColor)
 		tableView.tableFooterView = loadMoreSpinner
 		
 		spinner.hidesWhenStopped = true
+		spinner.color = UIColor(color: .MainColor)
 		view.addSubview(spinner)
 		
 		let filterIcon = UIButton(type: .Custom)
@@ -60,7 +66,7 @@ class StreamViewController: UIViewController {
 		                 action: #selector(StreamViewController.filterIconPressed),
 		                 forControlEvents: .TouchUpInside)
 		filterIcon.setImage(UIImage(named: "filter")?.imageWithRenderingMode(.AlwaysTemplate), forState: .Normal)
-		filterIcon.imageView?.tintColor = .whiteColor()
+		filterIcon.imageView?.tintColor = UIColor(color: .LightGray)
 		
 		let locationIcon = UIButton(type: .Custom)
 		locationIcon.frame = CGRect(x: 0, y: 0, width: 25, height: 25)
@@ -68,7 +74,7 @@ class StreamViewController: UIViewController {
 		                     action: #selector(StreamViewController.locationIconPressed),
 		                     forControlEvents: .TouchUpInside)
 		locationIcon.setImage(UIImage(named: "location")?.imageWithRenderingMode(.AlwaysTemplate), forState: .Normal)
-		locationIcon.imageView?.tintColor = .whiteColor()
+		locationIcon.imageView?.tintColor = UIColor(color: .LightGray)
 		
 		let space = UIBarButtonItem(barButtonSystemItem: .FixedSpace, target: nil, action: nil)
 		space.width = 20
@@ -175,8 +181,18 @@ class StreamViewController: UIViewController {
 				print(error)
 		}
 		
-		viewModel.loadState.producer.startWithNext { state in
-//			print(state)
+		// Start loading next batch when scrolled to end of loaded content
+		scrollSignal
+			.map { scrollView -> Bool in
+				return ((scrollView.contentOffset.y + scrollView.bounds.size.height - scrollView.contentInset.bottom) > scrollView.contentSize.height)
+			}
+			.skipRepeats()
+			.observeNext { [unowned self] didReachBottom in
+				if didReachBottom &&
+					!self.viewModel.load.executing.value &&
+					self.viewModel.loadState.value == .Loaded {
+					self.viewModel.loadNext()
+				}
 		}
 	}
 	
@@ -189,9 +205,6 @@ class StreamViewController: UIViewController {
 	
 	func filterIconPressed() {
 		navigationController?.pushViewController(FilterListViewController(), animated: true)
-//		let vc = BaseModalViewController()
-//		vc.modalPresentationStyle = .OverCurrentContext
-//		tabBarController?.presentViewController(vc, animated: false, completion: nil)
 	}
 	
 	func locationIconPressed() {
@@ -212,21 +225,29 @@ class StreamViewController: UIViewController {
 	override func preferredStatusBarStyle() -> UIStatusBarStyle {
 		return .LightContent
 	}
+	
+	deinit {
+		scrollObserver.sendCompleted()
+	}
 }
 
 extension StreamViewController: UITableViewDelegate {
 	
 	func scrollViewDidScroll(scrollView: UIScrollView) {
-		let offsetY = scrollView.contentOffset.y
-		let bounds = scrollView.bounds
-		let size = scrollView.contentSize
-		let insets = scrollView.contentInset
+		scrollObserver.sendNext(scrollView)
+	}
+}
+
+extension StreamViewController: PetCellDelegate {
+	
+	func topButtonPressed() {
+		let vc = BaseModalViewController()
+		vc.modalPresentationStyle = .OverCurrentContext
+		tabBarController?.presentViewController(vc, animated: false, completion: nil)
+	}
+	
+	func bottomButtonPressed() {
 		
-		if ((offsetY + bounds.size.height - insets.bottom) > size.height &&
-			viewModel.load.executing.value == false) {
-			viewModel.loadNext()
-			print("Load next")
-		}
 	}
 }
 
@@ -236,6 +257,7 @@ extension StreamViewController: UITableViewDataSource {
 	               cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
 		let cell = tableView.dequeueReusableCellWithIdentifier(NSStringFromClass(PetCell.self), forIndexPath: indexPath) as! PetCell
 		cell.pet = viewModel.content[indexPath.row]
+		cell.delegate = self
 		return cell
 	}
 	

@@ -24,16 +24,15 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 		let viewControllers = [UINavigationController(rootViewController: StreamViewController()),
 		                       UINavigationController(rootViewController: UIViewController()),
 		                       UINavigationController(rootViewController: UIViewController())]
-		viewControllers.forEach { $0.navigationBar.darkStyle = true }
+		viewControllers.forEach { $0.navigationBar.defaultStyle = true }
 		tab.viewControllers = viewControllers
-		tab.tabBar.darkStyle = true
+		tab.tabBar.defaultStyle = true
 		
 		window?.rootViewController = tab
 		window?.backgroundColor = UIColor.whiteColor()
 		window?.makeKeyAndVisible()
 		
 		return true
-		
 	}
 
 	func applicationWillResignActive(application: UIApplication) {
