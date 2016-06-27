@@ -46,6 +46,8 @@
 		819E8E131D0B65B000697ADB /* Dictionary.swift in Sources */ = {isa = PBXBuildFile; fileRef = 819E8E121D0B65B000697ADB /* Dictionary.swift */; };
 		81C58E631D1E2BB300635986 /* UIActivityIndicatorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 81C58E621D1E2BB300635986 /* UIActivityIndicatorView.swift */; };
 		81C58E651D1E2F1100635986 /* RAC+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 81C58E641D1E2F1100635986 /* RAC+Extensions.swift */; };
+		81C58E691D20B98F00635986 /* CircularProgressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 81C58E681D20B98F00635986 /* CircularProgressView.swift */; };
+		81C58E6B1D20B9AF00635986 /* LoadingImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 81C58E6A1D20B9AF00635986 /* LoadingImageView.swift */; };
 		81CE14BA1D14CC4F0092111E /* TableViewBackground.swift in Sources */ = {isa = PBXBuildFile; fileRef = 81CE14B91D14CC4F0092111E /* TableViewBackground.swift */; };
 		81CE14BC1D1732630092111E /* UITableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 81CE14BB1D1732630092111E /* UITableView.swift */; };
 		81CE14BE1D185A200092111E /* FilterListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 81CE14BD1D185A200092111E /* FilterListViewController.swift */; };
@@ -113,6 +115,8 @@
 		819E8E121D0B65B000697ADB /* Dictionary.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Dictionary.swift; sourceTree = "<group>"; };
 		81C58E621D1E2BB300635986 /* UIActivityIndicatorView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UIActivityIndicatorView.swift; sourceTree = "<group>"; };
 		81C58E641D1E2F1100635986 /* RAC+Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "RAC+Extensions.swift"; sourceTree = "<group>"; };
+		81C58E681D20B98F00635986 /* CircularProgressView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CircularProgressView.swift; sourceTree = "<group>"; };
+		81C58E6A1D20B9AF00635986 /* LoadingImageView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoadingImageView.swift; sourceTree = "<group>"; };
 		81CE14B91D14CC4F0092111E /* TableViewBackground.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TableViewBackground.swift; sourceTree = "<group>"; };
 		81CE14BB1D1732630092111E /* UITableView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UITableView.swift; sourceTree = "<group>"; };
 		81CE14BD1D185A200092111E /* FilterListViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FilterListViewController.swift; sourceTree = "<group>"; };
@@ -220,6 +224,8 @@
 			children = (
 				81919FC41D109EC0000334BC /* PetCellLabelView.swift */,
 				81CE14B91D14CC4F0092111E /* TableViewBackground.swift */,
+				81C58E681D20B98F00635986 /* CircularProgressView.swift */,
+				81C58E6A1D20B9AF00635986 /* LoadingImageView.swift */,
 			);
 			name = Views;
 			sourceTree = "<group>";
@@ -377,6 +383,8 @@
 				8134EB941D0F5650002B5C8F /* Animal.swift in Sources */,
 				815EBEB31D0E407E0056ECF6 /* API+Shelter.swift in Sources */,
 				81CE14C41D1877100092111E /* FilterLocationCell.swift in Sources */,
+				81C58E6B1D20B9AF00635986 /* LoadingImageView.swift in Sources */,
+				81C58E691D20B98F00635986 /* CircularProgressView.swift in Sources */,
 				810DD2771CEB6BEA00EAF8A8 /* StreamViewController.swift in Sources */,
 				819E8E091D0B5C5D00697ADB /* Pet.swift in Sources */,
 				81CE14C91D188C9B0092111E /* LocationManager.swift in Sources */,

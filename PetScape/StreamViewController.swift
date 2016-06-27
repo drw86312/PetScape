@@ -35,7 +35,7 @@ class StreamViewController: UIViewController {
 	
 	override func loadView() {
 		view = UIView()
-		view.backgroundColor = .blackColor()
+		view.backgroundColor = UIColor(color: .LightGray)
 		
 		tableView.dataSource = self
 		tableView.delegate = self

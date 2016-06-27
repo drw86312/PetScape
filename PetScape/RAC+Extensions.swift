@@ -11,7 +11,7 @@ import ReactiveCocoa
 import Result
 
 extension NSObject {
-	func rac_WillDeallocSignalProducer() -> SignalProducer<(), NoError>{
+	func rac_WillDeallocSignalProducer() -> SignalProducer<(), NoError> {
 		return self.rac_willDeallocSignal()
 			.toSignalProducer()
 			.flatMapError { _ in SignalProducer<AnyObject?, NoError>.empty}

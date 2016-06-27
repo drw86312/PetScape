@@ -20,7 +20,7 @@ class PetCell: UITableViewCell {
 	private let scrollView = UIScrollView()
 	private let labelView = PetCellLabelView()
 	private let pageControl = UIPageControl()
-	private var imageViews = [UIImageView()]
+	private var imageViews = [LoadingImageView(frame: CGRectZero)]
 	var delegate: PetCellDelegate?
 
 	var pet: Pet? {
@@ -112,7 +112,7 @@ class PetCell: UITableViewCell {
 		
 		if photos.count > imageViews.count {
 			// Add imageViews
-			let new = (imageViews.count..<photos.count).map { _ in return UIImageView() }
+			let new = (imageViews.count..<photos.count).map { _ in return LoadingImageView(frame: CGRectZero) }
 			imageViews.appendContentsOf(new)
 			imageViews
 				.enumerate()
@@ -139,7 +139,16 @@ class PetCell: UITableViewCell {
 				.enumerate()
 				.forEach { index, imageView in
 				 if let url = photos[index].extraLargeURL {
-					imageView.sd_setImageWithURL(url, placeholderImage: UIColor.grayColor().imageFromColor())
+					imageView.loadingView.isLoading.value = true
+					imageView.sd_setImageWithURL(
+						url,
+						placeholderImage: UIColor.grayColor().imageFromColor(),
+						options: .HighPriority,
+						progress: { (loaded, total) in
+							imageView.loadingView.loadingObserver.sendNext((CGFloat(loaded), CGFloat(total)))
+						}, completed: { (image, error, cache, url) in
+							imageView.loadingView.isLoading.value = false
+					})
 					}
 			}
 		}
