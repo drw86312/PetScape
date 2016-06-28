@@ -17,12 +17,21 @@ class BaseModalViewController: UIViewController {
 		static let springVelocity: CGFloat = 0.7
 	}
 	
+	enum PresentationStyle {
+		case Small
+		case Medium
+		case Large
+	}
+	
 	let contentView = UIView()
+	let blurView = UIVisualEffectView(effect: UIBlurEffect(style: UIBlurEffectStyle.Dark))
 	
 	var contentViewHorizontalConstraint: NSLayoutConstraint!
 	var contentViewHeightConstraint: NSLayoutConstraint!
+	var presentationStyle: PresentationStyle
 	
-	init() {
+	init(style: PresentationStyle = .Small) {
+		self.presentationStyle = style
 		super.init(nibName: nil, bundle: nil)
 	}
 	
@@ -31,8 +40,11 @@ class BaseModalViewController: UIViewController {
 	}
 	
 	override func loadView() {
-		view = UIVisualEffectView(effect: UIBlurEffect(style: UIBlurEffectStyle.Dark))
-		view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(BaseModalViewController.dismiss)))
+		view = UIView()
+		view.backgroundColor = .clearColor()
+		
+		blurView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(BaseModalViewController.dismiss)))
+		view.addSubview(blurView)
 		
 		contentView.backgroundColor = .whiteColor()
 		contentView.layer.masksToBounds = true
@@ -61,11 +73,26 @@ class BaseModalViewController: UIViewController {
 	}
 	
 	private func addConstraints() {
-		contentView.autoSetDimension(.Width, toSize: 250)
-		contentView.autoAlignAxisToSuperviewAxis(.Vertical)
-		contentViewHeightConstraint = contentView.autoSetDimension(.Height, toSize: 300)
-		contentViewHorizontalConstraint = contentView.autoAlignAxisToSuperviewAxis(.Horizontal)
 		
+		blurView.autoPinEdgesToSuperviewEdges()
+		
+		let widthConstraint = contentView.autoSetDimension(.Width, toSize: 0)
+		contentViewHeightConstraint = contentView.autoSetDimension(.Height, toSize: 0)
+		
+		switch presentationStyle {
+		case .Small:
+			widthConstraint.constant = UIScreen.mainScreen().bounds.width * 0.6
+			contentViewHeightConstraint.constant = UIScreen.mainScreen().bounds.height * 0.3
+		case .Medium:
+			widthConstraint.constant = UIScreen.mainScreen().bounds.width * 0.75
+			contentViewHeightConstraint.constant = UIScreen.mainScreen().bounds.height * 0.45
+		case .Large:
+			widthConstraint.constant = UIScreen.mainScreen().bounds.width * 0.9
+			contentViewHeightConstraint.constant = UIScreen.mainScreen().bounds.height * 0.6
+		}
+		
+		contentView.autoAlignAxisToSuperviewAxis(.Vertical)
+		contentViewHorizontalConstraint = contentView.autoAlignAxisToSuperviewAxis(.Horizontal)
 		contentViewHorizontalConstraint.constant = UIScreen.mainScreen().bounds.height/2 + contentViewHeightConstraint.constant
 	}
 	

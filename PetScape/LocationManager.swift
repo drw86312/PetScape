@@ -48,6 +48,7 @@ class LocationManager: NSObject, CLLocationManagerDelegate {
 	let manager = CLLocationManager()
 	private let _locationStatusProperty = MutableProperty<LocationStatus>(.NotDetermined)
 	let locationStatusProperty: AnyProperty<LocationStatus>
+	let userCoordinate = MutableProperty<CLLocationCoordinate2D?>(nil)
 	
 	override init() {
 		locationStatusProperty = AnyProperty(_locationStatusProperty)
@@ -74,6 +75,10 @@ class LocationManager: NSObject, CLLocationManagerDelegate {
 				return
 			}
 			
+			if let coordinate = placemark.location?.coordinate {
+				self.userCoordinate.value = coordinate
+			}
+						
 			// Give postal code precedence, then try city/state
 			if let postalCode = placemark.postalCode {
 				self._locationStatusProperty.value = .Some(postalCode)

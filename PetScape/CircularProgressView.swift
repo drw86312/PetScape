@@ -33,6 +33,7 @@ class CircularProgressView: UIView {
 	init(layerBackgroundColor: UIColor = .lightGrayColor(),
 	     layerTintColor: UIColor = UIColor(color: .MainColor),
 	     lineWidth: CGFloat = 15) {
+		
 		self.layerBackgroundColor = layerBackgroundColor
 		self.layerTintColor = layerTintColor
 		self.lineWidth = lineWidth
@@ -106,6 +107,7 @@ class CircularProgressView: UIView {
 	func generateLayer(startPoint: CGFloat,
 	                   endPoint: CGFloat,
 	                   strokeColor: UIColor = UIColor(color: .MainColor)) -> CAShapeLayer {
+		
 		let originDegrees = (360 * startPoint) - 90
 		let terminusDegrees = (360 * endPoint) - 90
 		

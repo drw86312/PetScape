@@ -11,7 +11,7 @@ import PureLayout
 import WebImage
 
 protocol PetCellDelegate {
-	func topButtonPressed()
+	func contactButtonPressed(pet: Pet)
 	func bottomButtonPressed()
 }
 
@@ -44,7 +44,7 @@ class PetCell: UITableViewCell {
 		labelView.layer.cornerRadius = 5.0
 		labelView.layer.masksToBounds = true
 		
-		labelView.topButton.addTarget(self, action: #selector(PetCell.topButtonPressed(_:)), forControlEvents: .TouchUpInside)
+		labelView.topButton.addTarget(self, action: #selector(PetCell.contactButtonPressed(_:)), forControlEvents: .TouchUpInside)
 		labelView.bottomButton.addTarget(self, action: #selector(PetCell.bottomButtonPressed(_:)), forControlEvents: .TouchUpInside)
 		
 		pageControl.pageIndicatorTintColor = .whiteColor()
@@ -166,9 +166,9 @@ class PetCell: UITableViewCell {
 		pageControl.currentPage = 0
 	}
 	
-	func topButtonPressed(sender: UIButton) {
-		guard let delegate = delegate else { return }
-		delegate.topButtonPressed()
+	func contactButtonPressed(sender: UIButton) {
+		guard let delegate = delegate, let pet = pet  else { return }
+		delegate.contactButtonPressed(pet)
 	}
 	
 	func bottomButtonPressed(sender: UIButton) {

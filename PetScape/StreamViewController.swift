@@ -240,8 +240,8 @@ extension StreamViewController: UITableViewDelegate {
 
 extension StreamViewController: PetCellDelegate {
 	
-	func topButtonPressed() {
-		let vc = BaseModalViewController()
+	func contactButtonPressed(pet: Pet) {
+		let vc = ContactViewController(pet: pet)
 		vc.modalPresentationStyle = .OverCurrentContext
 		tabBarController?.presentViewController(vc, animated: false, completion: nil)
 	}

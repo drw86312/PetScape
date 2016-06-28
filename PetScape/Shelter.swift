@@ -12,8 +12,8 @@ import Curry
 struct Shelter {
 	let id: String
 	let name: String
-	let latitude: Float
-	let longitude: Float
+	let latitude: Double
+	let longitude: Double
 	let contact: Contact
 }
 
@@ -22,8 +22,8 @@ extension Shelter: Decodable {
 		let shelter = curry(Shelter.init)
 			<^> json <| ["id", "$t"]
 			<*> json <| ["name" ,"$t"]
-			<*> (json <| ["latitude" ,"$t"] >>- toFloat)
-			<*> (json <| ["longitude" ,"$t"] >>- toFloat)
+			<*> (json <| ["latitude" ,"$t"] >>- toDouble)
+			<*> (json <| ["longitude" ,"$t"] >>- toDouble)
 			<*> json <| []
 		return shelter
 	}
