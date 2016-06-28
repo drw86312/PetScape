@@ -33,7 +33,6 @@ class CircularProgressView: UIView {
 	init(layerBackgroundColor: UIColor = .lightGrayColor(),
 	     layerTintColor: UIColor = UIColor(color: .MainColor),
 	     lineWidth: CGFloat = 15) {
-		
 		self.layerBackgroundColor = layerBackgroundColor
 		self.layerTintColor = layerTintColor
 		self.lineWidth = lineWidth
@@ -60,7 +59,7 @@ class CircularProgressView: UIView {
 			.combinePrevious(0.0)
 			.observeOn(UIScheduler())
 			.observeNext { [unowned self] (prev, next) in
-				let prev = prev == 1 ? 0: prev
+				let prev = prev == 1 ? 0 : prev
 				if fabs(next) - fabs(prev) != 0 {
 					let newLayer = self.generateLayer(prev, endPoint: next)
 					self.loadingLayers.append(newLayer)
@@ -68,56 +67,40 @@ class CircularProgressView: UIView {
 				}
 		}
 		
-		loadState <~ progressSignal.map { progress -> LoadState in
-			if progress == 1.0 {
-				return .Loaded
-			} else if progress == 0.0 {
-				return .NotLoaded
-			} else {
-				return .Loading
-			}
+		loadState <~ progressSignal
+			.map { progress in
+				if progress >= 1.0 { return .Loaded }
+				else if progress <= 0.0 { return .NotLoaded }
+				else { return .Loading }
 		}
 		
-		DynamicProperty(object: self,
-		                keyPath: "hidden") <~ progressSignal
-							.map { progress -> Bool in
-								return (progress == 1.0)
-							}
-							.skipRepeats()
-		
-		DynamicProperty(object: accessoryView,
-		                keyPath: "hidden") <~ loadState
-							.signal
-							.map { state -> Bool in
-								if state != .Error {
-									return true
-								}
-								return false
-							}
-							.skipRepeats()
-		
-		DynamicProperty(object: backingLayer,
-		                keyPath: "hidden") <~ loadState
-							.signal
-							.map { state -> Bool in
-								if state == .Error {
-									return true
-								}
-								return false
-							}
-							.skipRepeats()
-		
-		loadState
-			.producer
+		let didFinishLoading = loadState
+			.signal
 			.observeOn(UIScheduler())
+			.map { $0 == .Loaded }
 			.skipRepeats()
-			.takeUntil(rac_WillDeallocSignalProducer())
-			.startWithNext { [unowned self] state in
-				if state == .Loaded {
+		
+		didFinishLoading
+			.observeNext { [unowned self] finished in
+				if finished {
 					self.loadingLayers.forEach { $0.removeFromSuperlayer() }
 					self.loadingLayers = []
 				}
 		}
+		
+		DynamicProperty(object: self,
+		                keyPath: "hidden") <~ didFinishLoading
+		
+		let didError = loadState
+			.signal
+			.map { $0 == .Error }
+			.skipRepeats()
+		
+		DynamicProperty(object: backingLayer,
+		                keyPath: "hidden") <~ didError
+		
+		DynamicProperty(object: accessoryView,
+		                keyPath: "hidden") <~ didError.map { !$0 }
 	}
 	
 	func generateLayer(startPoint: CGFloat,
@@ -129,7 +112,8 @@ class CircularProgressView: UIView {
 		let originRadians = originDegrees * CGFloat(M_PI/180)
 		let terminusRadians = terminusDegrees * CGFloat(M_PI/180)
 		
-		let circlePath = UIBezierPath(arcCenter: CGPoint(x: bounds.origin.x + bounds.size.width/2, y: bounds.origin.y + bounds.size.height/2),
+		let circlePath = UIBezierPath(arcCenter: CGPoint(x: bounds.origin.x + bounds.size.width/2,
+														 y: bounds.origin.y + bounds.size.height/2),
 		                              radius: CGFloat(frame.size.width/2) - lineWidth/2,
 		                              startAngle: originRadians,
 		                              endAngle: terminusRadians,
