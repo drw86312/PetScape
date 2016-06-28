@@ -39,6 +39,7 @@ class PetCell: UITableViewCell {
 		scrollView.alwaysBounceHorizontal = false
 		scrollView.bounces = false
 		scrollView.delegate = self
+		scrollView.backgroundColor = .grayColor()
 		
 		labelView.layer.cornerRadius = 5.0
 		labelView.layer.masksToBounds = true
@@ -139,15 +140,20 @@ class PetCell: UITableViewCell {
 				.enumerate()
 				.forEach { index, imageView in
 				 if let url = photos[index].extraLargeURL {
-					imageView.loadingView.isLoading.value = true
 					imageView.sd_setImageWithURL(
 						url,
 						placeholderImage: UIColor.grayColor().imageFromColor(),
 						options: .HighPriority,
 						progress: { (loaded, total) in
-							imageView.loadingView.loadingObserver.sendNext((CGFloat(loaded), CGFloat(total)))
-						}, completed: { (image, error, cache, url) in
-							imageView.loadingView.isLoading.value = false
+							imageView.loadingView.progress.value = CGFloat(loaded)/CGFloat(total)
+						}, completed: { (image, error, _, _) in
+							if error != nil || image == nil {
+								imageView.loadingView.loadState.value = .Error
+							} else {
+								if imageView.loadingView.progress.value != 1.0 {
+									imageView.loadingView.progress.value = 1.0
+								}
+							}
 					})
 					}
 			}

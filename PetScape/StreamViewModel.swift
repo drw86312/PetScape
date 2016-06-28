@@ -70,7 +70,7 @@ class StreamViewModel {
 			.producer
 			.map { state -> String? in
 				if case .Some(let location) = state {
-					return location
+					return "60642"
 				}
 				return nil
 			}

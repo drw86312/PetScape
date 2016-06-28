@@ -12,16 +12,23 @@ import UIKit
 
 class CircularProgressView: UIView {
 	
-	var loadingLayers: [CAShapeLayer] = []
-
+	enum LoadState {
+		case NotLoaded
+		case Loaded
+		case Loading
+		case Error
+	}
+	
 	var layerBackgroundColor: UIColor
 	var layerTintColor: UIColor
 	var lineWidth: CGFloat
 	
-	let isLoading = MutableProperty<Bool>(false)
+	let progress = MutableProperty<CGFloat>(0.0)
+	let loadState = MutableProperty<LoadState>(.NotLoaded)
 	
-	let loadingSignal: Signal<(progress: CGFloat, total: CGFloat), NoError>
-	let loadingObserver: Observer<(progress: CGFloat, total: CGFloat), NoError>
+	private var loadingLayers: [CAShapeLayer] = []
+	private let accessoryView = UIImageView()
+	private var backingLayer: CAShapeLayer!
 	
 	init(layerBackgroundColor: UIColor = .lightGrayColor(),
 	     layerTintColor: UIColor = UIColor(color: .MainColor),
@@ -30,43 +37,85 @@ class CircularProgressView: UIView {
 		self.layerBackgroundColor = layerBackgroundColor
 		self.layerTintColor = layerTintColor
 		self.lineWidth = lineWidth
-		(loadingSignal, loadingObserver) = Signal.pipe()
 		
 		super.init(frame: CGRectZero)
+		
 		frame.size = CGSize(width: 100, height: 100)
 		
-		// Add background layer
-		layer.addSublayer(generateLayer(0.0,
-			endPoint: 1.0,
-			strokeColor: layerBackgroundColor))
+		accessoryView.frame = CGRect(x: 0, y: 0, width: frame.size.width - (2 * lineWidth), height: frame.size.height - (2 * lineWidth))
+		accessoryView.image = UIImage(named: "bash")?.imageWithRenderingMode(.AlwaysTemplate)
+		accessoryView.tintColor = layerBackgroundColor
+		accessoryView.contentMode = .ScaleToFill
+		addSubview(accessoryView)
 		
-		isLoading
-			.producer
-			.skipRepeats()
+		// Add background layer
+		backingLayer = generateLayer(0.0,
+		                             endPoint: 1.0,
+		                             strokeColor: layerBackgroundColor)
+		layer.addSublayer(backingLayer)
+		
+		let progressSignal = AnyProperty(progress).signal
+		
+		progressSignal
+			.combinePrevious(0.0)
 			.observeOn(UIScheduler())
-			.takeUntil(rac_WillDeallocSignalProducer())
-			.startWithNext { [unowned self] loading in
-				if !loading {
-					self.loadingLayers.forEach { $0.removeFromSuperlayer() }
-					self.loadingLayers = []
-					self.hidden = true
-				} else {
-					self.hidden = false
+			.observeNext { [unowned self] (prev, next) in
+				let prev = prev == 1 ? 0: prev
+				if fabs(next) - fabs(prev) != 0 {
+					let newLayer = self.generateLayer(prev, endPoint: next)
+					self.loadingLayers.append(newLayer)
+					self.layer.addSublayer(newLayer)
 				}
 		}
 		
-		// Observe progress -> generate arcs representing incremental progress -> add to self.layer
-		loadingSignal
-			.combinePrevious((0.0, 0.0))
+		loadState <~ progressSignal.map { progress -> LoadState in
+			if progress == 1.0 {
+				return .Loaded
+			} else if progress == 0.0 {
+				return .NotLoaded
+			} else {
+				return .Loading
+			}
+		}
+		
+		DynamicProperty(object: self,
+		                keyPath: "hidden") <~ progressSignal
+							.map { progress -> Bool in
+								return (progress == 1.0)
+							}
+							.skipRepeats()
+		
+		DynamicProperty(object: accessoryView,
+		                keyPath: "hidden") <~ loadState
+							.signal
+							.map { state -> Bool in
+								if state != .Error {
+									return true
+								}
+								return false
+							}
+							.skipRepeats()
+		
+		DynamicProperty(object: backingLayer,
+		                keyPath: "hidden") <~ loadState
+							.signal
+							.map { state -> Bool in
+								if state == .Error {
+									return true
+								}
+								return false
+							}
+							.skipRepeats()
+		
+		loadState
+			.producer
 			.observeOn(UIScheduler())
-			.observeNext { [unowned self] (previous: (progress: CGFloat, total: CGFloat),
-										   next: (progress: CGFloat, total: CGFloat)) in
-				let oldProgress = previous.progress/previous.total
-				let newProgress = next.progress/next.total
-				if fabs(newProgress) - fabs(oldProgress) != 0 {
-					let newLayer = self.generateLayer(oldProgress, endPoint: newProgress)
-					self.loadingLayers.append(newLayer)
-					self.layer.addSublayer(newLayer)
+			.skipRepeats()
+			.takeUntil(rac_WillDeallocSignalProducer())
+			.startWithNext { [unowned self] state in
+				if state == .Loaded {
+					self.loadingLayers.forEach { $0.removeFromSuperlayer() }
+					self.loadingLayers = []
 				}
 		}
 	}
@@ -97,7 +146,8 @@ class CircularProgressView: UIView {
 		fatalError("init(coder:) has not been implemented")
 	}
 	
-	deinit {
-		loadingObserver.sendCompleted()
+	override func layoutSubviews() {
+		super.layoutSubviews()
+		accessoryView.center = CGPoint(x: bounds.origin.x + bounds.size.width/2, y: bounds.origin.y + bounds.size.height/2)
 	}
 }
