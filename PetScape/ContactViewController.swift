@@ -42,6 +42,8 @@ class ContactViewController: BaseModalViewController {
 	let bottomStackView = UIStackView()
 	var buttonHeight: NSLayoutConstraint!
 	
+	let spinner = UIActivityIndicatorView(activityIndicatorStyle: .White)
+	
 	var delegate: ContactViewControllerDelegate?
 	
 	init(pet: Pet) {
@@ -73,10 +75,8 @@ class ContactViewController: BaseModalViewController {
 		titleLabel.font = UIFont.boldSystemFontOfSize(19)
 		titleLabel.text = viewModel.pet.name
 		
-		closeButton.setBackgroundImage(UIColor.orangeColor().imageFromColor(),
-		                               forState: .Normal)
-		closeButton.addTarget(self, action: #selector(ContactViewController.close),
-		                      forControlEvents: .TouchUpInside)
+		closeButton.setBackgroundImage(UIColor.orangeColor().imageFromColor(), forState: .Normal)
+		closeButton.addTarget(self, action: #selector(ContactViewController.dismiss), forControlEvents: .TouchUpInside)
 		
 		topStackView.addArrangedSubview(petImageView)
 		topStackView.addArrangedSubview(titleLabel)
@@ -104,15 +104,18 @@ class ContactViewController: BaseModalViewController {
 		let link = UIButton()
 		link.setTitle("A", forState: .Normal)
 		link.setBackgroundImage(UIColor.greenColor().imageFromColor(), forState: .Normal)
+		link.addTarget(self, action: #selector(ContactViewController.linkButtonPressed), forControlEvents: .TouchUpInside)
 		
 		let email = UIButton()
 		email.setTitle("B", forState: .Normal)
 		email.setBackgroundImage(UIColor.blueColor().imageFromColor(), forState: .Normal)
+		email.addTarget(self, action: #selector(ContactViewController.emailButtonPressed), forControlEvents: .TouchUpInside)
 		
 		let phone = UIButton()
 		phone.setTitle("C", forState: .Normal)
 		phone.setBackgroundImage(UIColor.yellowColor().imageFromColor(), forState: .Normal)
-	
+		phone.addTarget(self, action: #selector(ContactViewController.phoneButtonPressed), forControlEvents: .TouchUpInside)
+
 		bottomStackView.addArrangedSubview(link)
 		bottomStackView.addArrangedSubview(email)
 		bottomStackView.addArrangedSubview(phone)
@@ -123,6 +126,10 @@ class ContactViewController: BaseModalViewController {
 		rootStackView.addArrangedSubview(bottomStackView)
 		
 		contentView.addSubview(rootStackView)
+		
+		spinner.hidesWhenStopped = true
+		spinner.color = UIColor(color: .MainColor)
+		view.addSubview(spinner)
 		
 		addConstraints()
 	}
@@ -142,6 +149,7 @@ class ContactViewController: BaseModalViewController {
 		}
 		
 		viewModel.fetchShelter.apply(viewModel.pet).start()
+		spinner.loading(viewModel.fetchShelter.executing.signal)
 	}
 	
 	 private func addConstraints() {
@@ -164,10 +172,27 @@ class ContactViewController: BaseModalViewController {
 		distanceLabel.autoPinEdge(.Right, toEdge: .Right, ofView: labelContainer)
 		distanceLabel.autoPinEdge(.Top, toEdge: .Top, ofView: labelContainer)
 		distanceLabel.autoPinEdge(.Left, toEdge: .Right, ofView: addressLabel)
+		
+		spinner.autoCenterInSuperview()
 	}
 	
 	required init?(coder aDecoder: NSCoder) {
 		fatalError("init(coder:) has not been implemented")
+	}
+	
+	func linkButtonPressed() {
+		guard let delegate = delegate  else { return }
+		delegate.didSelectAction(.Link("link"))
+	}
+	
+	func emailButtonPressed() {
+		guard let delegate = delegate else { return }
+		delegate.didSelectAction(.Email("email"))
+	}
+	
+	func phoneButtonPressed() {
+		guard let delegate = delegate else { return }
+		delegate.didSelectAction(.Phone("phone"))
 	}
 	
 	func mapViewPressed() {
@@ -183,10 +208,6 @@ class ContactViewController: BaseModalViewController {
 //				self.view.layoutIfNeeded()
 //			},
 //			completion: nil)
-	}
-	
-	func close() {
-		
 	}
 	
 	private func configureAddressLabel(shelter: Shelter) {

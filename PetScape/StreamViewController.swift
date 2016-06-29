@@ -95,9 +95,9 @@ class StreamViewController: UIViewController {
 	override func viewDidLoad() {
 		super.viewDidLoad()
 		
-		let loadState = viewModel
+		let loadSignal = viewModel
 			.loadState
-			.producer
+			.signal
 			.observeOn(UIScheduler())
 			.skipRepeats()
 		
@@ -107,7 +107,7 @@ class StreamViewController: UIViewController {
 			.observeOn(UIScheduler())
 		
 		DynamicProperty(object: backgroundView, keyPath: "hidden") <~
-			loadState
+			loadSignal
 				.map { state -> Bool in
 					if case .Failed = state {
 						return false
@@ -126,7 +126,7 @@ class StreamViewController: UIViewController {
 					}
 		}
 		
-		let loadingFirst = loadState
+		let loadingFirst = loadSignal
 			.map { state -> Bool in
 				if case .Loading = state where self.viewModel.content.count == 0 {
 					return true
@@ -136,7 +136,7 @@ class StreamViewController: UIViewController {
 			.skipRepeats()
 			.flatMapError { _ in SignalProducer<Bool, NoError>.empty }
 		
-		let loadingMore = loadState
+		let loadingMore = loadSignal
 			.map { state -> Bool in
 				if case .Loading = state where self.viewModel.content.count != 0 {
 					return true
@@ -146,12 +146,11 @@ class StreamViewController: UIViewController {
 			.skipRepeats()
 			.flatMapError { _ in SignalProducer<Bool, NoError>.empty }
 
-		
 		self.spinner.loading(loadingFirst)
 		self.loadMoreSpinner.loading(loadingMore)
 		
 		DynamicProperty(object: backgroundView.refreshButton, keyPath: "enabled")
-			<~ loadState.map { state -> Bool in
+			<~ loadSignal.map { state -> Bool in
 				if state == .Failed {
 					return true
 				}
@@ -271,9 +270,22 @@ extension StreamViewController: ContactViewControllerDelegate {
 	
 	func didSelectAction(action: ContactAction) {
 		switch action {
-		case .Phone(let phone): break
-		case .Email(let email): break
-		case .Link(let link): break
+		case .Phone(let phone):
+			let set = NSCharacterSet.decimalDigitCharacterSet().invertedSet
+			let strippedNumber = phone.componentsSeparatedByCharactersInSet(set).joinWithSeparator("")
+			print(strippedNumber)
+			
+//			NSString *newString = [[origString componentsSeparatedByCharactersInSet:
+//				[[NSCharacterSet decimalDigitCharacterSet] invertedSet]]
+//				componentsJoinedByString:@""];
+			
+//			NSString *phoneNumber = [@"tel://" stringByAppendingString:mymobileNO.titleLabel.text];
+//			[[UIApplication sharedApplication] openURL:[NSURL URLWithString:phoneNumber]];
+		print(phone)
+		case .Email(let email):
+		print(email)
+		case .Link(let link):
+		print(link)
 		}
 	}
 }

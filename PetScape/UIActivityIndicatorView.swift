@@ -13,14 +13,11 @@ import UIKit
 
 extension UIActivityIndicatorView {
 	
-	func loading(signal: SignalProducer<Bool, NoError>) {
+	func loading(signal: Signal<Bool, NoError>) {
 		signal
-			.producer
-			.takeUntil(rac_WillDeallocSignalProducer())
-			.start() { event in
-				if case .Next(let loading) = event {
-					loading ? self.startAnimating() : self.stopAnimating()
-				}
+			.observeOn(UIScheduler())
+			.observeNext { [unowned self] loading in
+				loading ? self.startAnimating() : self.stopAnimating()
 		}
 	}
 }
