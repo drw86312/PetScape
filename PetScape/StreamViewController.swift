@@ -242,6 +242,7 @@ extension StreamViewController: PetCellDelegate {
 	
 	func contactButtonPressed(pet: Pet) {
 		let vc = ContactViewController(pet: pet)
+		vc.delegate = self
 		vc.modalPresentationStyle = .OverCurrentContext
 		tabBarController?.presentViewController(vc, animated: false, completion: nil)
 	}
@@ -263,6 +264,17 @@ extension StreamViewController: UITableViewDataSource {
 	
 	func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
 		return viewModel.content.count
+	}
+}
+
+extension StreamViewController: ContactViewControllerDelegate {
+	
+	func didSelectAction(action: ContactAction) {
+		switch action {
+		case .Phone(let phone): break
+		case .Email(let email): break
+		case .Link(let link): break
+		}
 	}
 }
 

@@ -85,10 +85,10 @@ class BaseModalViewController: UIViewController {
 			contentViewHeightConstraint.constant = UIScreen.mainScreen().bounds.height * 0.3
 		case .Medium:
 			widthConstraint.constant = UIScreen.mainScreen().bounds.width * 0.75
-			contentViewHeightConstraint.constant = UIScreen.mainScreen().bounds.height * 0.45
+			contentViewHeightConstraint.constant = UIScreen.mainScreen().bounds.height * 0.5
 		case .Large:
 			widthConstraint.constant = UIScreen.mainScreen().bounds.width * 0.9
-			contentViewHeightConstraint.constant = UIScreen.mainScreen().bounds.height * 0.6
+			contentViewHeightConstraint.constant = UIScreen.mainScreen().bounds.height * 0.7
 		}
 		
 		contentView.autoAlignAxisToSuperviewAxis(.Vertical)

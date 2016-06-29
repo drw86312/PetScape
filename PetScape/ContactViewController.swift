@@ -10,12 +10,28 @@ import UIKit
 import MapKit
 import PureLayout
 import ReactiveCocoa
+import WebImage
+
+enum ContactAction {
+	case Phone(String)
+	case Email(String)
+	case Link(String)
+}
+
+protocol ContactViewControllerDelegate {
+	func didSelectAction(action: ContactAction)
+}
 
 class ContactViewController: BaseModalViewController {
 	
 	let viewModel: ContactViewModel
 	
-	let mainStackView = UIStackView()
+	let rootStackView = UIStackView()
+	
+	let topStackView = UIStackView()
+	let petImageView = UIImageView()
+	let titleLabel = UILabel()
+	let closeButton = UIButton()
 	
 	let mapView = MKMapView()
 	
@@ -23,9 +39,10 @@ class ContactViewController: BaseModalViewController {
 	let addressLabel = UILabel()
 	let distanceLabel = UILabel()
 	
-	let buttonsStackView = UIStackView()
-	
+	let bottomStackView = UIStackView()
 	var buttonHeight: NSLayoutConstraint!
+	
+	var delegate: ContactViewControllerDelegate?
 	
 	init(pet: Pet) {
 		self.viewModel = ContactViewModel(pet: pet)
@@ -35,10 +52,35 @@ class ContactViewController: BaseModalViewController {
 	override func loadView() {
 		super.loadView()
 		
-		mainStackView.axis = .Vertical
-		mainStackView.distribution = .Fill
-		mainStackView.alignment = .Fill
-		mainStackView.spacing = 10;
+		rootStackView.axis = .Vertical
+		rootStackView.distribution = .Fill
+		rootStackView.alignment = .Fill
+		rootStackView.spacing = 10;
+		
+		topStackView.axis = .Horizontal
+		topStackView.distribution = .FillProportionally
+		topStackView.alignment = .Fill
+		topStackView.spacing = 10;
+		
+		petImageView.layer.cornerRadius = 15
+		petImageView.layer.masksToBounds = true
+		petImageView.sd_setImageWithURL(viewModel.pet.photos?.first?.thumbnailURL,
+		                                placeholderImage: UIColor.darkGrayColor().imageFromColor())
+		
+		titleLabel.textColor = .darkGrayColor()
+		titleLabel.numberOfLines = 1
+		titleLabel.textAlignment = .Center
+		titleLabel.font = UIFont.boldSystemFontOfSize(19)
+		titleLabel.text = viewModel.pet.name
+		
+		closeButton.setBackgroundImage(UIColor.orangeColor().imageFromColor(),
+		                               forState: .Normal)
+		closeButton.addTarget(self, action: #selector(ContactViewController.close),
+		                      forControlEvents: .TouchUpInside)
+		
+		topStackView.addArrangedSubview(petImageView)
+		topStackView.addArrangedSubview(titleLabel)
+		topStackView.addArrangedSubview(closeButton)
 		
 		mapView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(ContactViewController.mapViewPressed)))
 		mapView.delegate = self
@@ -54,32 +96,33 @@ class ContactViewController: BaseModalViewController {
 		distanceLabel.font = UIFont.systemFontOfSize(12)
 		labelContainer.addSubview(distanceLabel)
 		
-		buttonsStackView.axis = .Horizontal
-		buttonsStackView.distribution = .EqualCentering
-		buttonsStackView.alignment = .Fill
-		buttonsStackView.spacing = 10;
+		bottomStackView.axis = .Horizontal
+		bottomStackView.distribution = .EqualCentering
+		bottomStackView.alignment = .Fill
+		bottomStackView.spacing = 10;
 		
-		let button1 = UIButton()
-		button1.setTitle("A", forState: .Normal)
-		button1.setBackgroundImage(UIColor.greenColor().imageFromColor(), forState: .Normal)
+		let link = UIButton()
+		link.setTitle("A", forState: .Normal)
+		link.setBackgroundImage(UIColor.greenColor().imageFromColor(), forState: .Normal)
 		
-		let button2 = UIButton()
-		button2.setTitle("B", forState: .Normal)
-		button2.setBackgroundImage(UIColor.blueColor().imageFromColor(), forState: .Normal)
+		let email = UIButton()
+		email.setTitle("B", forState: .Normal)
+		email.setBackgroundImage(UIColor.blueColor().imageFromColor(), forState: .Normal)
 		
-		let button3 = UIButton()
-		button3.setTitle("C", forState: .Normal)
-		button3.setBackgroundImage(UIColor.yellowColor().imageFromColor(), forState: .Normal)
-
-		buttonsStackView.addArrangedSubview(button1)
-		buttonsStackView.addArrangedSubview(button2)
-		buttonsStackView.addArrangedSubview(button3)
+		let phone = UIButton()
+		phone.setTitle("C", forState: .Normal)
+		phone.setBackgroundImage(UIColor.yellowColor().imageFromColor(), forState: .Normal)
+	
+		bottomStackView.addArrangedSubview(link)
+		bottomStackView.addArrangedSubview(email)
+		bottomStackView.addArrangedSubview(phone)
 		
-		mainStackView.addArrangedSubview(mapView)
-		mainStackView.addArrangedSubview(labelContainer)
-		mainStackView.addArrangedSubview(buttonsStackView)
+		rootStackView.addArrangedSubview(topStackView)
+		rootStackView.addArrangedSubview(mapView)
+		rootStackView.addArrangedSubview(labelContainer)
+		rootStackView.addArrangedSubview(bottomStackView)
 		
-		contentView.addSubview(mainStackView)
+		contentView.addSubview(rootStackView)
 		
 		addConstraints()
 	}
@@ -95,7 +138,6 @@ class ContactViewController: BaseModalViewController {
 				if case .Next(let shelter) = event {
 					self.configureMapView(shelter)
 					self.configureAddressLabel(shelter)
-					print(shelter.contact)
 				}
 		}
 		
@@ -103,12 +145,15 @@ class ContactViewController: BaseModalViewController {
 	}
 	
 	 private func addConstraints() {
-		mainStackView.autoPinEdgesToSuperviewMargins()
+		rootStackView.autoPinEdgesToSuperviewMargins()
 		
-		buttonsStackView.arrangedSubviews.forEach {
+		bottomStackView.arrangedSubviews.forEach {
 			$0.autoSetDimension(.Width, toSize: 50)
 			$0.autoSetDimension(.Height, toSize: 50)
 		}
+		
+		petImageView.autoSetDimensionsToSize(CGSize(width: 30, height: 30))
+		closeButton.autoSetDimensionsToSize(CGSize(width: 30, height: 30))
 		
 		mapView.autoSetDimension(.Height, toSize: 200)
 		
@@ -140,35 +185,16 @@ class ContactViewController: BaseModalViewController {
 //			completion: nil)
 	}
 	
+	func close() {
+		
+	}
+	
 	private func configureAddressLabel(shelter: Shelter) {
 		
 		let titleText = shelter.name.characters.count > 0 ? shelter.name + "\n" : ""
 		
-		var total: String = ""
-		
-		var address = shelter.contact.address1 ?? ""
-		let address2 = shelter.contact.address2 ?? ""
-		if address2.characters.count > 0 { address += ", " + address2 } else { address += address2 }
-		
-		total = address
-		if total.characters.count > 0 { total += "\n" }
-		
-		var city = shelter.contact.city ?? ""
-		let state = shelter.contact.state ?? ""
-		if state.characters.count > 0 { city += ", " + state } else { city += state }
-		
-		total += city
-		if total.characters.count > 0 { total += "\n" }
-		
-		var country = shelter.contact.country ?? ""
-		let zip = shelter.contact.zip ?? ""
-		if zip.characters.count > 0 { country += " " + zip } else { country += zip }
-		
-		total += country
-		
-		
 		let attrText = NSMutableAttributedString(string: titleText, attributes: [NSFontAttributeName : UIFont.boldSystemFontOfSize(19)])
-		let addressString = NSMutableAttributedString(string: total, attributes: [NSFontAttributeName : UIFont.systemFontOfSize(14)])
+		let addressString = NSMutableAttributedString(string: shelter.contact.formattedAddressString(), attributes: [NSFontAttributeName : UIFont.systemFontOfSize(14)])
 		attrText.appendAttributedString(addressString)
 		
 		addressLabel.attributedText = attrText
