@@ -26,19 +26,19 @@ class ContactViewController: BaseModalViewController {
 	
 	let viewModel: ContactViewModel
 	
-	let rootStackView = UIStackView()
+	private let rootStackView = UIStackView()
 	
-	let topStackView = UIStackView()
+	private let topStackView = UIStackView()
 	private let imageView = UIImageView()
 	private let titleLabel = UILabel()
 	private let closeButton = UIButton()
 	
-	let mapView = MKMapView()
+	private let mapView = MKMapView()
 	
-	let labelContainer = UIView()
-	let shelterNameLabel = UILabel()
-	let addressLabel = UILabel()
-	let distanceLabel = UILabel()
+	private let labelContainer = UIView()
+	private let shelterNameLabel = UILabel()
+	private let addressLabel = UILabel()
+	private let distanceLabel = UILabel()
 	
 	private let bottomStackView = UIStackView()
 	private let linkButton = UIButton()
@@ -47,7 +47,7 @@ class ContactViewController: BaseModalViewController {
 
 	var buttonHeight: NSLayoutConstraint!
 	
-	let spinner = UIActivityIndicatorView(activityIndicatorStyle: .White)
+	private let spinner = UIActivityIndicatorView(activityIndicatorStyle: .White)
 	
 	var delegate: ContactViewControllerDelegate?
 	
@@ -267,8 +267,9 @@ class ContactViewController: BaseModalViewController {
 	}
 	
 	func emailButtonPressed() {
-		guard let delegate = delegate else { return }
-		delegate.didSelectAction(.Email("email"))
+		guard let delegate = delegate, let email = viewModel.email.value else { return }
+		let stripped = email.stringByTrimmingCharactersInSet(NSCharacterSet.whitespaceCharacterSet())
+		dismiss { delegate.didSelectAction(.Email(stripped)) }
 	}
 	
 	func phoneButtonPressed() {
@@ -291,18 +292,6 @@ class ContactViewController: BaseModalViewController {
 //			},
 //			completion: nil)
 	}
-	
-//	private func configureAddressLabel(shelter: Shelter) {
-//		
-//		let titleText = shelter.name.characters.count > 0 ? shelter.name + "\n" : ""
-//		
-//		let attrText = NSMutableAttributedString(string: titleText, attributes: [NSFontAttributeName : UIFont.boldSystemFontOfSize(19)])
-//		let addressString = NSMutableAttributedString(string: shelter.contact.formattedAddressString(), attributes: [NSFontAttributeName : UIFont.systemFontOfSize(14)])
-//		attrText.appendAttributedString(addressString)
-//		
-//		addressLabel.attributedText = attrText
-//	}
-
 }
 
 extension ContactViewController: MKMapViewDelegate {

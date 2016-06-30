@@ -274,9 +274,10 @@ extension StreamViewController: ContactViewControllerDelegate {
 			guard let url = NSURL(string: phone) else { return }
 			UIApplication.sharedApplication().openURL(url)
 		case .Email(let email):
-		print(email)
+			guard let url = NSURL(string: "mailto:\(email)") else { return }
+			UIApplication.sharedApplication().openURL(url)
 		case .Link(let link):
-		print(link)
+			print(link)
 		}
 	}
 }
