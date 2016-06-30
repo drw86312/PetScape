@@ -25,7 +25,7 @@ class ContactViewModel {
 	
 	let email = MutableProperty<String?>(nil)
 	let phone = MutableProperty<String?>(nil)
-	let link = MutableProperty<String?>(nil)
+	let link = MutableProperty<NSURL?>(nil)
 	
 	init(pet: Pet) {
 		
@@ -53,7 +53,25 @@ class ContactViewModel {
 			.flatMapError { _ in SignalProducer<Shelter, NoError>.empty }
 		
 		shelterName <~ shelter.map { $0.name }
-		shelterAddress <~ shelter.map { $0.contact?.formattedAddressString() }
+		shelterAddress <~ shelter.map { $0.contact?.formatted(true) }
+		
+		
+		shelterName
+			.producer
+			.combineLatestWith(shelterLocation
+				.producer)
+			.startWithNext { [unowned self] name, location in
+				guard let name = name, let location = location else { return }
+				let request = MKLocalSearchRequest()
+				request.naturalLanguageQuery = name
+				request.region = MKCoordinateRegionMakeWithDistance(location, 10, 10)
+				MKLocalSearch(request: request)
+					.startWithCompletionHandler({ response, error in
+						if let mapItem = response?.mapItems.first where error == nil {
+							self.link.value = mapItem.url
+						}
+					})
+		}
 		
 		shelterLocation <~ shelter
 			.map { shelter -> CLLocationCoordinate2D? in

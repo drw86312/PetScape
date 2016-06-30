@@ -43,7 +43,7 @@ class BaseModalViewController: UIViewController {
 		view = UIView()
 		view.backgroundColor = .clearColor()
 		
-		blurView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(BaseModalViewController.backgroundTapped)))
+		blurView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(BaseModalViewController.close)))
 		view.addSubview(blurView)
 		
 		contentView.backgroundColor = .whiteColor()
@@ -96,7 +96,7 @@ class BaseModalViewController: UIViewController {
 		contentViewHorizontalConstraint.constant = UIScreen.mainScreen().bounds.height/2 + contentViewHeightConstraint.constant
 	}
 	
-	func backgroundTapped() {
+	func close() {
 		dismiss()
 	}
 	

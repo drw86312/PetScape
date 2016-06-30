@@ -39,17 +39,14 @@ extension Contact: Decodable {
 
 extension Contact {
 	
-	func formattedAddressString() -> String {
-		return formattedAddressString(address1,
-		                       address2: address2,
-		                       city: city,
-		                       state: state,
-		                       country: country,
-		                       zip: zip)
+	func formatted(withLineBreaks: Bool) -> String {
+		return withLineBreaks ?
+			formatWithLineBreaks(address1, address2: address2, city: city, state: state, country: country, zip: zip) :
+			formatWithoutLineBreaks(address1, address2: address2, city: city, state: state, country: country, zip: zip)
 	}
 	
 	// Formats an address from optional components with line breaks
-	private func formattedAddressString(address1: String? = nil,
+	private func formatWithLineBreaks(address1: String? = nil,
 	                            address2: String? = nil,
 	                            city: String? = nil,
 	                            state: String? = nil,
@@ -71,6 +68,38 @@ extension Contact {
 		
 		accum += line2
 		if accum.characters.count > 0 { accum += "\n" }
+		
+		var line3 = country ?? ""
+		let zip = zip ?? ""
+		if zip.characters.count > 0 { line3 += " " + zip } else { line3 += zip }
+		
+		accum += line3
+		return accum
+	}
+	
+	// Formats an address from optional components with line breaks
+	private func formatWithoutLineBreaks(address1: String? = nil,
+	                                  address2: String? = nil,
+	                                  city: String? = nil,
+	                                  state: String? = nil,
+	                                  country: String? = nil,
+	                                  zip: String? = nil) -> String {
+		
+		var accum: String = ""
+		
+		var line1 = address1 ?? ""
+		let address2 = address2 ?? ""
+		if address2.characters.count > 0 { line1 += ", " + address2 } else { line1 += address2 }
+		
+		accum = line1
+		if accum.characters.count > 0 { accum += " " }
+		
+		var line2 = city ?? ""
+		let state = state ?? ""
+		if state.characters.count > 0 { line2 += ", " + state } else { line2 += state }
+		
+		accum += line2
+		if accum.characters.count > 0 { accum += ", " }
 		
 		var line3 = country ?? ""
 		let zip = zip ?? ""

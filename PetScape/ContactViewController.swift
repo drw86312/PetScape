@@ -15,7 +15,7 @@ import WebImage
 enum ContactAction {
 	case Phone(String)
 	case Email(String)
-	case Link(String)
+	case Link(NSURL)
 }
 
 protocol ContactViewControllerDelegate {
@@ -78,7 +78,7 @@ class ContactViewController: BaseModalViewController {
 		titleLabel.font = UIFont.boldSystemFontOfSize(19)
 		
 		closeButton.setBackgroundImage(UIColor.orangeColor().imageFromColor(), forState: .Normal)
-		closeButton.addTarget(self, action: #selector(ContactViewController.dismiss), forControlEvents: .TouchUpInside)
+		closeButton.addTarget(self, action: #selector(ContactViewController.close), forControlEvents: .TouchUpInside)
 		
 		topStackView.addArrangedSubview(imageView)
 		topStackView.addArrangedSubview(titleLabel)
@@ -184,6 +184,13 @@ class ContactViewController: BaseModalViewController {
 							.observeOn(UIScheduler())
 							.map { $0 != nil }
 		
+		DynamicProperty(object: self.linkButton,
+		                keyPath: "enabled") <~ viewModel
+							.link
+							.producer
+							.observeOn(UIScheduler())
+							.map { $0 != nil }
+		
 		viewModel.userLocation.producer
 			.combineLatestWith(viewModel.shelterLocation.producer)
 			.observeOn(UIScheduler())
@@ -262,8 +269,8 @@ class ContactViewController: BaseModalViewController {
 	}
 	
 	func linkButtonPressed() {
-		guard let delegate = delegate  else { return }
-		delegate.didSelectAction(.Link("link"))
+		guard let delegate = delegate, let link = viewModel.link.value else { return }
+		dismiss { delegate.didSelectAction(.Link(link)) }
 	}
 	
 	func emailButtonPressed() {
