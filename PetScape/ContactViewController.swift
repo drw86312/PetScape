@@ -39,6 +39,7 @@ class ContactViewController: BaseModalViewController {
 	private let shelterNameLabel = UILabel()
 	private let addressLabel = UILabel()
 	private let distanceLabel = UILabel()
+	private let contactLabel = UILabel()
 	
 	private let bottomStackView = UIStackView()
 	private let linkButton = UIButton()
@@ -77,8 +78,9 @@ class ContactViewController: BaseModalViewController {
 		titleLabel.textAlignment = .Center
 		titleLabel.font = UIFont.boldSystemFontOfSize(19)
 		
-		closeButton.setBackgroundImage(UIColor.orangeColor().imageFromColor(), forState: .Normal)
+		closeButton.setBackgroundImage(UIImage(named: "close")?.imageWithRenderingMode(.AlwaysTemplate), forState: .Normal)
 		closeButton.addTarget(self, action: #selector(ContactViewController.close), forControlEvents: .TouchUpInside)
+		closeButton.tintColor = .darkGrayColor()
 		
 		topStackView.addArrangedSubview(imageView)
 		topStackView.addArrangedSubview(titleLabel)
@@ -104,21 +106,27 @@ class ContactViewController: BaseModalViewController {
 		distanceLabel.font = UIFont.systemFontOfSize(12)
 		labelContainer.addSubview(distanceLabel)
 		
+		contactLabel.textColor = .darkGrayColor()
+		contactLabel.textAlignment = .Right
+		contactLabel.numberOfLines = 0
+		contactLabel.font = UIFont.systemFontOfSize(12)
+		labelContainer.addSubview(contactLabel)
+		
 		bottomStackView.axis = .Horizontal
 		bottomStackView.distribution = .EqualCentering
 		bottomStackView.alignment = .Fill
 		bottomStackView.spacing = 10;
 		
-		linkButton.setTitle("Li", forState: .Normal)
-		linkButton.setBackgroundImage(UIColor.greenColor().imageFromColor(), forState: .Normal)
+		linkButton.setBackgroundImage(UIImage(named: "external_link")?.imageWithRenderingMode(.AlwaysTemplate), forState: .Normal)
+		linkButton.tintColor = UIColor(color: .MainColor)
 		linkButton.addTarget(self, action: #selector(ContactViewController.linkButtonPressed), forControlEvents: .TouchUpInside)
 		
-		emailButton.setTitle("Em", forState: .Normal)
-		emailButton.setBackgroundImage(UIColor.blueColor().imageFromColor(), forState: .Normal)
+		emailButton.setBackgroundImage(UIImage(named: "mail")?.imageWithRenderingMode(.AlwaysTemplate), forState: .Normal)
+		emailButton.tintColor = UIColor(color: .MainColor)
 		emailButton.addTarget(self, action: #selector(ContactViewController.emailButtonPressed), forControlEvents: .TouchUpInside)
 		
-		phoneButton.setTitle("Ph", forState: .Normal)
-		phoneButton.setBackgroundImage(UIColor.yellowColor().imageFromColor(), forState: .Normal)
+		phoneButton.setBackgroundImage(UIImage(named: "phone")?.imageWithRenderingMode(.AlwaysTemplate), forState: .Normal)
+		phoneButton.tintColor = UIColor(color: .MainColor)
 		phoneButton.addTarget(self, action: #selector(ContactViewController.phoneButtonPressed), forControlEvents: .TouchUpInside)
 
 		bottomStackView.addArrangedSubview(linkButton)
@@ -234,14 +242,31 @@ class ContactViewController: BaseModalViewController {
 					placeholderImage: UIColor.darkGrayColor().imageFromColor())
 		}
 		
+		DynamicProperty(object: self.contactLabel,
+		                keyPath: "text") <~ viewModel
+							.phone
+							.producer
+							.combineLatestWith(viewModel
+								.email
+								.producer)
+							.map { phone, email in
+								var string = ""
+								if let phone = phone { string += phone }
+								if string.characters.count > 0 { string += "\n" }
+								if let email = email {
+									let email = email.stringByTrimmingCharactersInSet(NSCharacterSet.whitespaceCharacterSet())
+									string += email
+								}
+								return string
+		}
 	}
 	
 	 private func addConstraints() {
 		rootStackView.autoPinEdgesToSuperviewMargins()
 		
 		bottomStackView.arrangedSubviews.forEach {
-			$0.autoSetDimension(.Width, toSize: 50)
-			$0.autoSetDimension(.Height, toSize: 50)
+			$0.autoSetDimension(.Width, toSize: 30)
+			$0.autoSetDimension(.Height, toSize: 30)
 		}
 		
 		imageView.autoSetDimensionsToSize(CGSize(width: 30, height: 30))
@@ -256,10 +281,14 @@ class ContactViewController: BaseModalViewController {
 		addressLabel.autoPinEdge(.Top, toEdge: .Bottom, ofView: shelterNameLabel)
 		addressLabel.autoPinEdge(.Left, toEdge: .Left, ofView: labelContainer)
 		addressLabel.autoSetDimension(.Width, toSize: 250)
+		addressLabel.autoPinEdge(.Bottom, toEdge: .Bottom, ofView: labelContainer)
 		
 		distanceLabel.autoPinEdge(.Right, toEdge: .Right, ofView: labelContainer)
 		distanceLabel.autoPinEdge(.Top, toEdge: .Top, ofView: labelContainer)
 		distanceLabel.autoPinEdge(.Left, toEdge: .Right, ofView: addressLabel)
+		
+		contactLabel.autoPinEdge(.Right, toEdge: .Right, ofView: labelContainer)
+		contactLabel.autoPinEdge(.Bottom, toEdge: .Bottom, ofView: addressLabel)
 		
 		spinner.autoCenterInSuperview()
 	}

@@ -12,9 +12,9 @@ import UIKit
 class BaseModalViewController: UIViewController {
 	
 	struct Constants {
-		static let animationDuration: Double = 0.8
-		static let springDamping: CGFloat = 0.6
-		static let springVelocity: CGFloat = 0.7
+		static let animationDuration: Double = 0.7
+		static let springDamping: CGFloat = 0.4
+		static let springVelocity: CGFloat = 0.5
 	}
 	
 	enum PresentationStyle {
@@ -27,7 +27,6 @@ class BaseModalViewController: UIViewController {
 	let blurView = UIVisualEffectView(effect: UIBlurEffect(style: UIBlurEffectStyle.Dark))
 	
 	var contentViewHorizontalConstraint: NSLayoutConstraint!
-	var contentViewHeightConstraint: NSLayoutConstraint!
 	var presentationStyle: PresentationStyle
 	
 	init(style: PresentationStyle = .Small) {
@@ -73,27 +72,22 @@ class BaseModalViewController: UIViewController {
 	}
 	
 	private func addConstraints() {
-		
 		blurView.autoPinEdgesToSuperviewEdges()
 		
 		let widthConstraint = contentView.autoSetDimension(.Width, toSize: 0)
-		contentViewHeightConstraint = contentView.autoSetDimension(.Height, toSize: 0)
 		
 		switch presentationStyle {
 		case .Small:
 			widthConstraint.constant = UIScreen.mainScreen().bounds.width * 0.6
-			contentViewHeightConstraint.constant = UIScreen.mainScreen().bounds.height * 0.3
 		case .Medium:
 			widthConstraint.constant = UIScreen.mainScreen().bounds.width * 0.75
-			contentViewHeightConstraint.constant = UIScreen.mainScreen().bounds.height * 0.5
 		case .Large:
 			widthConstraint.constant = UIScreen.mainScreen().bounds.width * 0.9
-			contentViewHeightConstraint.constant = UIScreen.mainScreen().bounds.height * 0.7
 		}
 		
 		contentView.autoAlignAxisToSuperviewAxis(.Vertical)
 		contentViewHorizontalConstraint = contentView.autoAlignAxisToSuperviewAxis(.Horizontal)
-		contentViewHorizontalConstraint.constant = UIScreen.mainScreen().bounds.height/2 + contentViewHeightConstraint.constant
+		contentViewHorizontalConstraint.constant = UIScreen.mainScreen().bounds.height/2
 	}
 	
 	func close() {
@@ -101,7 +95,7 @@ class BaseModalViewController: UIViewController {
 	}
 	
 	func dismiss(completion: ((() -> Void)?) = nil) {
-		contentViewHorizontalConstraint.constant = UIScreen.mainScreen().bounds.height/2 + contentViewHeightConstraint.constant
+		contentViewHorizontalConstraint.constant = UIScreen.mainScreen().bounds.height
 		UIView.animateWithDuration(
 			Constants.animationDuration,
 			delay: 0,

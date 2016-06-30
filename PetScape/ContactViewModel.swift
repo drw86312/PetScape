@@ -55,7 +55,6 @@ class ContactViewModel {
 		shelterName <~ shelter.map { $0.name }
 		shelterAddress <~ shelter.map { $0.contact?.formatted(true) }
 		
-		
 		shelterName
 			.producer
 			.combineLatestWith(shelterLocation
@@ -66,11 +65,11 @@ class ContactViewModel {
 				request.naturalLanguageQuery = name
 				request.region = MKCoordinateRegionMakeWithDistance(location, 10, 10)
 				MKLocalSearch(request: request)
-					.startWithCompletionHandler({ response, error in
+					.startWithCompletionHandler { [unowned self] response, error in
 						if let mapItem = response?.mapItems.first where error == nil {
 							self.link.value = mapItem.url
 						}
-					})
+				}
 		}
 		
 		shelterLocation <~ shelter
