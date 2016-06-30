@@ -26,7 +26,7 @@ func toFloat(number: String) -> Decoded<Float> {
 	return .fromOptional(Float(number))
 }
 
-func toDouble(number: String) -> Decoded<Double> {
+func toDouble(number: String) -> Decoded<Double?> {
 	return .fromOptional(Double(number))
 }
 

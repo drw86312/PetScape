@@ -11,20 +11,20 @@ import Curry
 
 struct Shelter {
 	let id: String
-	let name: String
-	let latitude: Double
-	let longitude: Double
-	let contact: Contact
+	let name: String?
+	let latitude: Double?
+	let longitude: Double?
+	let contact: Contact?
 }
 
 extension Shelter: Decodable {
 	static func decode(json: JSON) -> Decoded<Shelter> {
 		let shelter = curry(Shelter.init)
 			<^> json <| ["id", "$t"]
-			<*> json <| ["name" ,"$t"]
+			<*> json <|? ["name" ,"$t"]
 			<*> (json <| ["latitude" ,"$t"] >>- toDouble)
 			<*> (json <| ["longitude" ,"$t"] >>- toDouble)
-			<*> json <| []
+			<*> json <|? []
 		return shelter
 	}
 }

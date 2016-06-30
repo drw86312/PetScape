@@ -8,39 +8,74 @@
 
 import Foundation
 import ReactiveCocoa
+import Result
 import MapKit
 
 class ContactViewModel {
 	
-	let pet: Pet
-	var fetchShelter: Action<Pet, Shelter, Error>!
-	var userCoordinate: CLLocationCoordinate2D?
+	let imageURL = MutableProperty<NSURL?>(nil)
+	let titleString = MutableProperty<String?>(nil)
+	
+	let shelterName = MutableProperty<String?>(nil)
+	let shelterAddress = MutableProperty<String?>(nil)
+	let distance = MutableProperty<Double?>(nil)
+	
+	let userLocation: MutableProperty<CLLocationCoordinate2D?>
+	let shelterLocation = MutableProperty<CLLocationCoordinate2D?>(nil)
+	
+	let email = MutableProperty<String?>(nil)
+	let phone = MutableProperty<String?>(nil)
+	let link = MutableProperty<String?>(nil)
 	
 	init(pet: Pet) {
 		
-		self.pet = pet
+		self.imageURL.value = pet.photos?.first?.thumbnailURL
+		self.titleString.value = pet.name
+		self.email.value = pet.contact?.email
+		self.phone.value = pet.contact?.phone
 		
-		let appDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
-		userCoordinate = appDelegate.locationManager.userCoordinate.value
+		self.userLocation = (UIApplication.sharedApplication().delegate as! AppDelegate).locationManager.userCoordinate
 		
-		self.fetchShelter = Action<Pet, Shelter, Error> { pet in
-			
-			return SignalProducer<Shelter, Error> { observer, disposable in
-				guard let shelterID = pet.shelterID else {
-					observer.sendFailed(.Unknown)
-					return
-				}
-				
-				API.fetch(Endpoint<Shelter>.getShelter(shelterID)) { response in
-					switch response.result {
-					case .Success(let shelter):
-						observer.sendNext(shelter)
-						observer.sendCompleted()
-					case .Failure(let error):
-						observer.sendFailed(error)
-					}
+		guard let shelterID = pet.shelterID else { return }
+		
+		let shelter = SignalProducer<Shelter, Error> { observer, _ in
+			API.fetch(Endpoint<Shelter>.getShelter(shelterID)) { response in
+				switch response.result {
+				case .Success(let shelter):
+					observer.sendNext(shelter)
+					observer.sendCompleted()
+				case .Failure(let error):
+					observer.sendFailed(error)
 				}
 			}
+			}
+			.producer
+			.flatMapError { _ in SignalProducer<Shelter, NoError>.empty }
+		
+		shelterName <~ shelter.map { $0.name }
+		shelterAddress <~ shelter.map { $0.contact?.formattedAddressString() }
+		
+		shelterLocation <~ shelter
+			.map { shelter -> CLLocationCoordinate2D? in
+				guard let lat = shelter.latitude, let long = shelter.longitude else { return nil }
+				return CLLocationCoordinate2D(latitude: lat, longitude: long)
 		}
+		
+		distance <~ userLocation
+			.producer
+			.map { coordinate -> CLLocation? in
+				guard let coordinate = coordinate else { return nil }
+				return CLLocation(latitude: coordinate.latitude, longitude: coordinate.longitude)
+			}
+			.combineLatestWith(shelter
+				.map { shelter -> CLLocation? in
+					guard let lat = shelter.latitude, let long = shelter.longitude else { return nil }
+					return CLLocation(latitude: lat, longitude: long)
+				})
+			.map { user, shelter in
+				guard let user = user, let shelter = shelter else { return nil }
+				return shelter.distanceFromLocation(user) * 0.000621371
+			}
+			.skipRepeats(==)
 	}
 }

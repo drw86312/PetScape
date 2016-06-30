@@ -96,7 +96,7 @@ class BaseModalViewController: UIViewController {
 		contentViewHorizontalConstraint.constant = UIScreen.mainScreen().bounds.height/2 + contentViewHeightConstraint.constant
 	}
 	
-	func dismiss() {
+	func dismiss(completion: (() -> Void)?) {
 		contentViewHorizontalConstraint.constant = UIScreen.mainScreen().bounds.height/2 + contentViewHeightConstraint.constant
 		UIView.animateWithDuration(
 			Constants.animationDuration,
@@ -108,7 +108,7 @@ class BaseModalViewController: UIViewController {
 				self.view.layoutIfNeeded()
 			},
 			completion: { finished in
-				self.presentingViewController?.dismissViewControllerAnimated(false, completion: nil)
+				self.presentingViewController?.dismissViewControllerAnimated(false, completion: completion)
 		})
 	}
 }

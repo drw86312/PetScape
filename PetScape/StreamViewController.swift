@@ -271,17 +271,8 @@ extension StreamViewController: ContactViewControllerDelegate {
 	func didSelectAction(action: ContactAction) {
 		switch action {
 		case .Phone(let phone):
-			let set = NSCharacterSet.decimalDigitCharacterSet().invertedSet
-			let strippedNumber = phone.componentsSeparatedByCharactersInSet(set).joinWithSeparator("")
-			print(strippedNumber)
-			
-//			NSString *newString = [[origString componentsSeparatedByCharactersInSet:
-//				[[NSCharacterSet decimalDigitCharacterSet] invertedSet]]
-//				componentsJoinedByString:@""];
-			
-//			NSString *phoneNumber = [@"tel://" stringByAppendingString:mymobileNO.titleLabel.text];
-//			[[UIApplication sharedApplication] openURL:[NSURL URLWithString:phoneNumber]];
-		print(phone)
+			guard let url = NSURL(string: phone) else { return }
+			UIApplication.sharedApplication().openURL(url)
 		case .Email(let email):
 		print(email)
 		case .Link(let link):
