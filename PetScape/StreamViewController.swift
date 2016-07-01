@@ -246,8 +246,14 @@ extension StreamViewController: PetCellDelegate {
 		tabBarController?.presentViewController(vc, animated: false, completion: nil)
 	}
 	
-	func bottomButtonPressed() {
+	func favoriteButtonPressed(pet: Pet) {
 		
+	}
+	
+	func shareButtonPressed(pet: Pet) {
+		guard let name = pet.name else { return }
+		let vc = UIActivityViewController(activityItems: [name as NSString], applicationActivities: nil)
+		presentViewController(vc, animated: true, completion: {})
 	}
 }
 

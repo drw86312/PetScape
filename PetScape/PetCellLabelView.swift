@@ -12,8 +12,9 @@ import PureLayout
 class PetCellLabelView: UIView {
 	
 	private let rightStackView = UIStackView()
-	let topButton = UIButton()
-	let bottomButton = UIButton()
+	let contactButton = UIButton()
+	let favoriteButton = UIButton()
+	let shareButton = UIButton()
 	
 	private let topStackView = UIStackView()
 	let titleLabel = UILabel()
@@ -34,16 +35,26 @@ class PetCellLabelView: UIView {
 			$0.lineBreakMode = .ByTruncatingTail
 		}
 		
-		topButton.setTitle("C", forState: .Normal)
-		bottomButton.setTitle("F", forState: .Normal)
+		favoriteButton.setBackgroundImage(UIImage(named: "star")?.imageWithRenderingMode(.AlwaysTemplate), forState: .Normal)
+		favoriteButton.setBackgroundImage(UIImage(named: "star_filled")?.imageWithRenderingMode(.AlwaysTemplate), forState: .Selected)
+		favoriteButton.tintColor = .whiteColor()
+		
+		shareButton.setBackgroundImage(UIImage(named: "share")?.imageWithRenderingMode(.AlwaysTemplate), forState: .Normal)
+		shareButton.tintColor = .whiteColor()
+		
+		contactButton.setBackgroundImage(UIImage(named: "map")?.imageWithRenderingMode(.AlwaysTemplate), forState: .Normal)
+		contactButton.tintColor = .whiteColor()
 		
 		rightStackView.axis = .Horizontal
 		rightStackView.distribution = .EqualSpacing
 		rightStackView.alignment = .Fill
 		rightStackView.spacing = 10;
+		rightStackView.layoutMargins = UIEdgeInsets(top: 0, left: 0, bottom: 5, right: 0)
+		rightStackView.layoutMarginsRelativeArrangement = true
 		
-		rightStackView.addArrangedSubview(topButton)
-		rightStackView.addArrangedSubview(bottomButton)
+		rightStackView.addArrangedSubview(contactButton)
+		rightStackView.addArrangedSubview(shareButton)
+		rightStackView.addArrangedSubview(favoriteButton)
 		
 		topStackView.axis = .Vertical
 		topStackView.distribution = .FillEqually
@@ -63,22 +74,21 @@ class PetCellLabelView: UIView {
 	private func addConstraints() {
 		
 		rightStackView.arrangedSubviews.forEach {
-			$0.autoSetDimension(.Width, toSize: 40)
-			$0.autoSetDimension(.Height, toSize: 40)
+			$0.autoSetDimension(.Width, toSize: 30)
+			$0.autoSetDimension(.Height, toSize: 30)
 		}
 		
 		rightStackView.autoPinEdge(.Right, toEdge: .Right, ofView: self, withOffset: -10)
 		rightStackView.autoPinEdge(.Bottom, toEdge: .Bottom, ofView: self)
-		rightStackView.autoSetDimension(.Width, toSize: 90)
 		
 		topStackView.autoPinEdge(.Left, toEdge: .Left, ofView: self, withOffset: 10)
 		topStackView.autoPinEdge(.Top, toEdge: .Top, ofView: self, withOffset: 5)
-		topStackView.autoPinEdge(.Bottom, toEdge: .Top, ofView: rightStackView)
+		topStackView.autoPinEdge(.Bottom, toEdge: .Top, ofView: rightStackView, withOffset: -5)
 		topStackView.autoPinEdge(.Right, toEdge: .Right, ofView: self, withOffset: -10)
 		
 		detailLabel2.autoPinEdge(.Left, toEdge: .Left, ofView: topStackView)
 		detailLabel2.autoPinEdge(.Bottom, toEdge: .Bottom, ofView: self, withOffset: -5)
-		detailLabel2.autoPinEdge(.Right, toEdge: .Left, ofView: rightStackView, withOffset: -10)
+		detailLabel2.autoPinEdge(.Right, toEdge: .Left, ofView: rightStackView, withOffset: -15)
 	}
 	
 	required init?(coder aDecoder: NSCoder) {

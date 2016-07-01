@@ -12,7 +12,8 @@ import WebImage
 
 protocol PetCellDelegate {
 	func contactButtonPressed(pet: Pet)
-	func bottomButtonPressed()
+	func favoriteButtonPressed(pet: Pet)
+	func shareButtonPressed(pet: Pet)
 }
 
 class PetCell: UITableViewCell {
@@ -44,8 +45,9 @@ class PetCell: UITableViewCell {
 		labelView.layer.cornerRadius = 5.0
 		labelView.layer.masksToBounds = true
 		
-		labelView.topButton.addTarget(self, action: #selector(PetCell.contactButtonPressed(_:)), forControlEvents: .TouchUpInside)
-		labelView.bottomButton.addTarget(self, action: #selector(PetCell.bottomButtonPressed(_:)), forControlEvents: .TouchUpInside)
+		labelView.contactButton.addTarget(self, action: #selector(PetCell.contactButtonPressed(_:)), forControlEvents: .TouchUpInside)
+		labelView.favoriteButton.addTarget(self, action: #selector(PetCell.favoriteButtonPressed(_:)), forControlEvents: .TouchUpInside)
+		labelView.shareButton.addTarget(self, action: #selector(PetCell.shareButtonPressed(_:)), forControlEvents: .TouchUpInside)
 		
 		pageControl.pageIndicatorTintColor = .whiteColor()
 		pageControl.currentPageIndicatorTintColor = UIColor(color: .MainColor)
@@ -166,14 +168,19 @@ class PetCell: UITableViewCell {
 		pageControl.currentPage = 0
 	}
 	
-	func contactButtonPressed(sender: UIButton) {
+	internal func contactButtonPressed(sender: UIButton) {
 		guard let delegate = delegate, let pet = pet  else { return }
 		delegate.contactButtonPressed(pet)
 	}
 	
-	func bottomButtonPressed(sender: UIButton) {
-		guard let delegate = delegate else { return }
-		delegate.bottomButtonPressed()
+	internal func favoriteButtonPressed(sender: UIButton) {
+		guard let delegate = delegate, let pet = pet else { return }
+		delegate.favoriteButtonPressed(pet)
+	}
+	
+	internal func shareButtonPressed(sender: UIButton) {
+		guard let delegate = delegate, let pet = pet else { return }
+		delegate.shareButtonPressed(pet)
 	}
 }
 
