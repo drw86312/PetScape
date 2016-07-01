@@ -13,7 +13,7 @@ import WebImage
 protocol PetCellDelegate {
 	func contactButtonPressed(pet: Pet)
 	func favoriteButtonPressed(pet: Pet)
-	func shareButtonPressed(pet: Pet)
+	func shareButtonPressed(pet: Pet, image: UIImage?)
 }
 
 class PetCell: UITableViewCell {
@@ -80,7 +80,7 @@ class PetCell: UITableViewCell {
 		
 		if let name = pet.name, let sex  = pet.sex {
 			let nameString = NSMutableAttributedString(string: name, attributes: [NSFontAttributeName : UIFont.boldSystemFontOfSize(24)])
-			let ageString = NSMutableAttributedString(string: "  |  " + sex.titleString, attributes: [NSFontAttributeName : UIFont.systemFontOfSize(18)])
+			let ageString = NSAttributedString(string: "  |  " + sex.titleString, attributes: [NSFontAttributeName : UIFont.systemFontOfSize(18)])
 			nameString.appendAttributedString(ageString)
 			labelView.titleLabel.attributedText = nameString
 		} else {
@@ -88,14 +88,19 @@ class PetCell: UITableViewCell {
 			                                                                 attributes: [NSFontAttributeName : UIFont.systemFontOfSize(24, weight: 0.5)])
 		}
 		
-		if let breeds = pet.breeds,
-			let age  = pet.age {
-			labelView.detailLabel.text = age.rawValue + "  |  " + breeds.joinWithSeparator(" / ")
+		if let age = pet.age, let breeds  = pet.breeds {
+			let ageString = NSMutableAttributedString(string: age.rawValue, attributes: [NSFontAttributeName : UIFont.boldSystemFontOfSize(16)])
+			let breedString = NSAttributedString(string: "  |  " + breeds.joinWithSeparator(", "), attributes: [NSFontAttributeName : UIFont.systemFontOfSize(16)])
+			ageString.appendAttributedString(breedString)
+			labelView.detailLabel.attributedText = ageString
+		} else {
+			labelView.detailLabel.attributedText =  NSMutableAttributedString(string: pet.age?.rawValue ?? "",
+			                                                                  attributes: [NSFontAttributeName : UIFont.boldSystemFontOfSize(16)])
 		}
 		
 		if let size = pet.size, mix = pet.mix, status = pet.adoptionStatus {
 			let mixString = mix ? "Y" : "N"
-			labelView.detailLabel2.text = "Size: \(size.rawValue)  |  Mix: \(mixString)  |  Status: \(status.titleString)"
+			labelView.rightLabel.text = "Size: \(size.rawValue)\nMix: \(mixString)\n\(status.titleString)"
 		}
 	}
 	
@@ -180,7 +185,7 @@ class PetCell: UITableViewCell {
 	
 	internal func shareButtonPressed(sender: UIButton) {
 		guard let delegate = delegate, let pet = pet else { return }
-		delegate.shareButtonPressed(pet)
+		delegate.shareButtonPressed(pet, image: imageViews.first?.image)
 	}
 }
 

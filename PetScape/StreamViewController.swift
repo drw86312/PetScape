@@ -193,6 +193,8 @@ class StreamViewController: UIViewController {
 					self.viewModel.loadNext()
 				}
 		}
+		
+		viewModel.filterProperty.value = FilterStruct(animal: .Dog, breed: nil, size: nil, sex: nil, age: nil, hasPhotos: nil)
 	}
 	
 	private func emptyDataSet() {
@@ -250,10 +252,18 @@ extension StreamViewController: PetCellDelegate {
 		
 	}
 	
-	func shareButtonPressed(pet: Pet) {
-		guard let name = pet.name else { return }
-		let vc = UIActivityViewController(activityItems: [name as NSString], applicationActivities: nil)
-		presentViewController(vc, animated: true, completion: {})
+	func shareButtonPressed(pet: Pet, image: UIImage?) {
+		var activityItems: [AnyObject] = []
+		if let name = pet.name {
+			let pronoun = pet.sex == .Male ? "He" : "She"
+			activityItems.append("Meet \(name)! \(pronoun) needs a home")
+		}
+		if let image = image {
+			activityItems.append(image)
+		}
+		presentViewController(UIActivityViewController(activityItems: activityItems, applicationActivities: nil),
+		                      animated: true,
+		                      completion: nil)
 	}
 }
 

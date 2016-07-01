@@ -24,7 +24,7 @@ class BaseModalViewController: UIViewController {
 	}
 	
 	let contentView = UIView()
-	let blurView = UIVisualEffectView(effect: UIBlurEffect(style: UIBlurEffectStyle.Dark))
+	let blurView = UIVisualEffectView(effect: UIBlurEffect(style: .Light))
 	
 	var contentViewHorizontalConstraint: NSLayoutConstraint!
 	var presentationStyle: PresentationStyle

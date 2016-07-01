@@ -30,47 +30,44 @@ class StreamViewModel {
 	let loadState = MutableProperty<LoadState>(.NotLoaded)
 	
 	let locationStatus: AnyProperty<LocationManager.LocationStatus>
-	
-	let animal: MutableProperty<Animal?>
-	let breed: MutableProperty<String?>
-	let size: MutableProperty<Size?>
-	let sex: MutableProperty<Sex?>
-	let age: MutableProperty<Age?>
+	let filterProperty: MutableProperty<FilterStruct>
 	
 	init() {
 		
-		var optionalAnimal: Animal? = nil
-		var optionalBreed: String? = nil
-		var optionalSize: Size? = nil
-		var optionalSex: Sex? = nil
-		var optionalAge: Age? = nil
+		var animal: Animal? = nil
+		var breed: String? = nil
+		var size: Size? = nil
+		var sex: Sex? = nil
+		var age: Age? = nil
+		var hasPhotos: Bool? = nil
 		
-		
-		// Fetch saved filters, stored locally.
+		// Fetch stored filters
 		if let decoded  = NSUserDefaults.standardUserDefaults().objectForKey(StreamViewModel.kFiltersKey) as? NSData,
-			let filter = NSKeyedUnarchiver.unarchiveObjectWithData(decoded) as? Filter {
-			if let v = filter.animal, let enumValue = Animal(rawValue: v) { optionalAnimal = enumValue }
-			if let v = filter.size, let enumValue = Size(rawValue: v) { optionalSize = enumValue }
-			if let v = filter.sex, let enumValue = Sex(rawValue: v) { optionalSex = enumValue }
-			if let v = filter.age, let enumValue = Age(rawValue: v) { optionalAge = enumValue }
-			if let v = filter.breed { optionalBreed = v }
+			let filter = NSKeyedUnarchiver.unarchiveObjectWithData(decoded) as? FilterClass {
+			if let v = filter.animal, let enumValue = Animal(rawValue: v) { animal = enumValue }
+			if let v = filter.size, let enumValue = Size(rawValue: v) { size = enumValue }
+			if let v = filter.sex, let enumValue = Sex(rawValue: v) { sex = enumValue }
+			if let v = filter.age, let enumValue = Age(rawValue: v) { age = enumValue }
+			if let v = filter.breed { breed = v }
+			if let v = filter.hasPhotos { hasPhotos = v }
 		}
 		
-		// Instantiate filter properties
-		animal = MutableProperty<Animal?>(optionalAnimal)
-		breed = MutableProperty<String?>(optionalBreed)
-		size = MutableProperty<Size?>(optionalSize)
-		sex = MutableProperty<Sex?>(optionalSex)
-		age = MutableProperty<Age?>(optionalAge)
+		// Assign filters to filters property
+		filterProperty = MutableProperty<FilterStruct>(
+			FilterStruct(animal: animal,
+				breed: breed,
+				size: size,
+				sex: sex,
+				age: age,
+				hasPhotos: hasPhotos))
 		
-		let appDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
-		locationStatus = AnyProperty(appDelegate.locationManager.locationStatusProperty)
+		locationStatus = AnyProperty((UIApplication.sharedApplication().delegate as! AppDelegate).locationManager.locationStatusProperty)
 		
 		let uniqueLocations = locationStatus
 			.producer
 			.map { state -> String? in
 				if case .Some(let location) = state {
-					return "60642"
+					return location
 				}
 				return nil
 			}
@@ -78,55 +75,29 @@ class StreamViewModel {
 			.ignoreNil()
 		
 		let filterSignal = uniqueLocations
-			.combineLatestWith(animal.producer)
-			.combineLatestWith(breed.producer)
-			.combineLatestWith(size.producer)
-			.combineLatestWith(sex.producer)
-			.combineLatestWith(age.producer)
-			// Unpack tuples
-			.map { (tuple, age) -> (String, Animal?, String?, Size?, Sex?, Age?) in
-				let sex = tuple.1
-				let size = tuple.0.1
-				let breed = tuple.0.0.1
-				let animal = tuple.0.0.0.1
-				let location = tuple.0.0.0.0
-				return (location, animal, breed, size, sex, age)
-			}
-			.map { [unowned self] tuple -> Endpoint<[Pet]> in
-				return self.generateEndpoint(tuple.0,
-					animal: tuple.1,
-					breed: tuple.2,
-					size: tuple.3,
-					sex: tuple.4,
-					age: tuple.5,
+			.combineLatestWith(filterProperty.producer)
+			.map { (location, filter) -> Endpoint<[Pet]> in
+				return self.generateEndpoint(location,
+					animal: filter.animal,
+					breed: filter.breed,
+					size: filter.size,
+					sex: filter.sex,
+					age: filter.age,
 					offset: 0,
 					count: self.count)
-			}
-		
+		}
+				
 		// Use this signal to cancel in-flight requests
 		let disposalSignal = filterSignal
 			.map { _ in () }
 			.flatMapError { _ in SignalProducer<(), NoError>.empty }
 		
-//		disposalSignal
-//			.skip(1)
-//			.take(1)
-//			.startWithNext {
-//				print("Disposal")
-//		}
-		
-//		uniqueLocations.startWithNext { loc in
-//			print(loc)
-//		}
-		
 		filterSignal.startWithNext { [unowned self] endpoint in
-			if !self.load.executing.value {
-				self.load
-					.apply(endpoint)
-					.takeUntil(disposalSignal.skip(1).take(1))
-					.on(disposed: { print("Disposing") })
-					.start()
-			}
+			self.load
+				.apply(endpoint)
+				.takeUntil(disposalSignal.skip(1).take(1))
+				.on(disposed: { print("Disposing") })
+				.start()
 		}
 		
 //		client.resourceList()
@@ -182,7 +153,7 @@ class StreamViewModel {
 						return .NoResults
 					}
 					return .Loaded
-				} else if case .Failed = signal {
+				} else if case .Failed = signal  {
 					return .Failed
 				} else if case .Interrupted = signal {
 					return .Failed
@@ -198,11 +169,11 @@ class StreamViewModel {
 	func loadNext() {
 		if case .Some(let location) = locationStatus.value {
 			let endpoint = generateEndpoint(location,
-			                                animal: animal.value,
-			                                breed: breed.value,
-			                                size: size.value,
-			                                sex: sex.value,
-			                                age: age.value,
+			                                animal: filterProperty.value.animal,
+			                                breed: filterProperty.value.breed,
+			                                size: filterProperty.value.size,
+			                                sex: filterProperty.value.sex,
+			                                age: filterProperty.value.age,
 			                                offset: self.offset,
 			                                count: self.count)
 			load

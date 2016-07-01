@@ -16,8 +16,29 @@ public enum Animal: String {
 	case Dog = "Dog"
 	case Horse = "Horse"
 	case Pig = "Pig"
-	case Reptile = "Reptile"
-	case SmallFurry = "SmallFurry"
+	case Reptile = "Scales, Fins & Other"
+	case SmallFurry = "Small & Furry"
+	
+	// String values expected by the API
+	var apiValue: String {
+		switch self {
+		case Barnyard, .Cat, .Bird, Dog, Horse, Pig:
+		 return rawValue
+		case Reptile:
+			return "Reptile"
+		case SmallFurry:
+			return "SmallFurry"
+		}
+	}
+	
+	var titleString: String {
+		switch self {
+		case Barnyard, .Cat, .Bird, Dog, Horse, Pig, SmallFurry:
+		 return rawValue
+		case Reptile:
+			return apiValue
+		}
+	}
 }
 
 extension Animal: Decodable {

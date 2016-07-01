@@ -30,7 +30,7 @@ extension Endpoint {
 		var parameters: [String: AnyObject] = ["location" : zip,
 		                                       "offset" : offset,
 		                                       "count" : count]
-		if let animal = animal { parameters.addEntries(["animal" : animal.rawValue.lowercaseString]) }
+		if let animal = animal { parameters.addEntries(["animal" : animal.apiValue.lowercaseString]) }
 		if let breed = breed { parameters.addEntries(["breed" : breed]) }
 		if let size = size { parameters.addEntries(["size" : size.rawValue]) }
 		if let sex = sex { parameters.addEntries(["sex" : sex.rawValue]) }
