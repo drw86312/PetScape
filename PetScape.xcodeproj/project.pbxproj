@@ -60,6 +60,10 @@
 		81CE14C91D188C9B0092111E /* LocationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 81CE14C81D188C9B0092111E /* LocationManager.swift */; };
 		81E798C91D19A4B600135EAB /* UIColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 81E798C81D19A4B600135EAB /* UIColor.swift */; };
 		81E798CB1D19E07C00135EAB /* BaseModalViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 81E798CA1D19E07C00135EAB /* BaseModalViewController.swift */; };
+		81FB684D1D2C108F0032916F /* AppCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 81FB684C1D2C108F0032916F /* AppCoordinator.swift */; };
+		81FB684F1D2C15610032916F /* PetCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 81FB684E1D2C15610032916F /* PetCoordinator.swift */; };
+		81FB68511D2C17110032916F /* ShelterCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 81FB68501D2C17110032916F /* ShelterCoordinator.swift */; };
+		81FB68541D2C17310032916F /* FavoritesCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 81FB68531D2C17310032916F /* FavoritesCoordinator.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -131,6 +135,10 @@
 		81CE14C81D188C9B0092111E /* LocationManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LocationManager.swift; sourceTree = "<group>"; };
 		81E798C81D19A4B600135EAB /* UIColor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UIColor.swift; sourceTree = "<group>"; };
 		81E798CA1D19E07C00135EAB /* BaseModalViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BaseModalViewController.swift; sourceTree = "<group>"; };
+		81FB684C1D2C108F0032916F /* AppCoordinator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppCoordinator.swift; sourceTree = "<group>"; };
+		81FB684E1D2C15610032916F /* PetCoordinator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PetCoordinator.swift; sourceTree = "<group>"; };
+		81FB68501D2C17110032916F /* ShelterCoordinator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ShelterCoordinator.swift; sourceTree = "<group>"; };
+		81FB68531D2C17310032916F /* FavoritesCoordinator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FavoritesCoordinator.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -176,6 +184,7 @@
 			isa = PBXGroup;
 			children = (
 				810DD2741CEB6BEA00EAF8A8 /* AppDelegate.swift */,
+				81FB68521D2C17170032916F /* Coordinators */,
 				81CE14C71D188C8B0092111E /* Managers */,
 				8134EB9B1D0F6FC3002B5C8F /* Launch Screen.storyboard */,
 				81919FC31D109E8D000334BC /* Views */,
@@ -286,6 +295,17 @@
 			name = Managers;
 			sourceTree = "<group>";
 		};
+		81FB68521D2C17170032916F /* Coordinators */ = {
+			isa = PBXGroup;
+			children = (
+				81FB684C1D2C108F0032916F /* AppCoordinator.swift */,
+				81FB684E1D2C15610032916F /* PetCoordinator.swift */,
+				81FB68501D2C17110032916F /* ShelterCoordinator.swift */,
+				81FB68531D2C17310032916F /* FavoritesCoordinator.swift */,
+			);
+			name = Coordinators;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -320,7 +340,7 @@
 				TargetAttributes = {
 					810DD2701CEB6BEA00EAF8A8 = {
 						CreatedOnToolsVersion = 7.3.1;
-						DevelopmentTeam = H3S3HGMYSA;
+						DevelopmentTeam = 6SW4QY498T;
 						DevelopmentTeamName = "David Warner (Personal Team)";
 						LastSwiftMigration = 0800;
 					};
@@ -397,12 +417,15 @@
 				819E8E091D0B5C5D00697ADB /* Pet.swift in Sources */,
 				81CE14C91D188C9B0092111E /* LocationManager.swift in Sources */,
 				810DD2751CEB6BEA00EAF8A8 /* AppDelegate.swift in Sources */,
+				81FB68511D2C17110032916F /* ShelterCoordinator.swift in Sources */,
 				81E798C91D19A4B600135EAB /* UIColor.swift in Sources */,
 				815EBEB51D0F04980056ECF6 /* Request+ArgoResponseSerializer.swift in Sources */,
+				81FB684D1D2C108F0032916F /* AppCoordinator.swift in Sources */,
 				8134EB901D0F55D8002B5C8F /* Sex.swift in Sources */,
 				815EBEB11D0E35D70056ECF6 /* Shelter.swift in Sources */,
 				8134EB981D0F56AD002B5C8F /* AdoptionStatus.swift in Sources */,
 				8134EB961D0F5684002B5C8F /* Age.swift in Sources */,
+				81FB684F1D2C15610032916F /* PetCoordinator.swift in Sources */,
 				8134EB9F1D0F7134002B5C8F /* PetCell.swift in Sources */,
 				81CE14BC1D1732630092111E /* UITableView.swift in Sources */,
 				81919FC51D109EC0000334BC /* PetCellLabelView.swift in Sources */,
@@ -421,6 +444,7 @@
 				819E8E101D0B60C700697ADB /* API+Pet.swift in Sources */,
 				8174B3FF1D0B70DD00F374D4 /* Contact.swift in Sources */,
 				819E8E131D0B65B000697ADB /* Dictionary.swift in Sources */,
+				81FB68541D2C17310032916F /* FavoritesCoordinator.swift in Sources */,
 				819E8E0E1D0B5F4400697ADB /* API.swift in Sources */,
 				819E8E0C1D0B5F1A00697ADB /* Endpoint.swift in Sources */,
 				8170B9F91D1C3C4200E42478 /* Filter.swift in Sources */,
@@ -519,6 +543,8 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/Carthage/Build/iOS",
@@ -527,6 +553,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.drw.PetScape;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "";
 				SWIFT_VERSION = 3.0;
 			};
 			name = Debug;
@@ -535,6 +562,8 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/Carthage/Build/iOS",
@@ -543,6 +572,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.drw.PetScape;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "";
 				SWIFT_VERSION = 3.0;
 			};
 			name = Release;

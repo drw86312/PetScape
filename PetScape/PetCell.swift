@@ -35,6 +35,8 @@ class PetCell: UITableViewCell {
 	override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
 		super.init(style: style, reuseIdentifier: reuseIdentifier)
 		
+		selectionStyle = .None
+		
 		scrollView.pagingEnabled = true
 		scrollView.alwaysBounceVertical = false
 		scrollView.alwaysBounceHorizontal = false

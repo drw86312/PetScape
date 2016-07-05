@@ -38,13 +38,6 @@ class LocationManager: NSObject, CLLocationManagerDelegate {
 		case Error(String)
 	}
 	
-	class var sharedInstance : LocationManager {
-		struct Static {
-			static let instance : LocationManager = LocationManager()
-		}
-		return Static.instance
-	}
-	
 	let manager = CLLocationManager()
 	private let _locationStatusProperty = MutableProperty<LocationStatus>(.NotDetermined)
 	let locationStatusProperty: AnyProperty<LocationStatus>

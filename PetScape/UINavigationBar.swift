@@ -13,6 +13,7 @@ extension UINavigationBar {
 	
 	var defaultStyle: Bool {
 		set {
+			tintColor = .whiteColor();
 			barTintColor = UIColor(color: .MainColor)
 			titleTextAttributes = [NSForegroundColorAttributeName: UIColor(color: .LightGray)]
 		}

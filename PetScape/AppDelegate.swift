@@ -14,23 +14,16 @@ import ReactiveCocoa
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
 	var window: UIWindow?
-	let locationManager = LocationManager.sharedInstance
+	var rootCoordinator: AppCoordinator!
 
 	func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
 		
 		window = UIWindow(frame: UIScreen.mainScreen().bounds)
+		guard let window = window else { return false }
 		
-		let tab = UITabBarController()
-		let viewControllers = [UINavigationController(rootViewController: StreamViewController()),
-		                       UINavigationController(rootViewController: UIViewController()),
-		                       UINavigationController(rootViewController: UIViewController())]
-		viewControllers.forEach { $0.navigationBar.defaultStyle = true }
-		tab.viewControllers = viewControllers
-		tab.tabBar.defaultStyle = true
-		
-		window?.rootViewController = tab
-		window?.backgroundColor = UIColor.whiteColor()
-		window?.makeKeyAndVisible()
+		rootCoordinator = AppCoordinator(window: window)
+		window.rootViewController = rootCoordinator.baseVC
+		window.makeKeyAndVisible()
 		
 		return true
 	}

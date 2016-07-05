@@ -17,18 +17,18 @@ class SimpleFilterCell: UITableViewCell {
 	override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
 		super.init(style: style, reuseIdentifier: reuseIdentifier)
 		
-		contentView.backgroundColor = .blackColor()
+		contentView.backgroundColor = UIColor(color: .LightGray)
 		
 		let selectedView = UIView()
-		selectedView.backgroundColor = UIColor(white: 0.1, alpha: 1)
+		selectedView.backgroundColor = .lightGrayColor()
 		selectedBackgroundView = selectedView
 		
 		label.sizeToFit()
-		label.textColor = .whiteColor()
+		label.textColor = UIColor(color: .MainColor)
 		label.font = UIFont.boldSystemFontOfSize(21)
 		addSubview(label)
 		
-		divider.backgroundColor = .grayColor()
+		divider.backgroundColor = .lightGrayColor()
 		addSubview(divider)
 		
 		addConstraints()
@@ -46,9 +46,5 @@ class SimpleFilterCell: UITableViewCell {
 		divider.autoPinEdge(.Left, toEdge: .Left, ofView: contentView, withOffset: 15)
 		divider.autoPinEdge(.Right, toEdge: .Right, ofView: contentView, withOffset: -15)
 		divider.autoSetDimension(.Height, toSize: 1)
-	}
-	
-	override func layoutSubviews() {
-		super.layoutSubviews()
 	}
 }

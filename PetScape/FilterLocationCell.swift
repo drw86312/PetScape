@@ -17,13 +17,13 @@ class FilterLocationCell: SimpleFilterCell {
 		super.init(style: style, reuseIdentifier: reuseIdentifier)
 		
 		textField.textAlignment = .Right
-		textField.tintColor = .whiteColor()
-		textField.textColor = .whiteColor()
+		textField.tintColor = UIColor(color: .MainColor)
+		textField.textColor = UIColor(color: .MainColor)
 		textField.font = UIFont.systemFontOfSize(16)
-		textField.keyboardAppearance = .Dark
+		textField.keyboardAppearance = .Light
 		textField.attributedPlaceholder = NSAttributedString(string: "Zip or City & State",
 		                                                     attributes: [NSFontAttributeName : UIFont.systemFontOfSize(21),
-																		  NSForegroundColorAttributeName : UIColor.whiteColor()])
+																		  NSForegroundColorAttributeName : UIColor(color: .MainColor)])
 		addSubview(textField)
 		addConstraints()
 	}

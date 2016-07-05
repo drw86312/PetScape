@@ -22,6 +22,8 @@ class StreamViewModel {
 		case Failed
 	}
 	
+	let locationManager: LocationManager
+	
 	var content: [Pet] = []
 	var count = 10
 	var offset = 0
@@ -31,8 +33,11 @@ class StreamViewModel {
 	
 	let locationStatus: AnyProperty<LocationManager.LocationStatus>
 	let filterProperty: MutableProperty<FilterStruct>
+
 	
-	init() {
+	init(locationManager: LocationManager) {
+		self.locationManager = locationManager
+		locationStatus = AnyProperty(locationManager.locationStatusProperty)
 		
 		var animal: Animal? = nil
 		var breed: String? = nil
@@ -61,8 +66,6 @@ class StreamViewModel {
 				age: age,
 				hasPhotos: hasPhotos))
 		
-		locationStatus = AnyProperty((UIApplication.sharedApplication().delegate as! AppDelegate).locationManager.locationStatusProperty)
-		
 		let uniqueLocations = locationStatus
 			.producer
 			.map { state -> String? in
@@ -76,7 +79,7 @@ class StreamViewModel {
 		
 		let filterSignal = uniqueLocations
 			.combineLatestWith(filterProperty.producer)
-			.map { (location, filter) -> Endpoint<[Pet]> in
+			.map { location, filter -> Endpoint<[Pet]> in
 				return self.generateEndpoint(location,
 					animal: filter.animal,
 					breed: filter.breed,
@@ -91,6 +94,7 @@ class StreamViewModel {
 		let disposalSignal = filterSignal
 			.map { _ in () }
 			.flatMapError { _ in SignalProducer<(), NoError>.empty }
+			.observeOn(UIScheduler())
 		
 		filterSignal.startWithNext { [unowned self] endpoint in
 			self.load
@@ -99,15 +103,6 @@ class StreamViewModel {
 				.on(disposed: { print("Disposing") })
 				.start()
 		}
-		
-//		client.resourceList()
-//			.flatMap(.Latest) { (ids) -> SignalProducer<Resource, MyError> in
-//				let signalProducers = ids.map { client.fetchResource($0) }
-//				return SignalProducer(values: signalProducers).flatten(.Merge)
-//		}
-		
-//		let loading = SignalProducer<State, NoError>(value: .Loading)
-
 		
 		self.load = Action<Endpoint<[Pet]>, Range<Int>, Error> { endpoint in
 			return SignalProducer<Range<Int>, Error> { [unowned self] observer, disposable in

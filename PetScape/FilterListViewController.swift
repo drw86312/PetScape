@@ -23,18 +23,22 @@ class FilterListViewController: UIViewController {
 	
 	override func loadView() {
 		view = UIView()
-		view.backgroundColor = .blackColor()
+		view.backgroundColor = UIColor(color: .LightGray)
 		
 		tableView.registerClass(FilterLocationCell.self,
 		                        forCellReuseIdentifier: NSStringFromClass(FilterLocationCell.self))
 		tableView.registerClass(SimpleFilterCell.self,
 		                        forCellReuseIdentifier: NSStringFromClass(SimpleFilterCell.self))
 		tableView.separatorStyle = .None
-		tableView.backgroundColor = .blackColor()
+		tableView.backgroundColor = UIColor(color: .LightGray)
 		tableView.dataSource = self
 		tableView.delegate = self
 		tableView.keyboardDismissMode = .OnDrag
+		tableView.alwaysBounceVertical = false
 		view.addSubview(tableView)
+		
+		navigationController?.hidesBarsOnSwipe = false
+
 		
 		addConstraints()
 	}

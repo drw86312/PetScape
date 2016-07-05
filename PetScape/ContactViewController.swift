@@ -52,8 +52,8 @@ class ContactViewController: BaseModalViewController {
 	
 	var delegate: ContactViewControllerDelegate?
 	
-	init(pet: Pet) {
-		self.viewModel = ContactViewModel(pet: pet)
+	init(pet: Pet, locationManager: LocationManager) {
+		self.viewModel = ContactViewModel(pet: pet, locationManager: locationManager)
 		super.init(style: .Large)
 	}
 	

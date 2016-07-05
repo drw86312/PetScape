@@ -17,19 +17,15 @@ class TableViewBackground: UIView {
 	init() {
 		super.init(frame: CGRectZero)
 				
-		label.text = "Refresh Failed"
-		label.textColor = .whiteColor()
+		label.textColor = UIColor(color: .MainColor)
 		label.textAlignment = .Center
 		label.font = UIFont.systemFontOfSize(21)
 		label.numberOfLines = 0
 		
 		refreshButton.setTitle("Retry", forState: .Normal)
-		refreshButton.setTitleColor(.whiteColor(), forState: .Normal)
-		refreshButton.titleLabel?.font = UIFont.systemFontOfSize(21)
-		refreshButton.layer.masksToBounds = true
-		refreshButton.layer.cornerRadius = 2.5
-		refreshButton.layer.borderWidth = 2.0
-		refreshButton.layer.borderColor = UIColor.whiteColor().CGColor
+		refreshButton.setTitleColor(UIColor(color: .MainColor), forState: .Normal)
+		refreshButton.titleLabel?.font = UIFont.boldSystemFontOfSize(26)
+		refreshButton.layer.borderColor = UIColor(color: .MainColor).CGColor
 		
 		addSubview(label)
 		addSubview(refreshButton)

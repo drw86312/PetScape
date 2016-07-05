@@ -14,7 +14,7 @@ import UIKit
 
 class StreamViewController: UIViewController {
 	
-	let viewModel = StreamViewModel()
+	let viewModel: StreamViewModel
 	let tableView = UITableView(frame: CGRectZero, style: .Plain)
 	let backgroundView = TableViewBackground()
 	let spinner = UIActivityIndicatorView(activityIndicatorStyle: .WhiteLarge)
@@ -23,7 +23,8 @@ class StreamViewController: UIViewController {
 	let scrollSignal: Signal<UIScrollView, NoError>
 	private let scrollObserver: Observer<UIScrollView, NoError>
 	
-	init() {
+	init(locationManager: LocationManager) {
+		viewModel = StreamViewModel(locationManager: locationManager)
 		(scrollSignal, scrollObserver) = Signal.pipe()
 		super.init(nibName: nil, bundle: nil)
 		title = NSLocalizedString("Pets", comment: "")
@@ -101,7 +102,7 @@ class StreamViewController: UIViewController {
 			.observeOn(UIScheduler())
 			.skipRepeats()
 		
-		let locationState = viewModel
+		let locationSignal = viewModel
 			.locationStatus
 			.producer
 			.observeOn(UIScheduler())
@@ -117,10 +118,10 @@ class StreamViewController: UIViewController {
 				.skipRepeats()
 		
 		DynamicProperty(object: backgroundView.label, keyPath: "text") <~
-			locationState
+			locationSignal
 				.map { state -> String in
 					if case .Denied = state {
-						return "Please enable location Services or Set Location in Filters"
+						return "Enable location Services or Set Location in Filters"
 					} else {
 						return ""
 					}
@@ -193,8 +194,6 @@ class StreamViewController: UIViewController {
 					self.viewModel.loadNext()
 				}
 		}
-		
-		viewModel.filterProperty.value = FilterStruct(animal: .Dog, breed: nil, size: nil, sex: nil, age: nil, hasPhotos: nil)
 	}
 	
 	private func emptyDataSet() {
@@ -215,7 +214,7 @@ class StreamViewController: UIViewController {
 				UIApplication.sharedApplication().openURL(url)
 			}
 		} else {
-			appDelegate.locationManager.scanLocation()
+			viewModel.locationManager.scanLocation()
 		}
 	}
 	
@@ -242,7 +241,7 @@ extension StreamViewController: UITableViewDelegate {
 extension StreamViewController: PetCellDelegate {
 	
 	func contactButtonPressed(pet: Pet) {
-		let vc = ContactViewController(pet: pet)
+		let vc = ContactViewController(pet: pet, locationManager: viewModel.locationManager)
 		vc.delegate = self
 		vc.modalPresentationStyle = .OverCurrentContext
 		tabBarController?.presentViewController(vc, animated: false, completion: nil)
@@ -256,7 +255,7 @@ extension StreamViewController: PetCellDelegate {
 		var activityItems: [AnyObject] = []
 		if let name = pet.name {
 			let pronoun = pet.sex == .Male ? "He" : "She"
-			activityItems.append("Meet \(name)! \(pronoun) needs a home")
+			activityItems.append("This is \(name)! \(pronoun) needs a home")
 		}
 		if let image = image {
 			activityItems.append(image)

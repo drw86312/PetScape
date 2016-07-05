@@ -13,6 +13,8 @@ import MapKit
 
 class ContactViewModel {
 	
+	let locationManager: LocationManager
+	
 	let imageURL = MutableProperty<NSURL?>(nil)
 	let titleString = MutableProperty<String?>(nil)
 	
@@ -27,14 +29,15 @@ class ContactViewModel {
 	let phone = MutableProperty<String?>(nil)
 	let link = MutableProperty<NSURL?>(nil)
 	
-	init(pet: Pet) {
+	init(pet: Pet, locationManager: LocationManager) {
+		self.locationManager = locationManager
+		self.userLocation = locationManager.userCoordinate
 		
 		self.imageURL.value = pet.photos?.first?.thumbnailURL
 		self.titleString.value = pet.name
 		self.email.value = pet.contact?.email
 		self.phone.value = pet.contact?.phone
 		
-		self.userLocation = (UIApplication.sharedApplication().delegate as! AppDelegate).locationManager.userCoordinate
 		
 		guard let shelterID = pet.shelterID else { return }
 		
