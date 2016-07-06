@@ -61,6 +61,7 @@ func toPhotos(images: [Image]?) -> Decoded<[Photo]> {
 			var mediumURL: NSURL?
 			var largeURL: NSURL?
 			var extraLargeURL: NSURL?
+			
 			associatedImages.forEach {
 				switch $0.size {
 				case "t":
@@ -81,7 +82,8 @@ func toPhotos(images: [Image]?) -> Decoded<[Photo]> {
 			photos.append(
 				Photo(id: id,
 					thumbnailURL: thumbnailURL,
-					smallURL: smallURL, mediumURL: mediumURL,
+					smallURL: smallURL,
+					mediumURL: mediumURL,
 					largeURL: largeURL,
 					extraLargeURL: extraLargeURL))
 		}

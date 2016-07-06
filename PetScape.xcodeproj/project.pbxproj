@@ -35,7 +35,6 @@
 		815EBEB31D0E407E0056ECF6 /* API+Shelter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 815EBEB21D0E407E0056ECF6 /* API+Shelter.swift */; };
 		815EBEB51D0F04980056ECF6 /* Request+ArgoResponseSerializer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 815EBEB41D0F04980056ECF6 /* Request+ArgoResponseSerializer.swift */; };
 		815EBEB71D0F15720056ECF6 /* Breed.swift in Sources */ = {isa = PBXBuildFile; fileRef = 815EBEB61D0F15720056ECF6 /* Breed.swift */; };
-		8170B9F91D1C3C4200E42478 /* Filter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8170B9F81D1C3C4200E42478 /* Filter.swift */; };
 		8174B3FF1D0B70DD00F374D4 /* Contact.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8174B3FE1D0B70DD00F374D4 /* Contact.swift */; };
 		8174B4011D0C6D1E00F374D4 /* Photo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8174B4001D0C6D1E00F374D4 /* Photo.swift */; };
 		81919FC51D109EC0000334BC /* PetCellLabelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 81919FC41D109EC0000334BC /* PetCellLabelView.swift */; };
@@ -64,6 +63,7 @@
 		81FB684F1D2C15610032916F /* PetCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 81FB684E1D2C15610032916F /* PetCoordinator.swift */; };
 		81FB68511D2C17110032916F /* ShelterCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 81FB68501D2C17110032916F /* ShelterCoordinator.swift */; };
 		81FB68541D2C17310032916F /* FavoritesCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 81FB68531D2C17310032916F /* FavoritesCoordinator.swift */; };
+		81FB68561D2C1E140032916F /* FilterManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 81FB68551D2C1E140032916F /* FilterManager.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -110,7 +110,6 @@
 		815EBEB21D0E407E0056ECF6 /* API+Shelter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "API+Shelter.swift"; sourceTree = "<group>"; };
 		815EBEB41D0F04980056ECF6 /* Request+ArgoResponseSerializer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Request+ArgoResponseSerializer.swift"; sourceTree = "<group>"; };
 		815EBEB61D0F15720056ECF6 /* Breed.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Breed.swift; sourceTree = "<group>"; };
-		8170B9F81D1C3C4200E42478 /* Filter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Filter.swift; sourceTree = "<group>"; };
 		8174B3FE1D0B70DD00F374D4 /* Contact.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Contact.swift; sourceTree = "<group>"; };
 		8174B4001D0C6D1E00F374D4 /* Photo.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Photo.swift; sourceTree = "<group>"; };
 		81919FC41D109EC0000334BC /* PetCellLabelView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PetCellLabelView.swift; sourceTree = "<group>"; };
@@ -139,6 +138,7 @@
 		81FB684E1D2C15610032916F /* PetCoordinator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PetCoordinator.swift; sourceTree = "<group>"; };
 		81FB68501D2C17110032916F /* ShelterCoordinator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ShelterCoordinator.swift; sourceTree = "<group>"; };
 		81FB68531D2C17310032916F /* FavoritesCoordinator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FavoritesCoordinator.swift; sourceTree = "<group>"; };
+		81FB68551D2C1E140032916F /* FilterManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FilterManager.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -255,7 +255,6 @@
 				8174B3FE1D0B70DD00F374D4 /* Contact.swift */,
 				8174B4001D0C6D1E00F374D4 /* Photo.swift */,
 				815EBEB01D0E35D70056ECF6 /* Shelter.swift */,
-				8170B9F81D1C3C4200E42478 /* Filter.swift */,
 			);
 			name = Models;
 			sourceTree = "<group>";
@@ -291,6 +290,7 @@
 			isa = PBXGroup;
 			children = (
 				81CE14C81D188C9B0092111E /* LocationManager.swift */,
+				81FB68551D2C1E140032916F /* FilterManager.swift */,
 			);
 			name = Managers;
 			sourceTree = "<group>";
@@ -409,6 +409,7 @@
 				81C58E6D1D22E4A100635986 /* ContactViewController.swift in Sources */,
 				8134EB941D0F5650002B5C8F /* Animal.swift in Sources */,
 				815EBEB31D0E407E0056ECF6 /* API+Shelter.swift in Sources */,
+				81FB68561D2C1E140032916F /* FilterManager.swift in Sources */,
 				81C58E6F1D22EA2800635986 /* ContactViewModel.swift in Sources */,
 				81CE14C41D1877100092111E /* FilterLocationCell.swift in Sources */,
 				81C58E6B1D20B9AF00635986 /* LoadingImageView.swift in Sources */,
@@ -447,7 +448,6 @@
 				81FB68541D2C17310032916F /* FavoritesCoordinator.swift in Sources */,
 				819E8E0E1D0B5F4400697ADB /* API.swift in Sources */,
 				819E8E0C1D0B5F1A00697ADB /* Endpoint.swift in Sources */,
-				8170B9F91D1C3C4200E42478 /* Filter.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

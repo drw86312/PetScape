@@ -24,7 +24,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 		rootCoordinator = AppCoordinator(window: window)
 		window.rootViewController = rootCoordinator.baseVC
 		window.makeKeyAndVisible()
-		
+				
 		return true
 	}
 

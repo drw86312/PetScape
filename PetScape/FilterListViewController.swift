@@ -10,11 +10,21 @@ import UIKit
 
 class FilterListViewController: UIViewController {
 	
-	let tableView = UITableView(frame: CGRectZero, style: .Plain)
+	var collectionView: UICollectionView!
 	
 	init() {
 		super.init(nibName: nil, bundle: nil)
 		title = NSLocalizedString("Filters", comment: "")
+		
+		let layout = UICollectionViewFlowLayout()
+		layout.sectionInset = UIEdgeInsetsZero
+		layout.minimumLineSpacing = 0
+		layout.minimumInteritemSpacing = 0
+		layout.estimatedItemSize = CGSize(width: 200, height: 10)
+		collectionView = UICollectionView(frame: CGRect.zero,
+		                                  collectionViewLayout: layout)
+		collectionView.alwaysBounceVertical = false
+		self.view = collectionView
 	}
 	
 	required init?(coder aDecoder: NSCoder) {
@@ -22,24 +32,11 @@ class FilterListViewController: UIViewController {
 	}
 	
 	override func loadView() {
-		view = UIView()
-		view.backgroundColor = UIColor(color: .LightGray)
 		
-		tableView.registerClass(FilterLocationCell.self,
-		                        forCellReuseIdentifier: NSStringFromClass(FilterLocationCell.self))
-		tableView.registerClass(SimpleFilterCell.self,
-		                        forCellReuseIdentifier: NSStringFromClass(SimpleFilterCell.self))
-		tableView.separatorStyle = .None
-		tableView.backgroundColor = UIColor(color: .LightGray)
-		tableView.dataSource = self
-		tableView.delegate = self
-		tableView.keyboardDismissMode = .OnDrag
-		tableView.alwaysBounceVertical = false
-		view.addSubview(tableView)
+		collectionView.delegate = self
+//		collectionView.dataSource = self
 		
 		navigationController?.hidesBarsOnSwipe = false
-
-		
 		addConstraints()
 	}
 	
@@ -49,53 +46,62 @@ class FilterListViewController: UIViewController {
 	}
 	
 	private func addConstraints() {
-		tableView.autoPinEdgesToSuperviewEdges()
+		collectionView.autoPinEdgesToSuperviewEdges()
 	}
 }
 
-extension FilterListViewController: UITableViewDelegate {
+extension FilterListViewController: UICollectionViewDelegate {
 	
-	func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
-		tableView.deselectRowAtIndexPath(indexPath, animated: false)
-	}
-	
-	func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
-		return 60
+	func collectionView(collectionView: UICollectionView, didSelectItemAtIndexPath indexPath: NSIndexPath) {
+		collectionView.deselectItemAtIndexPath(indexPath, animated: false)
 	}
 }
 
+//extension FilterListViewController: UICollectionViewDataSource {
+//	
+//	func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+//		return 6
+//	}
+//	
+//	func collectionView(collectionView: UICollectionView,
+//	                    cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
+//		
+//	}
+//}
 
-extension FilterListViewController: UITableViewDataSource {
-	
-	func tableView(tableView: UITableView,
-	               cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-		if indexPath.row == 0 {
-			let cell = tableView.dequeueReusableCellWithIdentifier(NSStringFromClass(FilterLocationCell.self), forIndexPath: indexPath) as! FilterLocationCell
-			cell.label.text = "Location"
-			return cell
-		} else {
-			let cell = tableView.dequeueReusableCellWithIdentifier(NSStringFromClass(SimpleFilterCell.self), forIndexPath: indexPath) as! SimpleFilterCell
-			cell.accessoryType = .DisclosureIndicator
-			cell.tintColor = .blackColor()
-			
-			switch indexPath.row {
-			case 1:
-				cell.label.text = "Animal"
-			case 2:
-				cell.label.text = "Breed"
-			case 3:
-				cell.label.text = "Size"
-			case 4:
-				cell.label.text = "Sex"
-			case 5:
-				cell.label.text = "Age"
-			default: return cell
-			}
-			return cell
-		}
-	}
-	
-	func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-		return 6
-	}
-}
+//
+//
+//extension FilterListViewController: UICollectionViewDataSource {
+//	
+//	func tableView(tableView: UITableView,
+//	               cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
+//		if indexPath.row == 0 {
+//			let cell = tableView.dequeueReusableCellWithIdentifier(NSStringFromClass(FilterLocationCell.self), forIndexPath: indexPath) as! FilterLocationCell
+//			cell.label.text = "Location"
+//			return cell
+//		} else {
+//			let cell = tableView.dequeueReusableCellWithIdentifier(NSStringFromClass(SimpleFilterCell.self), forIndexPath: indexPath) as! SimpleFilterCell
+//			cell.accessoryType = .DisclosureIndicator
+//			cell.tintColor = .blackColor()
+//			
+//			switch indexPath.row {
+//			case 1:
+//				cell.label.text = "Animal"
+//			case 2:
+//				cell.label.text = "Breed"
+//			case 3:
+//				cell.label.text = "Size"
+//			case 4:
+//				cell.label.text = "Sex"
+//			case 5:
+//				cell.label.text = "Age"
+//			default: return cell
+//			}
+//			return cell
+//		}
+//	}
+//	
+//	func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+//		return 6
+//	}
+//}

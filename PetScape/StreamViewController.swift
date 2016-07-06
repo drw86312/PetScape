@@ -23,8 +23,10 @@ class StreamViewController: UIViewController {
 	let scrollSignal: Signal<UIScrollView, NoError>
 	private let scrollObserver: Observer<UIScrollView, NoError>
 	
-	init(locationManager: LocationManager) {
-		viewModel = StreamViewModel(locationManager: locationManager)
+	init(locationManager: LocationManager,
+	     filterManager: FilterManager) {
+		viewModel = StreamViewModel(locationManager: locationManager,
+		                            filterManager: filterManager)
 		(scrollSignal, scrollObserver) = Signal.pipe()
 		super.init(nibName: nil, bundle: nil)
 		title = NSLocalizedString("Pets", comment: "")

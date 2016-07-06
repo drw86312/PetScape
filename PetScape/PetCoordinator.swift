@@ -13,10 +13,12 @@ class PetCoordinator {
 	
 	let navigationController = UINavigationController()
 	private(set) var petVC: StreamViewController!
+	let filterManager = FilterManager()
 	
 	init(locationManager: LocationManager) {
 		navigationController.navigationBar.defaultStyle = true
-		petVC = StreamViewController(locationManager: locationManager)
+		petVC = StreamViewController(locationManager: locationManager,
+		                             filterManager: filterManager)
 		reset()
 	}
 	

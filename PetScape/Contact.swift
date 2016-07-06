@@ -77,7 +77,7 @@ extension Contact {
 		return accum
 	}
 	
-	// Formats an address from optional components with line breaks
+	// Formats an address from optional components without line breaks
 	private func formatWithoutLineBreaks(address1: String? = nil,
 	                                  address2: String? = nil,
 	                                  city: String? = nil,

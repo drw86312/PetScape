@@ -23,6 +23,7 @@ class StreamViewModel {
 	}
 	
 	let locationManager: LocationManager
+	let filterManager: FilterManager
 	
 	var content: [Pet] = []
 	var count = 10
@@ -32,64 +33,53 @@ class StreamViewModel {
 	let loadState = MutableProperty<LoadState>(.NotLoaded)
 	
 	let locationStatus: AnyProperty<LocationManager.LocationStatus>
-	let filterProperty: MutableProperty<FilterStruct>
-
 	
-	init(locationManager: LocationManager) {
+	init(locationManager: LocationManager, filterManager: FilterManager) {
 		self.locationManager = locationManager
 		locationStatus = AnyProperty(locationManager.locationStatusProperty)
+		self.filterManager = filterManager
 		
-		var animal: Animal? = nil
-		var breed: String? = nil
-		var size: Size? = nil
-		var sex: Sex? = nil
-		var age: Age? = nil
-		var hasPhotos: Bool? = nil
-		
-		// Fetch stored filters
-		if let decoded  = NSUserDefaults.standardUserDefaults().objectForKey(StreamViewModel.kFiltersKey) as? NSData,
-			let filter = NSKeyedUnarchiver.unarchiveObjectWithData(decoded) as? FilterClass {
-			if let v = filter.animal, let enumValue = Animal(rawValue: v) { animal = enumValue }
-			if let v = filter.size, let enumValue = Size(rawValue: v) { size = enumValue }
-			if let v = filter.sex, let enumValue = Sex(rawValue: v) { sex = enumValue }
-			if let v = filter.age, let enumValue = Age(rawValue: v) { age = enumValue }
-			if let v = filter.breed { breed = v }
-			if let v = filter.hasPhotos { hasPhotos = v }
-		}
-		
-		// Assign filters to filters property
-		filterProperty = MutableProperty<FilterStruct>(
-			FilterStruct(animal: animal,
-				breed: breed,
-				size: size,
-				sex: sex,
-				age: age,
-				hasPhotos: hasPhotos))
-		
-		let uniqueLocations = locationStatus
+		let locations = locationStatus
 			.producer
+			.filter { state in
+				if case .Some = state { return true }
+				return false
+			}
 			.map { state -> String? in
-				if case .Some(let location) = state {
-					return location
-				}
+				if case .Some(let location) = state { return location }
 				return nil
 			}
 			.skipRepeats(==)
 			.ignoreNil()
 		
-		let filterSignal = uniqueLocations
-			.combineLatestWith(filterProperty.producer)
-			.map { location, filter -> Endpoint<[Pet]> in
+		let locationAndFilter = locations.combineLatestWith(filterManager.filter.producer)
+		
+		locationAndFilter.on(next: { [unowned self] _ in
+			self.content = []
+			self.offset = 0
+		}).start()
+		
+		let filterSignal = locationAndFilter
+			.map { [unowned self] location, filter -> Endpoint<[Pet]> in
+				print("Generate endpoint")
 				return self.generateEndpoint(location,
 					animal: filter.animal,
 					breed: filter.breed,
 					size: filter.size,
 					sex: filter.sex,
 					age: filter.age,
-					offset: 0,
+					offset: self.offset,
 					count: self.count)
 		}
-				
+		
+//		filterManager.filter.producer.on().start() { event in
+//			print("This \(event)")
+//		}
+//		
+//		filterManager.filter.producer.startWithNext { next in
+//			print("That \(next)")
+//		}
+		
 		// Use this signal to cancel in-flight requests
 		let disposalSignal = filterSignal
 			.map { _ in () }
@@ -97,6 +87,7 @@ class StreamViewModel {
 			.observeOn(UIScheduler())
 		
 		filterSignal.startWithNext { [unowned self] endpoint in
+			self.content = []
 			self.load
 				.apply(endpoint)
 				.takeUntil(disposalSignal.skip(1).take(1))
@@ -164,11 +155,11 @@ class StreamViewModel {
 	func loadNext() {
 		if case .Some(let location) = locationStatus.value {
 			let endpoint = generateEndpoint(location,
-			                                animal: filterProperty.value.animal,
-			                                breed: filterProperty.value.breed,
-			                                size: filterProperty.value.size,
-			                                sex: filterProperty.value.sex,
-			                                age: filterProperty.value.age,
+			                                animal: filterManager.filter.value.animal,
+			                                breed: filterManager.filter.value.breed,
+			                                size: filterManager.filter.value.size,
+			                                sex: filterManager.filter.value.sex,
+			                                age: filterManager.filter.value.age,
 			                                offset: self.offset,
 			                                count: self.count)
 			load
