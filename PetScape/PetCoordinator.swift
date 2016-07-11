@@ -13,17 +13,34 @@ class PetCoordinator {
 	
 	let navigationController = UINavigationController()
 	private(set) var petVC: StreamViewController!
+	
 	let filterManager = FilterManager()
+	let locationManager: LocationManager
 	
 	init(locationManager: LocationManager) {
+		self.locationManager = locationManager
+		
 		navigationController.navigationBar.defaultStyle = true
 		petVC = StreamViewController(locationManager: locationManager,
 		                             filterManager: filterManager)
+		petVC.delegate = self
 		reset()
 	}
 	
 	func reset(animated: Bool = false) {
 		navigationController.popToRootViewControllerAnimated(animated)
 		navigationController.pushViewController(petVC, animated: animated)
+	}
+	
+	func pushFiltersController() {
+		
+	}
+}
+
+extension PetCoordinator: StreamViewControllerDelegate {
+	func filterIconPressed() {
+		let filterVC = FilterListViewController(filterManager: filterManager,
+		                                        locationManager: locationManager )
+		navigationController.pushViewController(filterVC, animated: true)
 	}
 }

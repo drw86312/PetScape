@@ -54,9 +54,10 @@
 		81CE14BE1D185A200092111E /* FilterListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 81CE14BD1D185A200092111E /* FilterListViewController.swift */; };
 		81CE14C01D1861E50092111E /* UINavigationBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 81CE14BF1D1861E50092111E /* UINavigationBar.swift */; };
 		81CE14C21D18641A0092111E /* UITabBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 81CE14C11D18641A0092111E /* UITabBar.swift */; };
-		81CE14C41D1877100092111E /* FilterLocationCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 81CE14C31D1877100092111E /* FilterLocationCell.swift */; };
 		81CE14C61D1877280092111E /* SimpleFilterCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 81CE14C51D1877280092111E /* SimpleFilterCell.swift */; };
 		81CE14C91D188C9B0092111E /* LocationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 81CE14C81D188C9B0092111E /* LocationManager.swift */; };
+		81D2445B1D341DAE0071BB99 /* TextfieldCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 81D2445A1D341DAE0071BB99 /* TextfieldCell.swift */; };
+		81D2445D1D341DC50071BB99 /* SimpleTextCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 81D2445C1D341DC50071BB99 /* SimpleTextCell.swift */; };
 		81E798C91D19A4B600135EAB /* UIColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 81E798C81D19A4B600135EAB /* UIColor.swift */; };
 		81E798CB1D19E07C00135EAB /* BaseModalViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 81E798CA1D19E07C00135EAB /* BaseModalViewController.swift */; };
 		81FB684D1D2C108F0032916F /* AppCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 81FB684C1D2C108F0032916F /* AppCoordinator.swift */; };
@@ -129,9 +130,10 @@
 		81CE14BD1D185A200092111E /* FilterListViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FilterListViewController.swift; sourceTree = "<group>"; };
 		81CE14BF1D1861E50092111E /* UINavigationBar.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UINavigationBar.swift; sourceTree = "<group>"; };
 		81CE14C11D18641A0092111E /* UITabBar.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UITabBar.swift; sourceTree = "<group>"; };
-		81CE14C31D1877100092111E /* FilterLocationCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FilterLocationCell.swift; sourceTree = "<group>"; };
 		81CE14C51D1877280092111E /* SimpleFilterCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SimpleFilterCell.swift; sourceTree = "<group>"; };
 		81CE14C81D188C9B0092111E /* LocationManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LocationManager.swift; sourceTree = "<group>"; };
+		81D2445A1D341DAE0071BB99 /* TextfieldCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TextfieldCell.swift; sourceTree = "<group>"; };
+		81D2445C1D341DC50071BB99 /* SimpleTextCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SimpleTextCell.swift; sourceTree = "<group>"; };
 		81E798C81D19A4B600135EAB /* UIColor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UIColor.swift; sourceTree = "<group>"; };
 		81E798CA1D19E07C00135EAB /* BaseModalViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BaseModalViewController.swift; sourceTree = "<group>"; };
 		81FB684C1D2C108F0032916F /* AppCoordinator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppCoordinator.swift; sourceTree = "<group>"; };
@@ -215,8 +217,9 @@
 			isa = PBXGroup;
 			children = (
 				8134EB9E1D0F7134002B5C8F /* PetCell.swift */,
-				81CE14C31D1877100092111E /* FilterLocationCell.swift */,
 				81CE14C51D1877280092111E /* SimpleFilterCell.swift */,
+				81D2445A1D341DAE0071BB99 /* TextfieldCell.swift */,
+				81D2445C1D341DC50071BB99 /* SimpleTextCell.swift */,
 			);
 			name = Cells;
 			sourceTree = "<group>";
@@ -405,18 +408,19 @@
 			buildActionMask = 2147483647;
 			files = (
 				8134EB921D0F561A002B5C8F /* Size.swift in Sources */,
+				81D2445B1D341DAE0071BB99 /* TextfieldCell.swift in Sources */,
 				81CE14C61D1877280092111E /* SimpleFilterCell.swift in Sources */,
 				81C58E6D1D22E4A100635986 /* ContactViewController.swift in Sources */,
 				8134EB941D0F5650002B5C8F /* Animal.swift in Sources */,
 				815EBEB31D0E407E0056ECF6 /* API+Shelter.swift in Sources */,
 				81FB68561D2C1E140032916F /* FilterManager.swift in Sources */,
 				81C58E6F1D22EA2800635986 /* ContactViewModel.swift in Sources */,
-				81CE14C41D1877100092111E /* FilterLocationCell.swift in Sources */,
 				81C58E6B1D20B9AF00635986 /* LoadingImageView.swift in Sources */,
 				81C58E691D20B98F00635986 /* CircularProgressView.swift in Sources */,
 				810DD2771CEB6BEA00EAF8A8 /* StreamViewController.swift in Sources */,
 				819E8E091D0B5C5D00697ADB /* Pet.swift in Sources */,
 				81CE14C91D188C9B0092111E /* LocationManager.swift in Sources */,
+				81D2445D1D341DC50071BB99 /* SimpleTextCell.swift in Sources */,
 				810DD2751CEB6BEA00EAF8A8 /* AppDelegate.swift in Sources */,
 				81FB68511D2C17110032916F /* ShelterCoordinator.swift in Sources */,
 				81E798C91D19A4B600135EAB /* UIColor.swift in Sources */,

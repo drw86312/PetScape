@@ -18,6 +18,19 @@ struct Filter {
 	let hasPhotos: Bool?
 }
 
+extension Filter: Equatable {}
+
+func == (lhs: Filter, rhs: Filter) -> Bool {
+	let isEqual =
+		lhs.animal == rhs.animal &&
+			lhs.breed == rhs.breed &&
+			lhs.size == rhs.size &&
+			lhs.sex == rhs.sex &&
+			lhs.age == rhs.age &&
+			lhs.hasPhotos == rhs.hasPhotos
+	return isEqual
+}
+
 class FilterManager {
 	
 	let filter: MutableProperty<Filter>

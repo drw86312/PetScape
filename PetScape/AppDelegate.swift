@@ -20,7 +20,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 		
 		window = UIWindow(frame: UIScreen.mainScreen().bounds)
 		guard let window = window else { return false }
-		
 		rootCoordinator = AppCoordinator(window: window)
 		window.rootViewController = rootCoordinator.baseVC
 		window.makeKeyAndVisible()

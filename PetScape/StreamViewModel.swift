@@ -32,12 +32,14 @@ class StreamViewModel {
 	var load: Action<Endpoint<[Pet]>, Range<Int>, Error>!
 	let loadState = MutableProperty<LoadState>(.NotLoaded)
 	
+	var dataErased: (() -> ())?
+	
 	let locationStatus: AnyProperty<LocationManager.LocationStatus>
 	
 	init(locationManager: LocationManager, filterManager: FilterManager) {
+		self.filterManager = filterManager
 		self.locationManager = locationManager
 		locationStatus = AnyProperty(locationManager.locationStatusProperty)
-		self.filterManager = filterManager
 		
 		let locations = locationStatus
 			.producer
@@ -52,47 +54,10 @@ class StreamViewModel {
 			.skipRepeats(==)
 			.ignoreNil()
 		
-		let locationAndFilter = locations.combineLatestWith(filterManager.filter.producer)
-		
-		locationAndFilter.on(next: { [unowned self] _ in
-			self.content = []
-			self.offset = 0
-		}).start()
-		
-		let filterSignal = locationAndFilter
-			.map { [unowned self] location, filter -> Endpoint<[Pet]> in
-				print("Generate endpoint")
-				return self.generateEndpoint(location,
-					animal: filter.animal,
-					breed: filter.breed,
-					size: filter.size,
-					sex: filter.sex,
-					age: filter.age,
-					offset: self.offset,
-					count: self.count)
-		}
-		
-//		filterManager.filter.producer.on().start() { event in
-//			print("This \(event)")
-//		}
-//		
-//		filterManager.filter.producer.startWithNext { next in
-//			print("That \(next)")
-//		}
-		
-		// Use this signal to cancel in-flight requests
-		let disposalSignal = filterSignal
-			.map { _ in () }
-			.flatMapError { _ in SignalProducer<(), NoError>.empty }
-			.observeOn(UIScheduler())
-		
-		filterSignal.startWithNext { [unowned self] endpoint in
-			self.content = []
-			self.load
-				.apply(endpoint)
-				.takeUntil(disposalSignal.skip(1).take(1))
-				.on(disposed: { print("Disposing") })
-				.start()
+		locations
+			.combineLatestWith(filterManager.filter.producer)
+			.startWithNext { [unowned self] _ in
+				self.reload()
 		}
 		
 		self.load = Action<Endpoint<[Pet]>, Range<Int>, Error> { endpoint in
@@ -152,9 +117,16 @@ class StreamViewModel {
 		self.loadState <~ Signal.merge([loaded, loading]).skipRepeats()
 	}
 	
+	func reload() {
+		content = []
+		offset = 0
+		dataErased?()
+		loadNext()
+	}
+
 	func loadNext() {
 		if case .Some(let location) = locationStatus.value {
-			let endpoint = generateEndpoint(location,
+			let endpoint = StreamViewModel.generateEndpoint(location,
 			                                animal: filterManager.filter.value.animal,
 			                                breed: filterManager.filter.value.breed,
 			                                size: filterManager.filter.value.size,
@@ -168,13 +140,7 @@ class StreamViewModel {
 		}
 	}
 	
-	func reload() {
-		if content.count != 0 { content = [] }
-		self.offset = 0
-		loadNext()
-	}
-	
-	func generateEndpoint(location: String,
+	static func generateEndpoint(location: String,
 	                      animal: Animal?,
 	                      breed: String?,
 	                      size: Size?,

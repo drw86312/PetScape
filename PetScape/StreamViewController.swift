@@ -12,6 +12,11 @@ import Result
 import WebImage
 import UIKit
 
+protocol StreamViewControllerDelegate: class {
+	func filterIconPressed()
+	
+}
+
 class StreamViewController: UIViewController {
 	
 	let viewModel: StreamViewModel
@@ -22,6 +27,8 @@ class StreamViewController: UIViewController {
 	
 	let scrollSignal: Signal<UIScrollView, NoError>
 	private let scrollObserver: Observer<UIScrollView, NoError>
+	
+	weak var delegate: StreamViewControllerDelegate?
 	
 	init(locationManager: LocationManager,
 	     filterManager: FilterManager) {
@@ -183,6 +190,12 @@ class StreamViewController: UIViewController {
 				print(error)
 		}
 		
+		viewModel.dataErased = { [unowned self] in
+			if self.tableView.numberOfRowsInSection(0) > 0 {
+				self.tableView.reloadData()
+			}
+		}
+		
 		// Start loading next batch when scrolled to end of loaded content
 		scrollSignal
 			.map { scrollView -> Bool in
@@ -198,19 +211,11 @@ class StreamViewController: UIViewController {
 		}
 	}
 	
-	private func emptyDataSet() {
-		if viewModel.content.count > 0 {
-			viewModel.content = []
-			tableView.reloadData()
-		}
-	}
-	
 	func filterIconPressed() {
-		navigationController?.pushViewController(FilterListViewController(), animated: true)
+		delegate?.filterIconPressed()
 	}
 	
 	func locationIconPressed() {
-		let appDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
 		if case .Denied = viewModel.locationStatus.value {
 			if let url  = NSURL(string: UIApplicationOpenSettingsURLString) where UIApplication.sharedApplication().canOpenURL(url)  {
 				UIApplication.sharedApplication().openURL(url)
@@ -221,7 +226,8 @@ class StreamViewController: UIViewController {
 	}
 	
 	func refreshButtonPressed() {
-		viewModel.reload()
+		
+		
 	}
 	
 	override func preferredStatusBarStyle() -> UIStatusBarStyle {
