@@ -9,11 +9,16 @@
 import UIKit
 import ReactiveCocoa
 
+protocol FilterListViewControllerDelegate: class {
+	func rowSelected()
+}
+
 class FilterListViewController: UIViewController {
 	
 	var collectionView: UICollectionView!
 	let filterManager: FilterManager
 	let locationManager: LocationManager
+	weak var delegate: FilterListViewControllerDelegate?
 	
 	init(filterManager: FilterManager,
 	     locationManager: LocationManager) {
@@ -47,6 +52,8 @@ class FilterListViewController: UIViewController {
 		
 		collectionView.backgroundColor = .lightGrayColor()
 		
+		view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(FilterListViewController.viewTapped)))
+		
 		navigationController?.hidesBarsOnSwipe = false
 		addConstraints()
 	}
@@ -67,12 +74,19 @@ class FilterListViewController: UIViewController {
 	private func addConstraints() {
 		collectionView.autoPinEdgesToSuperviewEdges()
 	}
+	
+	func viewTapped() {
+		view.endEditing(true)
+	}
 }
 
 extension FilterListViewController: UICollectionViewDelegate {
 	
 	func collectionView(collectionView: UICollectionView, didSelectItemAtIndexPath indexPath: NSIndexPath) {
 		collectionView.deselectItemAtIndexPath(indexPath, animated: false)
+		if indexPath.section == 1 {
+			delegate?.rowSelected()
+		}
 	}
 }
 
@@ -93,26 +107,29 @@ extension FilterListViewController: UICollectionViewDataSource {
 			let cell = collectionView.dequeueReusableCellWithReuseIdentifier(NSStringFromClass(TextfieldCell.self), forIndexPath: indexPath) as! TextfieldCell
 			if case .Some(let location) = locationManager.locationStatusProperty.value {
 				cell.textField.text = location
+				cell.textField.delegate = self
 			}
 			return cell
 		} else {
 			let cell = collectionView.dequeueReusableCellWithReuseIdentifier(NSStringFromClass(SimpleTextCell.self), forIndexPath: indexPath) as! SimpleTextCell
+			cell.accessoryImageView.image = UIImage(named: "arrow-right")?.imageWithRenderingMode(.AlwaysTemplate)
+			cell.accessoryImageView.tintColor = .darkGrayColor()
 			switch indexPath.row {
 			case 0:
 				cell.leftLabel.text = "Animal"
-				cell.rightLabel.text = filterManager.filter.value.animal?.rawValue ?? "\u{2212}"
+				cell.rightLabel.text = filterManager.filter.value.animal?.rawValue ?? "Any"
 			case 1:
 				cell.leftLabel.text = "Breed"
-				cell.rightLabel.text = filterManager.filter.value.breed ?? "\u{2212}"
+				cell.rightLabel.text = filterManager.filter.value.breed ?? "Any"
 			case 2:
 				cell.leftLabel.text = "Size"
-				cell.rightLabel.text = filterManager.filter.value.size?.rawValue ?? "\u{2212}"
+				cell.rightLabel.text = filterManager.filter.value.size?.rawValue ?? "Any"
 			case 3:
 				cell.leftLabel.text = "Sex"
-				cell.rightLabel.text = filterManager.filter.value.sex?.rawValue ?? "\u{2212}"
+				cell.rightLabel.text = filterManager.filter.value.sex?.rawValue ?? "Any"
 			case 4:
 				cell.leftLabel.text = "Age"
-				cell.rightLabel.text = filterManager.filter.value.age?.rawValue ?? "\u{2212}"
+				cell.rightLabel.text = filterManager.filter.value.age?.rawValue ?? "Any"
 			default: return cell
 			}
 			return cell
@@ -124,5 +141,15 @@ extension FilterListViewController: UICollectionViewDelegateFlowLayout {
 	
 	func collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAtIndexPath indexPath: NSIndexPath) -> CGSize {
 		return CGSize(width: view.frame.width, height: 50)
+	}
+}
+
+extension FilterListViewController: UITextFieldDelegate {
+	
+	func textFieldDidEndEditing(textField: UITextField) {
+		guard let trimmed = textField.text?.stringByTrimmingCharactersInSet(NSCharacterSet.whitespaceAndNewlineCharacterSet()) else { return }
+		if trimmed.characters.count > 0 {
+			locationManager.forceSetLocation(trimmed)
+		}
 	}
 }

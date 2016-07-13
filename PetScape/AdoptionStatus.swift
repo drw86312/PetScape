@@ -27,6 +27,8 @@ public enum AdoptionStatus: String {
 			return "Unavailable"
 		}
 	}
+	
+	static let all = [Available, Hold, Pending, Unavailable]
 }
 
 extension AdoptionStatus: Decodable {

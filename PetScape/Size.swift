@@ -27,6 +27,8 @@ public enum Size: String {
 			return "Extra Large"
 		}
 	}
+	
+	static let all = [Small, Medium, Large, ExtraLarge]
 }
 
 extension Size: Decodable {

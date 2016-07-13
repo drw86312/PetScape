@@ -39,6 +39,8 @@ public enum Animal: String {
 			return apiValue
 		}
 	}
+	
+	static let all = [Barnyard, Bird, Cat, Dog, Horse, Pig, Reptile, SmallFurry]
 }
 
 extension Animal: Decodable {

@@ -52,13 +52,13 @@ class LocationManager: NSObject, CLLocationManagerDelegate {
 	}
 	
 	func locationManager(manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+		manager.stopUpdatingLocation()
 		guard let location = manager.location else {
 			self._locationStatusProperty.value = .Error("No locations found")
 			return
 		}
 		
-		CLGeocoder().reverseGeocodeLocation(location, completionHandler: { [unowned self ] (placemarks, error) -> Void in
-			manager.stopUpdatingLocation()
+		CLGeocoder().reverseGeocodeLocation(location, completionHandler: { [unowned self ] placemarks, error -> Void in
 			if let error = error {
 				self._locationStatusProperty.value = .Error(error.localizedDescription)
 			}
@@ -98,5 +98,15 @@ class LocationManager: NSObject, CLLocationManagerDelegate {
 	func scanLocation() {
 		manager.startUpdatingLocation()
 		self._locationStatusProperty.value = .Scanning
+	}
+	
+	func forceSetLocation(location: String) {
+		if case .Some(let currentLocation) = locationStatusProperty.value {
+			if currentLocation != location {
+				_locationStatusProperty.value = .Some(location)
+			}
+		} else {
+			_locationStatusProperty.value = .Some(location)
+		}
 	}
 }

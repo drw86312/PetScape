@@ -39,8 +39,16 @@ class PetCoordinator {
 
 extension PetCoordinator: StreamViewControllerDelegate {
 	func filterIconPressed() {
-		let filterVC = FilterListViewController(filterManager: filterManager,
-		                                        locationManager: locationManager )
-		navigationController.pushViewController(filterVC, animated: true)
+		let vc = FilterListViewController(filterManager: filterManager,
+		                                        locationManager: locationManager)
+		vc.delegate = self
+		navigationController.pushViewController(vc, animated: true)
+	}
+}
+
+extension PetCoordinator: FilterListViewControllerDelegate {
+	
+	func rowSelected() {
+		
 	}
 }

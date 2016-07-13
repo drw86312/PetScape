@@ -35,6 +35,7 @@
 		815EBEB31D0E407E0056ECF6 /* API+Shelter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 815EBEB21D0E407E0056ECF6 /* API+Shelter.swift */; };
 		815EBEB51D0F04980056ECF6 /* Request+ArgoResponseSerializer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 815EBEB41D0F04980056ECF6 /* Request+ArgoResponseSerializer.swift */; };
 		815EBEB71D0F15720056ECF6 /* Breed.swift in Sources */ = {isa = PBXBuildFile; fileRef = 815EBEB61D0F15720056ECF6 /* Breed.swift */; };
+		816617E51D359018006CD506 /* FilterSelectionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 816617E41D359018006CD506 /* FilterSelectionViewController.swift */; };
 		8174B3FF1D0B70DD00F374D4 /* Contact.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8174B3FE1D0B70DD00F374D4 /* Contact.swift */; };
 		8174B4011D0C6D1E00F374D4 /* Photo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8174B4001D0C6D1E00F374D4 /* Photo.swift */; };
 		81919FC51D109EC0000334BC /* PetCellLabelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 81919FC41D109EC0000334BC /* PetCellLabelView.swift */; };
@@ -111,6 +112,7 @@
 		815EBEB21D0E407E0056ECF6 /* API+Shelter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "API+Shelter.swift"; sourceTree = "<group>"; };
 		815EBEB41D0F04980056ECF6 /* Request+ArgoResponseSerializer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Request+ArgoResponseSerializer.swift"; sourceTree = "<group>"; };
 		815EBEB61D0F15720056ECF6 /* Breed.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Breed.swift; sourceTree = "<group>"; };
+		816617E41D359018006CD506 /* FilterSelectionViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FilterSelectionViewController.swift; sourceTree = "<group>"; };
 		8174B3FE1D0B70DD00F374D4 /* Contact.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Contact.swift; sourceTree = "<group>"; };
 		8174B4001D0C6D1E00F374D4 /* Photo.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Photo.swift; sourceTree = "<group>"; };
 		81919FC41D109EC0000334BC /* PetCellLabelView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PetCellLabelView.swift; sourceTree = "<group>"; };
@@ -230,6 +232,7 @@
 				810DD2761CEB6BEA00EAF8A8 /* StreamViewController.swift */,
 				8134EBA11D0FB9BD002B5C8F /* StreamViewModel.swift */,
 				81CE14BD1D185A200092111E /* FilterListViewController.swift */,
+				816617E41D359018006CD506 /* FilterSelectionViewController.swift */,
 				81E798CA1D19E07C00135EAB /* BaseModalViewController.swift */,
 				81C58E6C1D22E4A100635986 /* ContactViewController.swift */,
 				81C58E6E1D22EA2800635986 /* ContactViewModel.swift */,
@@ -430,6 +433,7 @@
 				815EBEB11D0E35D70056ECF6 /* Shelter.swift in Sources */,
 				8134EB981D0F56AD002B5C8F /* AdoptionStatus.swift in Sources */,
 				8134EB961D0F5684002B5C8F /* Age.swift in Sources */,
+				816617E51D359018006CD506 /* FilterSelectionViewController.swift in Sources */,
 				81FB684F1D2C15610032916F /* PetCoordinator.swift in Sources */,
 				8134EB9F1D0F7134002B5C8F /* PetCell.swift in Sources */,
 				81CE14BC1D1732630092111E /* UITableView.swift in Sources */,

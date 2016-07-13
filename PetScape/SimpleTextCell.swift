@@ -22,7 +22,9 @@ class SimpleTextCell: UICollectionViewCell {
 		contentView.backgroundColor = UIColor(color: .LightGray)
 		
 		leftLabel.textAlignment = .Left
+		
 		rightLabel.textAlignment = .Right
+		rightLabel.textColor = .darkGrayColor()
 		
 		leftLabel.font = UIFont.systemFontOfSize(21)
 		divider.backgroundColor = .lightGrayColor()
@@ -42,7 +44,7 @@ class SimpleTextCell: UICollectionViewCell {
 		
 		accessoryImageView.autoPinEdge(.Right, toEdge: .Right, ofView: contentView, withOffset: -10)
 		accessoryImageView.autoAlignAxis(.Horizontal, toSameAxisOfView: contentView)
-		accessoryImageView.autoSetDimensionsToSize(CGSize(width: 30, height: 30))
+		accessoryImageView.autoSetDimensionsToSize(CGSize(width: 20, height: 20))
 		
 		rightLabel.autoPinEdge(.Right, toEdge: .Left, ofView: accessoryImageView, withOffset: -10)
 		rightLabel.autoPinEdge(.Bottom, toEdge: .Bottom, ofView: contentView)

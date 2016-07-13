@@ -22,7 +22,7 @@ class TextfieldCell: UICollectionViewCell {
 		textField.textAlignment = .Center
 		textField.tintColor = UIColor(color: .MainColor)
 		textField.textColor = UIColor(color: .MainColor)
-		textField.font = UIFont.systemFontOfSize(16)
+		textField.font = UIFont.systemFontOfSize(21)
 		textField.keyboardAppearance = .Light
 		textField.attributedPlaceholder = NSAttributedString(string: "Zip or City & State",
 		                                                     attributes: [NSFontAttributeName : UIFont.systemFontOfSize(21),

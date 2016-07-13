@@ -12,7 +12,7 @@ import Foundation
 public enum Sex: String {
 	case Male = "M"
 	case Female = "F"
-	case Unkown = "U"
+	case Unknown = "U"
 	
 	var titleString: String {
 		switch self {
@@ -20,10 +20,12 @@ public enum Sex: String {
 			return "Male"
 		case .Female:
 			return "Female"
-		case .Unkown:
+		case .Unknown:
 			return "Unknown"
 		}
 	}
+	
+	static let all = [Male, Female, Unknown]
 }
 
 extension Sex: Decodable {

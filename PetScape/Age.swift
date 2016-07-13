@@ -14,6 +14,8 @@ public enum Age: String {
 	case Young = "Young"
 	case Adult = "Adult"
 	case Senior = "Senior"
+	
+	static let all = [Baby, Young, Adult, Senior]
 }
 
 extension Age: Decodable {
