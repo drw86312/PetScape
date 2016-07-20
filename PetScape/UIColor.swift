@@ -13,6 +13,7 @@ enum PetScapeColor: UInt32 {
 	
 	case MainColor = 0x73c82c
 	case LightGray = 0xf5f5f5
+	case MediumGray = 0xe2e2e2
 	
 	var UIColor: UIKit.UIColor {
 		return .init(color: self)

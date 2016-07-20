@@ -10,7 +10,7 @@ import UIKit
 import ReactiveCocoa
 
 protocol FilterListViewControllerDelegate: class {
-	func rowSelected()
+	func rowSelected(field: FilterField)
 }
 
 class FilterListViewController: UIViewController {
@@ -46,13 +46,14 @@ class FilterListViewController: UIViewController {
 		
 		collectionView.delegate = self
 		collectionView.dataSource = self
+		collectionView.delaysContentTouches = true
 		collectionView.registerClass(TextfieldCell.self, forCellWithReuseIdentifier: NSStringFromClass(TextfieldCell.self))
 		collectionView.registerClass(SimpleTextCell.self, forCellWithReuseIdentifier: NSStringFromClass(SimpleTextCell.self))
 		view.addSubview(collectionView)
 		
-		collectionView.backgroundColor = .lightGrayColor()
+		collectionView.backgroundColor = UIColor(color: .MediumGray)
 		
-		view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(FilterListViewController.viewTapped)))
+//		view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(FilterListViewController.viewTapped)))
 		
 		navigationController?.hidesBarsOnSwipe = false
 		addConstraints()
@@ -82,10 +83,23 @@ class FilterListViewController: UIViewController {
 
 extension FilterListViewController: UICollectionViewDelegate {
 	
+	func collectionView(collectionView: UICollectionView, didHighlightItemAtIndexPath indexPath: NSIndexPath) {
+		let cell = collectionView.cellForItemAtIndexPath(indexPath)
+		cell?.contentView.backgroundColor = UIColor(color: .MediumGray)
+	}
+	
+	func collectionView(collectionView: UICollectionView, didUnhighlightItemAtIndexPath indexPath: NSIndexPath) {
+		let cell = collectionView.cellForItemAtIndexPath(indexPath)
+		cell?.contentView.backgroundColor = UIColor(color: .LightGray)
+	}
+	
 	func collectionView(collectionView: UICollectionView, didSelectItemAtIndexPath indexPath: NSIndexPath) {
-		collectionView.deselectItemAtIndexPath(indexPath, animated: false)
+//		let cell = collectionView.cellForItemAtIndexPath(indexPath)
+//		cell?.contentView.backgroundColor = .lightGrayColor()
+		
+//		collectionView.deselectItemAtIndexPath(indexPath, animated: false)
 		if indexPath.section == 1 {
-			delegate?.rowSelected()
+			delegate?.rowSelected(FilterField.all[indexPath.row])
 		}
 	}
 }
@@ -97,7 +111,7 @@ extension FilterListViewController: UICollectionViewDataSource {
 	}
 	
 	func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-		return section == 0 ? 1 : 5
+		return section == 0 ? 1 : FilterField.all.count
 	}
 	
 	func collectionView(collectionView: UICollectionView,
@@ -114,22 +128,24 @@ extension FilterListViewController: UICollectionViewDataSource {
 			let cell = collectionView.dequeueReusableCellWithReuseIdentifier(NSStringFromClass(SimpleTextCell.self), forIndexPath: indexPath) as! SimpleTextCell
 			cell.accessoryImageView.image = UIImage(named: "arrow-right")?.imageWithRenderingMode(.AlwaysTemplate)
 			cell.accessoryImageView.tintColor = .darkGrayColor()
+			cell.leftLabel.text = FilterField.all[indexPath.row].rawValue
 			switch indexPath.row {
 			case 0:
-				cell.leftLabel.text = "Animal"
 				cell.rightLabel.text = filterManager.filter.value.animal?.rawValue ?? "Any"
 			case 1:
-				cell.leftLabel.text = "Breed"
 				cell.rightLabel.text = filterManager.filter.value.breed ?? "Any"
 			case 2:
-				cell.leftLabel.text = "Size"
 				cell.rightLabel.text = filterManager.filter.value.size?.rawValue ?? "Any"
 			case 3:
-				cell.leftLabel.text = "Sex"
 				cell.rightLabel.text = filterManager.filter.value.sex?.rawValue ?? "Any"
 			case 4:
-				cell.leftLabel.text = "Age"
 				cell.rightLabel.text = filterManager.filter.value.age?.rawValue ?? "Any"
+			case 5:
+				if let hasPhotos = filterManager.filter.value.hasPhotos {
+					cell.rightLabel.text = hasPhotos ? "Yes" : "No"
+				} else {
+					cell.rightLabel.text = "Any"
+				}
 			default: return cell
 			}
 			return cell

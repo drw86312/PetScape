@@ -15,6 +15,10 @@ public enum Age: String {
 	case Adult = "Adult"
 	case Senior = "Senior"
 	
+	var titleString: String {
+		return rawValue
+	}
+	
 	static let all = [Baby, Young, Adult, Senior]
 }
 

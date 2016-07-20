@@ -8,6 +8,16 @@
 
 import UIKit
 
+enum FilterField: String {
+	case Animal = "Animal"
+	case Breed = "Breed"
+	case Size = "Size"
+	case Sex = "Sex"
+	case Age = "Age"
+	case HasPhotos = "Has Photos?"
+	
+	static let all = [Animal, Breed, Size, Sex, Age, HasPhotos]
+}
 
 class PetCoordinator {
 	
@@ -31,10 +41,6 @@ class PetCoordinator {
 		navigationController.popToRootViewControllerAnimated(animated)
 		navigationController.pushViewController(petVC, animated: animated)
 	}
-	
-	func pushFiltersController() {
-		
-	}
 }
 
 extension PetCoordinator: StreamViewControllerDelegate {
@@ -48,7 +54,15 @@ extension PetCoordinator: StreamViewControllerDelegate {
 
 extension PetCoordinator: FilterListViewControllerDelegate {
 	
-	func rowSelected() {
-		
+	func rowSelected(field: FilterField) {
+		let vc = FilterSelectionViewController(field: field,
+		                                       filterManager: filterManager)
+		vc.delegate = self
+		navigationController.pushViewController(vc, animated: true)
 	}
+}
+
+extension PetCoordinator: FilterSelectionViewControllerDelegate {
+	
+	
 }

@@ -26,7 +26,7 @@ class SimpleTextCell: UICollectionViewCell {
 		rightLabel.textAlignment = .Right
 		rightLabel.textColor = .darkGrayColor()
 		
-		leftLabel.font = UIFont.systemFontOfSize(21)
+		leftLabel.font = UIFont.systemFontOfSize(18)
 		divider.backgroundColor = .lightGrayColor()
 		
 		addSubview(leftLabel)
@@ -52,7 +52,7 @@ class SimpleTextCell: UICollectionViewCell {
 		rightLabel.autoPinEdge(.Left, toEdge: .Right, ofView: leftLabel, withOffset: 10)
 		
 		divider.autoPinEdge(.Left, toEdge: .Left, ofView: leftLabel)
-		divider.autoPinEdge(.Right, toEdge: .Right, ofView: accessoryImageView)
+		divider.autoPinEdge(.Right, toEdge: .Right, ofView: contentView)
 		divider.autoPinEdge(.Bottom, toEdge: .Bottom, ofView: contentView)
 		divider.autoSetDimension(.Height, toSize: 0.5)
 	}

@@ -34,6 +34,7 @@ func == (lhs: Filter, rhs: Filter) -> Bool {
 class FilterManager {
 	
 	let filter: MutableProperty<Filter>
+	static let kFiltersKey = "filters"
 	
 	init() {
 		filter = MutableProperty<Filter>(FilterManager.fetchStoredFilter())
@@ -49,7 +50,7 @@ class FilterManager {
 		var hasPhotos: Bool? = nil
 		
 		// Fetch stored filters
-		if let decoded  = NSUserDefaults.standardUserDefaults().objectForKey(StreamViewModel.kFiltersKey) as? NSData,
+		if let decoded  = NSUserDefaults.standardUserDefaults().objectForKey(FilterManager.kFiltersKey) as? NSData,
 			let filter = NSKeyedUnarchiver.unarchiveObjectWithData(decoded) as? FilterClass {
 			if let v = filter.animal, let enumValue = Animal(rawValue: v) { animal = enumValue }
 			if let v = filter.size, let enumValue = Size(rawValue: v) { size = enumValue }
@@ -75,7 +76,7 @@ class FilterManager {
 		                              age: filter.age?.rawValue,
 		                              hasPhotos: filter.hasPhotos)
 		NSUserDefaults.standardUserDefaults().setObject(NSKeyedArchiver.archivedDataWithRootObject(filterClass),
-		                                                forKey: StreamViewModel.kFiltersKey)
+		                                                forKey: FilterManager.kFiltersKey)
 		NSUserDefaults.standardUserDefaults().synchronize()
 	}
 }

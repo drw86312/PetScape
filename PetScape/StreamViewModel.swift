@@ -11,9 +11,7 @@ import ReactiveCocoa
 import Result
 
 class StreamViewModel {
-	
-	static let kFiltersKey = "filters"
-	
+		
 	enum LoadState {
 		case NotLoaded
 		case Loading
@@ -54,8 +52,14 @@ class StreamViewModel {
 			.skipRepeats(==)
 			.ignoreNil()
 		
+		let filter = filterManager
+			.filter
+			.producer
+			.skipRepeats()
+			.throttle(0.5, onScheduler: QueueScheduler.mainQueueScheduler)
+		
 		locations
-			.combineLatestWith(filterManager.filter.producer)
+			.combineLatestWith(filter)
 			.startWithNext { [unowned self] _ in
 				self.reload()
 		}
