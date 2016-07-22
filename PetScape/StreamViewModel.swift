@@ -60,9 +60,7 @@ class StreamViewModel {
 		
 		locations
 			.combineLatestWith(filter)
-			.startWithNext { [unowned self] _ in
-				self.reload()
-		}
+			.startWithNext { [unowned self] _ in self.reload() }
 		
 		self.load = Action<Endpoint<[Pet]>, Range<Int>, Error> { endpoint in
 			return SignalProducer<Range<Int>, Error> { [unowned self] observer, disposable in

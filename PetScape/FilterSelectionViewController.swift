@@ -71,6 +71,10 @@ class FilterSelectionViewController: UIViewController {
 		collectionView.autoPinEdgesToSuperviewEdges()
 		spinner.autoCenterInSuperview()
 	}
+	
+	deinit {
+		print("Disposing \(self)")
+	}
 }
 
 extension FilterSelectionViewController: UICollectionViewDelegate {

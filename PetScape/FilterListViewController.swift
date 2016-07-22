@@ -52,9 +52,7 @@ class FilterListViewController: UIViewController {
 		view.addSubview(collectionView)
 		
 		collectionView.backgroundColor = UIColor(color: .MediumGray)
-		
-//		view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(FilterListViewController.viewTapped)))
-		
+				
 		navigationController?.hidesBarsOnSwipe = false
 		addConstraints()
 	}
@@ -64,20 +62,21 @@ class FilterListViewController: UIViewController {
 		
 		filterManager
 			.filter
-			.signal
+			.producer
 			.skipRepeats(==)
 			.observeOn(UIScheduler())
-			.observeNext { [unowned self] _ in
+			.takeUntil(rac_WillDeallocSignalProducer())
+			.startWithNext { [unowned self] _ in
 				self.collectionView.reloadData()
 		}
 	}
-	
+
 	private func addConstraints() {
 		collectionView.autoPinEdgesToSuperviewEdges()
 	}
 	
-	func viewTapped() {
-		view.endEditing(true)
+	deinit {
+		print("Disposing \(self)")
 	}
 }
 
@@ -122,6 +121,7 @@ extension FilterListViewController: UICollectionViewDataSource {
 			if case .Some(let location) = locationManager.locationStatusProperty.value {
 				cell.textField.text = location
 				cell.textField.delegate = self
+				cell.textField.returnKeyType = .Done
 			}
 			return cell
 		} else {
@@ -131,15 +131,15 @@ extension FilterListViewController: UICollectionViewDataSource {
 			cell.leftLabel.text = FilterField.all[indexPath.row].rawValue
 			switch indexPath.row {
 			case 0:
-				cell.rightLabel.text = filterManager.filter.value.animal?.rawValue ?? "Any"
+				cell.rightLabel.text = filterManager.filter.value.animal?.titleString ?? "Any"
 			case 1:
 				cell.rightLabel.text = filterManager.filter.value.breed ?? "Any"
 			case 2:
-				cell.rightLabel.text = filterManager.filter.value.size?.rawValue ?? "Any"
+				cell.rightLabel.text = filterManager.filter.value.size?.titleString ?? "Any"
 			case 3:
-				cell.rightLabel.text = filterManager.filter.value.sex?.rawValue ?? "Any"
+				cell.rightLabel.text = filterManager.filter.value.sex?.titleString ?? "Any"
 			case 4:
-				cell.rightLabel.text = filterManager.filter.value.age?.rawValue ?? "Any"
+				cell.rightLabel.text = filterManager.filter.value.age?.titleString ?? "Any"
 			case 5:
 				if let hasPhotos = filterManager.filter.value.hasPhotos {
 					cell.rightLabel.text = hasPhotos ? "Yes" : "No"
@@ -161,6 +161,11 @@ extension FilterListViewController: UICollectionViewDelegateFlowLayout {
 }
 
 extension FilterListViewController: UITextFieldDelegate {
+	
+	func textFieldShouldReturn(textField: UITextField) -> Bool {
+		textField.resignFirstResponder()
+		return true
+	}
 	
 	func textFieldDidEndEditing(textField: UITextField) {
 		guard let trimmed = textField.text?.stringByTrimmingCharactersInSet(NSCharacterSet.whitespaceAndNewlineCharacterSet()) else { return }

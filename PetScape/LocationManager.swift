@@ -84,6 +84,10 @@ class LocationManager: NSObject, CLLocationManagerDelegate {
 			})
 	}
 	
+	func locationManager(manager: CLLocationManager, didStartMonitoringForRegion region: CLRegion) {
+		self._locationStatusProperty.value = .Scanning
+	}
+	
 	func locationManager(manager: CLLocationManager, didChangeAuthorizationStatus status: CLAuthorizationStatus) {
 		switch status {
 		case .AuthorizedAlways, .AuthorizedWhenInUse:
@@ -97,7 +101,6 @@ class LocationManager: NSObject, CLLocationManagerDelegate {
 	
 	func scanLocation() {
 		manager.startUpdatingLocation()
-		self._locationStatusProperty.value = .Scanning
 	}
 	
 	func forceSetLocation(location: String) {

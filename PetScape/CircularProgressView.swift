@@ -26,9 +26,10 @@ class CircularProgressView: UIView {
 	let progress = MutableProperty<CGFloat>(0.0)
 	let loadState = MutableProperty<LoadState>(.NotLoaded)
 	
-	private var loadingLayers: [CAShapeLayer] = []
 	private let accessoryView = UIImageView()
+	
 	private var backingLayer: CAShapeLayer!
+	private var loadingLayer: CAShapeLayer!
 	
 	init(layerBackgroundColor: UIColor = .lightGrayColor(),
 	     layerTintColor: UIColor = UIColor(color: .MainColor),
@@ -49,24 +50,59 @@ class CircularProgressView: UIView {
 		addSubview(accessoryView)
 		
 		// Add background layer
-		backingLayer = generateLayer(0.0,
-		                             endPoint: 1.0,
-		                             strokeColor: layerBackgroundColor)
+		let backPath = CircularProgressView.generatePath(0.0,
+		                                              endPoint: 1.0,
+		                                              lineWidth: lineWidth,
+		                                              drawRect: bounds)
+		backingLayer = CAShapeLayer()
+		backingLayer.path = backPath.CGPath
+		backingLayer.fillColor = UIColor.clearColor().CGColor
+		backingLayer.strokeColor = layerBackgroundColor.CGColor
+		backingLayer.lineWidth = lineWidth
 		layer.addSublayer(backingLayer)
+		
+		
+		// Add loading layer
+		let loadingPath = CircularProgressView.generatePath(0.0,
+		                                              endPoint: 0.0,
+		                                              lineWidth: lineWidth,
+		                                              drawRect: bounds)
+		loadingLayer = CAShapeLayer()
+		loadingLayer.path = loadingPath.CGPath
+		loadingLayer.fillColor = UIColor.clearColor().CGColor
+		loadingLayer.strokeColor = layerTintColor.CGColor
+		loadingLayer.lineWidth = lineWidth
+		layer.addSublayer(loadingLayer)
 		
 		let progressSignal = AnyProperty(progress).signal
 		
 		progressSignal
-			.combinePrevious(0.0)
+			.map { [unowned self] progress -> UIBezierPath in
+			 return CircularProgressView.generatePath(0.0,
+				endPoint: progress,
+				lineWidth: lineWidth,
+				drawRect: self.bounds)
+			}
+			.combinePrevious(CircularProgressView.generatePath(0.0,
+				endPoint: 0.0,
+				lineWidth: lineWidth,
+				drawRect: bounds))
 			.observeOn(UIScheduler())
-			.observeNext { [unowned self] (prev, next) in
-				let prev = prev == 1 ? 0 : prev
-				if fabs(next) - fabs(prev) != 0 {
-					let newLayer = self.generateLayer(prev, endPoint: next)
-					self.loadingLayers.append(newLayer)
-					self.layer.addSublayer(newLayer)
-				}
+			.observeNext { [unowned self] oldPath, newPath in
+				
+			let pathAnim = CABasicAnimation(keyPath: "path")
+			pathAnim.fromValue = self.loadingLayer.path
+			pathAnim.toValue = newPath
+				
+			let animGroup = CAAnimationGroup()
+			animGroup.animations = [pathAnim]
+			animGroup.removedOnCompletion = false
+			animGroup.duration = 0.5
+			animGroup.fillMode = kCAFillModeForwards
+			
+			self.loadingLayer.addAnimation(animGroup, forKey: nil)
 		}
+		
 		
 		loadState <~ progressSignal
 			.map { progress in
@@ -81,13 +117,10 @@ class CircularProgressView: UIView {
 			.map { $0 == .Loaded }
 			.skipRepeats()
 		
-		didFinishLoading
-			.observeNext { [unowned self] finished in
-				if finished {
-					self.loadingLayers.forEach { $0.removeFromSuperlayer() }
-					self.loadingLayers = []
-				}
-		}
+//		didFinishLoading
+//			.observeNext { [unowned self] finished in
+//				self.loadingLayer.hidden = finished
+//		}
 		
 		DynamicProperty(object: self,
 		                keyPath: "hidden") <~ didFinishLoading
@@ -104,9 +137,10 @@ class CircularProgressView: UIView {
 		                keyPath: "hidden") <~ didError.map { !$0 }
 	}
 	
-	func generateLayer(startPoint: CGFloat,
-	                   endPoint: CGFloat,
-	                   strokeColor: UIColor = UIColor(color: .MainColor)) -> CAShapeLayer {
+	static func generatePath(startPoint: CGFloat,
+	                          endPoint: CGFloat,
+	                          lineWidth: CGFloat,
+	                          drawRect: CGRect) -> UIBezierPath {
 		
 		let originDegrees = (360 * startPoint) - 90
 		let terminusDegrees = (360 * endPoint) - 90
@@ -114,18 +148,12 @@ class CircularProgressView: UIView {
 		let originRadians = originDegrees * CGFloat(M_PI/180)
 		let terminusRadians = terminusDegrees * CGFloat(M_PI/180)
 		
-		let circlePath = UIBezierPath(arcCenter: CGPoint(x: bounds.origin.x + bounds.size.width/2,
-														 y: bounds.origin.y + bounds.size.height/2),
-		                              radius: CGFloat(frame.size.width/2) - lineWidth/2,
-		                              startAngle: originRadians,
-		                              endAngle: terminusRadians,
-		                              clockwise: true)
-		let newLayer = CAShapeLayer()
-		newLayer.path = circlePath.CGPath
-		newLayer.fillColor = UIColor.clearColor().CGColor
-		newLayer.strokeColor = strokeColor.CGColor
-		newLayer.lineWidth = lineWidth
-		return newLayer
+		return UIBezierPath(arcCenter: CGPoint(x: drawRect.origin.x + drawRect.size.width/2,
+			y: drawRect.origin.y + drawRect.size.height/2),
+		                    radius: CGFloat(drawRect.size.width/2) - lineWidth/2,
+		                    startAngle: originRadians,
+		                    endAngle: terminusRadians,
+		                    clockwise: true)
 	}
 	
 	required init?(coder aDecoder: NSCoder) {
